@@ -1,4 +1,0 @@
-X:\if\if-ws-mobile-templates\bin\ws_phonegap.exe
-X:\if\if-ws-mobile-templates\ws_phonegap\obj\x86\Release\ResolveAssemblyReference.cache
-X:\if\if-ws-mobile-templates\ws_phonegap\obj\x86\Release\ws_phonegap.exe
-X:\if\if-ws-mobile-templates\bin\IntelliFactory.WebSharper.Mobile.Android.Sitelets.targets

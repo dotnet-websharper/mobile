@@ -49,7 +49,7 @@ prohibited without the written consent of the copyright holder.
       <Args>$(Args) -site "$(TargetPath)"</Args>      
     </PropertyGroup>
     <Exec Command="&quot;$(WEBSHARPER_HOME)\wsol.exe&quot; $(Args)" WorkingDirectory="$(OutDir)" />
-    <Exec Command="&quot;$(WEBSHARPER_HOME)\ws_phonegap.exe&quot; &quot;$(ProjectDir).&quot; &quot;$(WebSharperSiteletsOfflineDirectory).&quot; &quot;$(TargetFileName)&quot;" WorkingDirectory="$(WEBSHARPER_HOME)" />
+    <Exec Command="&quot;$(WEBSHARPER_HOME)\ws_mobile.exe&quot; &quot;$(ProjectDir).&quot; &quot;$(WebSharperSiteletsOfflineDirectory).&quot; &quot;$(TargetFileName)&quot;" WorkingDirectory="$(WEBSHARPER_HOME)" />
   </Target>
   <Target Name="WebSharperSiteletsClean">
     <ItemGroup>

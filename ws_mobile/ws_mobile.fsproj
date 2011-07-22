@@ -7,13 +7,13 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d5e7fc2d-d0f8-48d4-bff8-1c4cc672acf5}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ws_phonegap</RootNamespace>
-    <AssemblyName>ws_phonegap</AssemblyName>
+    <RootNamespace>ws_mobile</RootNamespace>
+    <AssemblyName>ws_mobile</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-    <Name>ws_phonegap</Name>
+    <Name>ws_mobile</Name>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-    <ReferencePath>X:\if\if-ws-mobile-templates\ws_phonegap\</ReferencePath>
+    <ReferencePath>X:\if\if-ws-mobile-templates\ws_mobile\</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,7 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <DocumentationFile>bin\Debug\ws_phonegap.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\ws_mobile.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>

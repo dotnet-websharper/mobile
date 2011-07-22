@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ws_phonegap", "ws_phonegap.fsproj", "{D5E7FC2D-D0F8-48D4-BFF8-1C4CC672ACF5}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ws_mobile", "ws_mobile.fsproj", "{D5E7FC2D-D0F8-48D4-BFF8-1C4CC672ACF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
