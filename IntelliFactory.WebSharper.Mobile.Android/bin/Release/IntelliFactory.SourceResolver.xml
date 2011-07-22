@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>IntelliFactory.SourceResolver</name></assembly>
+<members>
+<member name="P:IntelliFactory.SourceResolver.ISourceLocation.Line">
+<summary>
+ The line number, starting from 0.
+</summary>
+</member>
+<member name="P:IntelliFactory.SourceResolver.ISourceLocation.File">
+<summary>
+ The filename as an absolute path.
+</summary>
+</member>
+<member name="P:IntelliFactory.SourceResolver.ISourceLocation.Column">
+<summary>
+ The column number, starting from 0.
+</summary>
+</member>
+<member name="T:IntelliFactory.SourceResolver.ISourceLocation">
+<summary>
+ Represents a location in the source file.
+</summary>
+</member>
+<member name="M:IntelliFactory.SourceResolver.ISourceResolver.Resolve(System.Reflection.MemberInfo)">
+<summary>
+ Attempts to find the source location of the given member.
+</summary>
+</member>
+<member name="T:IntelliFactory.SourceResolver.ISourceResolver">
+<summary>
+ Resolves source code locations.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.SourceResolver.MetadataHost.New">
+<summary>
+ Serves as a constructor.
+</summary>
+</member>
+<member name="M:IntelliFactory.SourceResolver.MetadataHost.LoadUnitFrom(System.String)">
+<summary>
+ Implementation detail.
+</summary>
+</member>
+<member name="M:IntelliFactory.SourceResolver.MetadataHost.GetPdbReader(System.String)">
+<summary>
+ Gets a PdbReader for a given DLL path.
+</summary>
+</member>
+<member name="M:IntelliFactory.SourceResolver.MetadataHost.GetAssemblyIdentity(System.Reflection.Assembly)">
+<summary>
+ Gets a CCI AssemblyIdentity for a System.Reflection Assembly.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.SourceResolver.MetadataHost">
+<summary>
+ Implements IMetaDataHost and caches PDB file loading.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.SourceResolver.Method">
+<summary>
+ Represents methods.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.SourceResolver.Property">
+<summary>
+ Represents properties.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.SourceResolver.Type">
+<summary>
+ Represents types.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.SourceResolver.SourceResolver.New">
+<summary>
+ Serves as a constructor.
+</summary>
+</member>
+<member name="T:IntelliFactory.SourceResolver.SourceResolver">
+<summary>
+ Implements an ISourceResolver that finds and reads PDB files to locate
+ the source information for members.
+</summary>
+</member>
+</members>
+</doc>

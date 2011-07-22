@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>IntelliFactory.WebSharper.Remoting</name></assembly>
+<members>
+<member name="T:IntelliFactory.WebSharper.Remoting.Binding">
+<summary>
+ Implements late binding to Remoting methods.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Async(System.String,System.String,System.String,System.Object[])">
+<summary>
+ Sends an asynchronous RPC message.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Call(System.String,System.String,System.String,System.Object[])">
+<summary>
+ Sends a synchronous message to the server and waits for the reply.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Send(System.String,System.String,System.String,System.Object[])">
+<summary>
+ Sends a message to the server without waiting for a reply.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Rpc(System.Boolean,System.String,System.String,System.Object[],Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Core.FSharpFunc`2{System.Boolean,Microsoft.FSharp.Core.FSharpFunc`2{System.Object,Microsoft.FSharp.Core.Unit}}})">
+<summary>
+ Sends an RPC message.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Parse(System.String)">
+<summary>
+ Parses JSON from a server-serialized string on the client.
+ Restores prototype links.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.map(Microsoft.FSharp.Core.FSharpFunc`2{System.Object,System.Object},System.Object)">
+<summary>
+ Does a shallow generic mapping over an object.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.isArray(System.Object)">
+<summary>
+ Tests if the object is a runtime array.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.lookup``1(System.String[])">
+<summary>
+ Lookups an object by its FQN.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Stringify(System.Object)">
+<summary>
+ Serializes an object to JSON on the client.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Client">
+<summary>
+ Provides client-side (JavaScript) remoting facilities.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Remoting.Extensions.Log">
+<summary>
+ Logs messages specific to the current assembly.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Extensions">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Json.New(System.Lazy{IntelliFactory.WebSharper.Metadata.Info})">
+<summary>
+ Constructs a new server-side JSON facility.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Json">
+<summary>
+ Provides JSON serialization customized for remoting. On serializing it
+ emits prototype references for client-side consumption. It also respects
+ field renaming with the NameAttribute.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.RpcAttribute">
+<summary>
+ Implements RpcAttribute semantics.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="F:IntelliFactory.WebSharper.Remoting.Server.Server.handleRequest">
+<summary>
+ Handles a request.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Server.Server">
+<summary>
+ Represents an WebSharper Remoting request handler.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Remoting.Server.Environment.Output">
+<summary>
+ The raw response output stream.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Remoting.Server.Environment.Input">
+<summary>
+ The raw request input stream.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Remoting.Server.Environment.SetContentType">
+<summary>
+ Sets the content type.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Remoting.Server.Environment.GetParameter">
+<summary>
+ Gets a request (GET, POST) parameter.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Remoting.Server.Environment.GetHeader">
+<summary>
+ Gets an HTTP header.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Server.Environment">
+<summary>
+ Represents the HTTP server environment.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Server.Status">
+<summary>
+ Represents the status of serving a request.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Server.New(IntelliFactory.Json.JsonModule.Facility)">
+<summary>
+ Constructs a new Server.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Server.prepareMethod(IntelliFactory.Json.JsonModule.Facility,System.Reflection.MethodInfo)">
+<summary>
+ Prepares a reader-writer form of a method.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Server">
+<summary>
+ Implements the server-side  late binding to RPC methods.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Util.CheckRpcMethod(System.Reflection.MethodInfo)">
+<summary>
+ Gets RPC validation errors for a method.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Util.GetReturnType(System.Reflection.MethodInfo)">
+<summary>
+ Computes the return type of a method, mapping Async&lt;&apos;T&gt; to &apos;T.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Remoting.Util.ForceAsync">
+<summary>
+ Represents Async&lt;&apos;T&gt; -&gt; &apos;T with late-bound &apos;T.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Remoting.Util.TypeHeader">
+<summary>
+ The header that marks RPC messages.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Remoting.Util.MethodHeader">
+<summary>
+ The header that marks RPC messages.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Util">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.RemotingPervasives.IRpcHandlerFactory.Create(System.Type)">
+<summary>
+ Creates a new handler based on its type.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.RemotingPervasives.IRpcHandlerFactory">
+<summary>
+ Constructs RPC handlers.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.RemotingPervasives.RpcAttribute.Url">
+<summary>
+ The expression resolving to the URL to call.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.RemotingPervasives.RpcAttribute">
+<summary>
+ Marks methods as callable from the client via a remote procedure call.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.RemotingPervasives.Remote``1">
+<summary>
+ Constructs a proxy to a given remote handler.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.RemotingPervasives.SetRpcHandlerFactory(IntelliFactory.WebSharper.RemotingPervasives.IRpcHandlerFactory)">
+<summary>
+ Sets a custom factory for RPC handlers.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.RemotingPervasives">
+
+</member>
+</members>
+</doc>

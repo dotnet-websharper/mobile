@@ -1,0 +1,2280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>IntelliFactory.WebSharper</name></assembly>
+<members>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Attributes.JavaScriptTypeAttribute">
+<summary>
+ Marks types that must compile to JavaScript classes. Is safe to remove
+ when compilation to a class can be inferred or is not required.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Attributes.AbstractAttribute.ValidateUnionCase(Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Validates the use of this attribute on a union case.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Attributes.AbstractAttribute.ValidateMember(System.Reflection.MemberInfo)">
+<summary>
+ Validates the use of this attribute on a member.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Attributes.AbstractAttribute.ValidateAssembly(System.Reflection.Assembly)">
+<summary>
+ Validates the use of this attribute on an assembly.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Attributes.AbstractAttribute.Validate(IntelliFactory.WebSharper.Attributes.Target)">
+<summary>
+ Validates the use of this attribute on a given attribute target.
+ Defaults to using specialized validating methods.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Attributes.AbstractAttribute">
+<summary>
+ The base type for WebSharper attributes.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Attributes.Target">
+<summary>
+ Represents objects that can be annotated by attributes.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Attributes.ValidateAttributes(IntelliFactory.WebSharper.Attributes.Target)">
+<summary>
+ Validates the use of attributes on a given target.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Attributes.GetAttributes(IntelliFactory.WebSharper.Attributes.Target)">
+<summary>
+ Fetches all custom WebSharper attributes.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Attributes">
+<summary>
+ Defines basic custom attributes used by WebSharper projects.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Extensions">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Graphs.Contains``1(IntelliFactory.WebSharper.Graphs.Graph{``0},``0)">
+<summary>
+ Tests if the graph contains a given node.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Graphs.Count``1(IntelliFactory.WebSharper.Graphs.Graph{``0})">
+<summary>
+ Counts the number of nodes in the graph.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Graphs.DSet">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Graphs">
+<summary>
+ Defines directed graph representation and algorithms used by WebSharper.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.InlineAttribute.#ctor">
+<summary>
+ Constructs the attribute as an addition to JavaScriptAttribute.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.InlineAttribute.#ctor(System.String)">
+<summary>
+ Constructs the attribute with a JavaScript template.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Inlining.InlineAttribute">
+<summary>
+ Marks methods and constructors for inline
+ compilation to JavaScript.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Inlining.ConstantAttribute">
+<summary>
+ Marks union cases or properties that should be compiled to constants.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Inlining.StubAttribute">
+<summary>
+ Marks members that should be compiled by-name.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.AbstractInlineAttribute.GetUnionCaseInliner(IntelliFactory.WebSharper.Inlining.IContext,Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Loads the inline resolver for a union case.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.AbstractInlineAttribute.GetMemberInliner(IntelliFactory.WebSharper.Inlining.IContext,System.Reflection.MemberInfo)">
+<summary>
+ Loads the inline resolver for a member.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Inlining.AbstractInlineAttribute">
+<summary>
+ A helper base class for attributes that want to implement IInliningAnnotation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.IInlineAnnotation.GetUnionCaseInliner(IntelliFactory.WebSharper.Inlining.IContext,Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Loads the inline resolver for a union case.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.IInlineAnnotation.GetMemberInliner(IntelliFactory.WebSharper.Inlining.IContext,System.Reflection.MemberInfo)">
+<summary>
+ Loads the inline resolver for a member.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Inlining.IInlineAnnotation">
+<summary>
+ Implemented by custom attributes that mark members for inline compilation.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Inlining.IContext.ProxyResolver">
+<summary>
+ Resolves proxies.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Inlining.IContext.Logger">
+<summary>
+ The logger.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.IContext.Reflect(System.Reflection.MethodBase)">
+<summary>
+ Gets the translated definition of the member, if any.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.IContext.IsCompiledClass(System.Type)">
+<summary>
+ Tests if a type is compiled to a JavaScript class.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.IContext.GetName(System.Reflection.MemberInfo)">
+<summary>
+ Provides name resolution.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Inlining.IContext">
+<summary>
+ Provides context information to InlineAttribute values.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Inlining.Inliner">
+<summary>
+ Defines an inline translation of an expression.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.GetUnionCaseInliner(IntelliFactory.WebSharper.Inlining.IContext,Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Tries to load the inline resolver for a given union case.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.GetMemberInliner(IntelliFactory.WebSharper.Inlining.IContext,System.Reflection.MemberInfo)">
+<summary>
+ Tries to load the inline resolver for a given member.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.IsInlineUnionCase(Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Tests if a given union case is marked as inline.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Inlining.IsInlineMember(System.Reflection.MemberInfo)">
+<summary>
+ Tests if a given member is marked as inline.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Inlining">
+<summary>
+ Provides the InlineAttribute and related facilities.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.JavaScript.Class`1.Definition">
+<summary>
+ Looks up the class definition for a .NET type.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Class`1.Create(System.Object[])">
+<summary>
+ Creates a new instance of the class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.JavaScript.Function.Prototype">
+<summary>
+ Returns the prototype field of the function.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.JavaScript.Function.Name">
+<summary>
+ Returns the name of the function. For functions compiled
+ with WebSharper this is the fully qualified name.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.JavaScript.Function.Arity">
+<summary>
+ Returns the expected number of arguments of the function.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Function.Apply(System.Object,System.Object[])">
+<summary>
+ Applies this function to a given target object and arguments.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.JavaScript.Function">
+<summary>
+ Represents JavaScript function values that may also serve as class
+ definitions and constructors.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.JavaScript.Handle">
+<summary>
+ Represents a timer handle.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.JavaScript.Kind">
+<summary>
+ Enumerates JavaScript value kinds.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.GetClass``1">
+<summary>
+ Gets the runtime class representation for a given .NET type.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Coerce``1(IntelliFactory.WebSharper.JavaScript.Class{``0},System.Object)">
+<summary>
+ Coerces an arbitrary object to the given class.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.InstanceOf``1(``0,IntelliFactory.WebSharper.JavaScript.Class{``0})">
+<summary>
+ Tests if an object is an instance of a given class.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.ForEach(System.Object,Microsoft.FSharp.Core.FSharpFunc`2{System.String,System.Boolean})">
+<summary>
+ Iterates over the fields of a JavaScript object.
+ Iteration can be terminated by returning `true`.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.TypeOf(System.Object)">
+<summary>
+ Applies the JavaScript `typeof` operator.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.GetFields(System.Object)">
+<summary>
+ Retrieves all proper fields from an object.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.In(System.String,System.Object)">
+<summary>
+ Tests if the object has or inherits a property.
+ Implemented with the &quot;in&quot; operator.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.HasOwnProperty(System.String,System.Object)">
+<summary>
+ Tests if the object contains a property.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Delete(System.String,System.Object)">
+<summary>
+ Deletes a field from a JavaScript object.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Set(System.Object,System.String,System.Object)">
+<summary>
+ Sets the value of a field.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Get``1(System.String,System.Object)">
+<summary>
+ Gets the value of a field from a JavaScript object.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Apply``1(System.Object,System.String,System.Object[])">
+<summary>
+ Performs JavaScript function application.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.ClearInterval(IntelliFactory.WebSharper.JavaScript.Handle)">
+<summary>
+ Clears a scheduled interval function.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.ClearTimeout(IntelliFactory.WebSharper.JavaScript.Handle)">
+<summary>
+ Clears a scheduled timeout function.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.SetInterval(Microsoft.FSharp.Core.FSharpFunc`2{Microsoft.FSharp.Core.Unit,Microsoft.FSharp.Core.Unit},System.Int32)">
+<summary>
+ Schedules the function for execution once every
+ given number of microseconds.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.SetTimeout(Microsoft.FSharp.Core.FSharpFunc`2{Microsoft.FSharp.Core.Unit,Microsoft.FSharp.Core.Unit},System.Int32)">
+<summary>
+ Schedules the function for execution in the 
+ given number of microseconds.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Confirm(System.String)">
+<summary>
+ Displays a popup dialog with Yes and No buttons, returns the choice.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Alert(System.String)">
+<summary>
+ Displays a popup dialog.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Not``1(``0)">
+<summary>
+ Exposes the JavaScript `!x` operator.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.BitwiseNot``1(``0)">
+<summary>
+ Exposes the JavaScript `~x` operator.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Minus``1(``0)">
+<summary>
+ Exposes the JavaScript `-x` operator.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Plus``1(``0)">
+<summary>
+ Exposes the JavaScript `+x` operator.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Void``1(``0)">
+<summary>
+ Ignores the value of an expression.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.JavaScript.Global">
+<summary>
+ Returns the reference to the global JavaScript object.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.JavaScript.Undefined``1">
+<summary>
+ Constructs a JavaScript &quot;undefined&quot; value.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.JavaScript">
+<summary>
+ Defines common JavaScript operations.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Logging.Logger.TraceSource">
+<summary>
+ Returns the TraceSource backing the logger.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Logging.Logger.Name">
+<summary>
+ Returns the name of the TraceSource backing the logger.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Warning(System.String,System.Object[])">
+<summary>
+ A specialized form of Log.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Verbose(System.String,System.Object[])">
+<summary>
+ A specialized form of Log.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Subscribe(Microsoft.FSharp.Core.FSharpFunc`2{IntelliFactory.WebSharper.Logging.Message,Microsoft.FSharp.Core.Unit})">
+<summary>
+ Subscribes to messages sent through the Logger.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Send(IntelliFactory.WebSharper.Logging.Message)">
+<summary>
+ Sends a message to the Logger.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.New(System.String,System.Diagnostics.SourceLevels)">
+<summary>
+ Creates a new logger with a given name and level.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Log(System.Diagnostics.TraceEventType,System.String,System.Object[])">
+<summary>
+ Sends a message to the Logger: a convenience form of Send.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Information(System.String,System.Object[])">
+<summary>
+ A specialized form of Log.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Error(System.String,System.Object[])">
+<summary>
+ A specialized form of Log.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Critical(System.String,System.Object[])">
+<summary>
+ A specialized form of Log.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.CreateNestedLogger(System.String)">
+<summary>
+ Creates a nested logger with a given nested name.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.Create(System.String)">
+<summary>
+ Creates a new logger with a given name.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Logger.At(System.Reflection.MemberInfo)">
+<summary>
+ Creates a logger that defaults messages to the specific MemberInfo.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Logging.Logger">
+<summary>
+ Logs messages.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.IMessageReporter.Report(System.Diagnostics.TraceSource,IntelliFactory.WebSharper.Logging.Message)">
+<summary>
+ Reports a given message.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Logging.IMessageReporter">
+<summary>
+ Formats messages and reports them via a TraceSource.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Logging.Message.Text">
+<summary>
+ The message text.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Logging.Message.SourceLocation">
+<summary>
+ The source location, if any.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Logging.Message.MemberInfo">
+<summary>
+ The associated MemberInfo, if any.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Logging.Message.Id">
+<summary>
+ The message identifier, defaulting to zero.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Logging.Message.EventType">
+<summary>
+ The message event type, such as Warning or Information.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Message.ResolveSource(IntelliFactory.WebSharper.Logging.ISourceResolver)">
+<summary>
+ Resolves the source location with a given resolver.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.Message.Create(System.Diagnostics.TraceEventType,System.String)">
+<summary>
+ Creates a new Message.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Logging.Message">
+<summary>
+ Represents a message that is passed through the logging system.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.ISourceResolver.GetSourceLocation(System.Reflection.MemberInfo)">
+<summary>
+ Retrieves the source location of a member.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Logging.ISourceResolver">
+<summary>
+ Resolves source locations of members.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Logging.SourceLocation.Column">
+<summary>
+ The column number, starting with 0.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Logging.SourceLocation.Line">
+<summary>
+ The line number, starting with 0.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Logging.SourceLocation.File">
+<summary>
+ The name of the file.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Logging.SourceLocation">
+<summary>
+ Represents a textual location in a source file.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Logging.WebSharper">
+<summary>
+ The default logger for WebSharper components.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.GetSourceResolver``1(``0)">
+<summary>
+ Gets the global ISourceResolver.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.SetSourceResolver(IntelliFactory.WebSharper.Logging.ISourceResolver)">
+<summary>
+ Sets the global ISourceResolver.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.GetMessageReporer">
+<summary>
+ Gets the global IMessageReporter.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Logging.SetMessageReporter(IntelliFactory.WebSharper.Logging.IMessageReporter)">
+<summary>
+ Sets the global IMessageReporter.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Logging">
+<summary>
+ Provides logging functionality for WebSharper components.
+ WebSharper traces errors, warnings, informational and debugging
+ messages through the system defined in this module. The logging
+ system relies on TraceSource objects and extends them with support
+ for associating MemberInfo and source locations with messages.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Metadata.Info.ProxyResolver">
+<summary>
+ Resolves proxies.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Metadata.Info.DependencyResolver">
+<summary>
+ Resolves dependencies.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.Info.IsCompiledName(IntelliFactory.WebSharper.Naming.Name)">
+<summary>
+ Tests if a JavaScript name has a representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.Info.IsCompiledClass(System.Type)">
+<summary>
+ Tests if a given type has been compiled to JavaScript as a class.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.Info.Create(System.Collections.Generic.IEnumerable{IntelliFactory.WebSharper.Metadata.AssemblyInfo})">
+<summary>
+ Constructs a project metadata record from a set of
+ assembly metadata records.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Metadata.Info">
+<summary>
+ Represents the joint metadata of an assembly set.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Metadata.AssemblyInfoRead">
+<summary>
+ Classifies the different results of reading an AssemblyInfo record.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Metadata.AssemblyInfo.ResourceName">
+<summary>
+ The embedded resource name that stores dependencies.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Metadata.AssemblyInfo.References">
+<summary>
+ The names of WebSharper reference assemblies.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Metadata.AssemblyInfo.DependencyResolver">
+<summary>
+ Exposes the dependency resolver associated with the assembly.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Metadata.AssemblyInfo.Default">
+<summary>
+ Constructs a dummy AssemblyInfo.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Metadata.AssemblyInfo.AssemblyName">
+<summary>
+ The name of the assembly described by the current metadata record.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.WriteToStream(System.IO.Stream)">
+<summary>
+ Writes the metadata to a given stream.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.SearchDirectory(System.String)">
+<summary>
+ Searches the given directories for metadata files.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.ReflectAssembly(System.Collections.Generic.IEnumerable{System.Reflection.AssemblyName},System.Reflection.Assembly)">
+<summary>
+ Reflects the assembly to collect the metadata.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.ReadFromStream(System.IO.Stream)">
+<summary>
+ Reads the metadata from a given stream.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.GetReferencePath(System.String,System.Reflection.AssemblyName)">
+<summary>
+ Finds the path of an assembly by its name.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.ForAssemblyFile(System.String)">
+<summary>
+ Gets the metadata for the assembly located at the given path.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.ForAssembly(System.Reflection.Assembly)">
+<summary>
+ Gets the metadata for the given assembly.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.ExistsForAssemblyFile(System.String)">
+<summary>
+ Tests if the disk cache contains metadata for a given assembly file.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.ExistsForAssembly(System.Reflection.Assembly)">
+<summary>
+ Tests if the disk cache contains metadata for a given assembly.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a given BinaryWriter.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyInfo.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from the given BinaryReader.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Metadata.AssemblyInfo">
+<summary>
+ Provides WebSharper metadata for an assembly.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.AssemblyName.TryParse.Static(System.String)">
+<summary>
+ Tries to parse an assembly name.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.analyzeCustomDependencies(IntelliFactory.WebSharper.Graphs.Graph{IntelliFactory.WebSharper.Resources.Node},IntelliFactory.WebSharper.Attributes.Target)">
+<summary>
+ Analyzes dependencies defined by custom attributes.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.analyzeImplicitDependencies(IntelliFactory.WebSharper.Graphs.Graph{IntelliFactory.WebSharper.Resources.Node},System.Reflection.MemberInfo)">
+<summary>
+ Analyzes the implicit member dependencies
+ inferred from the call graph and member nesting.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.analyzeCallGraph(Microsoft.FSharp.Quotations.FSharpExpr)">
+<summary>
+ Constructs call graphs from quotations.
+ Finds all outgoing static member calls, field accesses and
+ object constructions in the quotation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Metadata.reflectAssembly(Microsoft.FSharp.Core.FSharpFunc`2{System.Reflection.MemberInfo,Microsoft.FSharp.Core.Unit},System.Reflection.Assembly)">
+<summary>
+ Reflects an assembly.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Metadata.Log">
+<summary>
+ Logs Metadata-related messages.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Metadata">
+<summary>
+ Provides types for the assembly and assembly-set metadata, 
+ and the means to collect it from assemblies.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Resolver.GetName(System.Reflection.MemberInfo)">
+<summary>
+ Resolves the name of a given member.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Resolver.Create">
+<summary>
+ Creates a new name resolver.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Naming.Resolver">
+<summary>
+ Resolves member names, detects within-class name conflicts
+ and disambiguates overloaded members. Includes an internal
+ cache to speed up the name lookup.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.NameAttribute.#ctor(System.String[])">
+<summary>
+ Constructs the Name from the explicit array of parts.
+ If the array is empty, the default Name is used.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.NameAttribute.#ctor(System.String)">
+<summary>
+ Constructs the Name by parsing a single dot-qualified string.
+ If there are no dots in the name, the default namespace is used.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Naming.NameAttribute">
+<summary>
+ Provides a runtime name for members when it differs from the F# name.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.AbstractNameAttribute.GetName(System.Reflection.MemberInfo)">
+<summary>
+ Gets the customized name of the given annotated member.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Naming.AbstractNameAttribute">
+<summary>
+ The helper base class for attributes that implement INameAnnotation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.INameAnnotation.GetName(System.Reflection.MemberInfo)">
+<summary>
+ Gets the customized name of the given annotated member.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Naming.INameAnnotation">
+<summary>
+ Implemented by attributes that set the JavaScript-compiled name of members.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Name.Reference">
+<summary>
+ Constructs a JavaScript Core expression referencing the name.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Name.Namespace">
+<summary>
+ Gets the package or namespace part of the qualified name.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Name.Name">
+<summary>
+ Gets the local part of the qualified name.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Name.Item(System.String)">
+<summary>
+ Constructs a sub-name.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Name.IsSimple">
+<summary>
+ Tests if the Name is a simple name with no namespace.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Name.IsGlobal">
+<summary>
+ Tests if the Name is referring to the global scope.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Name.Global">
+<summary>
+ Constructs a Name referring to the global scope.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Name.Components">
+<summary>
+ The list of the name components.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Name.ToSimpleName">
+<summary>
+ Discards the namespace part of the Name.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Name.Simple(System.String)">
+<summary>
+ Constructs a new simple Name.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Name.Parse(System.String)">
+<summary>
+ Parses a Name from a dot-qualified string.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Name.New(System.Collections.Generic.IEnumerable{System.String},System.String)">
+<summary>
+ Constructs a new Name with a given namespace and local name.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Name.Create(System.String[])">
+<summary>
+ Constructs a Name from components.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Name.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to the BinaryWriter.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Name.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from the BinaryReader.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.Name.Assignment(IntelliFactory.JavaScript.Scheme.Expression{IntelliFactory.JavaScript.Core.Primitive})">
+<summary>
+ Constructs a JavaScript Core expression assigning to the name.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Naming.Name">
+<summary>
+ Represents qualified names.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.getFullName(System.Reflection.MemberInfo)">
+<summary>
+ Gets the name of the given member. Respects customizations
+ declared with AbstractNameAttribute.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.getNamespace(System.Reflection.MemberInfo)">
+<summary>
+ Gets the namespace of a member, ignoring attributes.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Naming.getSimpleName(System.Reflection.MemberInfo)">
+<summary>
+ Gets the simple name of a member, ignoring attributes.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Naming.Log">
+<summary>
+ Logs naming events.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Naming">
+<summary>
+ Provides a qualified name type and related facilities.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.Func`9">
+<summary>
+ A helper delegate class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.Func`8">
+<summary>
+ A helper delegate class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.Func`7">
+<summary>
+ A helper delegate class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.Func`6">
+<summary>
+ A helper delegate class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.Func`5">
+<summary>
+ A helper delegate class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.Func`4">
+<summary>
+ A helper delegate class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.Func`3">
+<summary>
+ A helper delegate class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.Func`2">
+<summary>
+ A helper delegate class.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.ExportAttribute">
+<summary>
+ Included for backwards-compatibility. Is safe to remove.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.WebSharperAttribute">
+<summary>
+ Included for backwards-compatibility. Is safe to remove.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.ConstantAttribute">
+<summary>
+ Re-exports ConstantAttribute.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.StubAttribute">
+<summary>
+ Re-exports StubAttribute.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.RequireAttribute">
+<summary>
+ Re-exports RequireAttribute.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.ProxyAttribute">
+<summary>
+ Re-exports ProxyAttribute.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.NameAttribute">
+<summary>
+ Re-exports NameAttribute.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.InlineAttribute">
+<summary>
+ Re-exports InlineAttribute.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.JavaScriptAttribute">
+<summary>
+ Enables translation of the annotated member to JavaScript.
+ This attribute is an alias for `ReflectedDefinitionAttribute`.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives.JavaScriptTypeAttribute">
+<summary>
+ Re-exports JavaScriptTypeAttribute.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Pervasives.New``1(System.Collections.Generic.IEnumerable{System.Tuple`2{System.String,System.Object}})">
+<summary>
+ Constructs a new object as if an object literal was used.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Pervasives.op_BarGreaterBang``1(``0,Microsoft.FSharp.Core.FSharpFunc`2{``0,Microsoft.FSharp.Core.Unit})">
+<summary>
+ Implements piping with mutation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Pervasives.As``1(System.Object)">
+<summary>
+ Casts an object to the desired type.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Pervasives.X``1">
+<summary>
+ Returns null or some other default value of the given type.
+ Note: a short-hand for &quot;Unchecked.defaultof&lt;&apos;T&gt;&quot;.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Pervasives">
+<summary>
+ Defines operators and functions that are automatically available whenever
+ `IntelliFactory.WebSharper` is open.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Products.RequireAttribute.Title(System.String)">
+<summary>
+ Gets or sets the product title.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Products.RequireAttribute.Title">
+<summary>
+ Gets or sets the product title.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Products.RequireAttribute">
+<summary>
+ A simple implementation of AbstractRequireAttribute.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Products.AbstractRequireAttribute.GetRequirements">
+<summary>
+ The required products.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Products.AbstractRequireAttribute">
+<summary>
+ A helper implementation for IProductAnnotation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Products.IProductAnnotation.GetRequirements">
+<summary>
+ Gets the requirements.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Products.IProductAnnotation">
+<summary>
+ Implemented by attributes that annotate product requirements.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Products.Product">
+<summary>
+ Represents products.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Products.GetRequirements(System.Reflection.Assembly)">
+<summary>
+ Retrieves product all requirements of an assembly.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Products">
+<summary>
+ Provides facilities to declare product requirements.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Proxying.Resolver.ProxiedTypes">
+<summary>
+ Enumerates all types that have proxies.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Proxying.Resolver.ResolveUnionCaseProxy(Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Returns the union case proxy or the case itself if there is none.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Proxying.Resolver.ResolveMemberProxy``1(``0)">
+<summary>
+ Returns the member&apos;s proxy or the member itself if there is none.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Proxying.Resolver.GetUnionCaseProxy(Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Gets a proxy for a given union case, if there is any.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Proxying.Resolver.GetMemberProxy``1(``0)">
+<summary>
+ Gets a proxy for a given member, if there is any.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Proxying.Resolver.Create(System.Collections.Generic.Dictionary{IntelliFactory.PowerPack.MetaId.TypeId,IntelliFactory.PowerPack.MetaId.TypeId})">
+<summary>
+ Constructs a new Resolver.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Proxying.Resolver">
+<summary>
+ Provides cached proxy resolution.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Proxying.ProxyAttribute">
+<summary>
+ Declares a type to be a proxy for another type, identified directly or
+ by using a fully-qualified name.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Proxying.AbstractProxyAttribute.GetProxiedTypes(System.Type)">
+<summary>
+ Gets the proxied types for a given proxy type.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Proxying.AbstractProxyAttribute">
+<summary>
+ A base class implementing IProxyAnnotation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Proxying.IProxyAnnotation.GetProxiedTypes(System.Type)">
+<summary>
+ Gets the proxied types for a given annotated proxy type.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Proxying.IProxyAnnotation">
+<summary>
+ Implemented by custom attributes that extend the proxy relationship.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Proxying.GetProxiedTypes(System.Type)">
+<summary>
+ Gets all types that are declared to be proxied by the given
+ type with custom attributes.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Proxying">
+<summary>
+ Provides attributes for declaring a proxy relationship on types.
+ Proxies are useful to provide JavaScript-compilable implementation
+ for classes and modules written and maintained outside of WebSharper,
+ such as the Base Class Library classes.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.RequireAttribute">
+<summary>
+ Annotates members with dependencies. The type attribute usually
+ implements IResourceDefinition to provide a resource to depend on.
+ If it does not, a the annotated member is simply made to depend on the
+ given type.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.AbstractRequireAttribute.GetUnionCaseDependencies(Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Gets the dependencies of the annotated union case.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.AbstractRequireAttribute.GetMemberDependencies(System.Reflection.MemberInfo)">
+<summary>
+ Gets the dependencies of the annotated member.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.AbstractRequireAttribute.GetDependencies(IntelliFactory.WebSharper.Attributes.Target)">
+<summary>
+ Gets the dependencies of a given annotated target.
+ Defaults to using the specialized methods.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.AbstractRequireAttribute.GetAssemblyDependencies(System.Reflection.Assembly)">
+<summary>
+ Gets the dependencies of the annotated assembly.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.AbstractRequireAttribute">
+<summary>
+ A helper base class for attributes that want to implement IDependencyAnnotation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.IDependencyAnnotation.GetDependencies(IntelliFactory.WebSharper.Attributes.Target)">
+<summary>
+ Gets the dependencies of an annotated object.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.IDependencyAnnotation">
+<summary>
+ Implemented by custom attributes that extend the dependency graph.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Resources.DependencyResolver.Nodes">
+<summary>
+ The sequence of nodes for which dependencies can be resolved.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Resources.DependencyResolver.Count">
+<summary>
+ The number of nodes.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.DependencyResolver.Union(System.Collections.Generic.IEnumerable{IntelliFactory.WebSharper.Resources.DependencyResolver})">
+<summary>
+ Takes a union of several resolvers.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.DependencyResolver.GetDependenciesFor(IntelliFactory.WebSharper.Resources.Node)">
+<summary>
+ Resolves dependencies for a given node.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.DependencyResolver.GetDependencies(System.Collections.Generic.IEnumerable{IntelliFactory.WebSharper.Resources.Node})">
+<summary>
+ Resolves dependencies for a given node set.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.DependencyResolver.ForAssembly(IntelliFactory.WebSharper.Resources.DependencyResolver,IntelliFactory.WebSharper.Graphs.Graph{IntelliFactory.WebSharper.Resources.Node})">
+<summary>
+ Constructs a new dependency resolver for a given assembly
+ by analyzing its dependency graph. A combined resolver of all
+ references is required. This is an expensive operation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.DependencyResolver.Create">
+<summary>
+ Constructs an empty resolver.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.DependencyResolver.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a given binary writer.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.DependencyResolver.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from a given binary reader.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.DependencyResolver">
+<summary>
+ Resolves resource dependencies.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Resources.Runtime.Resource">
+<summary>
+ Returns the resource represented by this type.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Runtime">
+<summary>
+ Defines the WebSharper runtime resource.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.BaseResource">
+<summary>
+ A helper base class to define IResourceDefinition implementations
+ as used by RequireAttribute.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Resources.IResourceDefinition.Resource">
+<summary>
+ The resource being defined.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.IResourceDefinition">
+<summary>
+ An interface for resource-defining types as used by RequireAttribute.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Node.ForMember(System.Reflection.MemberInfo)">
+<summary>
+ Constructs a node that represents the given MemberInfo.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Node.ForAssemblyName(System.Reflection.AssemblyName)">
+<summary>
+ Constructs a node that represents the compiled
+ JavaScript resource for an assembly identified by the name.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Node.ForAssembly(System.Reflection.Assembly)">
+<summary>
+ Constructs a node that represents the compiled
+ JavaScript resource for a given assembly.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Node">
+<summary>
+ Represents nodes in the resource graph.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Resources.Resource.Dependencies">
+<summary>
+ The dependencies of this resource.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Resources.Resource.Body">
+<summary>
+ The HTML-writeable body.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Resources.Resource.Id">
+<summary>
+ The identifier used to compare and address resources.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Resource.WriteHtml(IntelliFactory.WebSharper.Resources.Context,System.Web.UI.HtmlTextWriter)">
+<summary>
+ Renders the resource to the given HTML writer.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Resource.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to the binary writer. The dependencies are written
+ as identifiers only.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Resource.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from the binary reader. The dependencies
+ are read as dummy resources and have to be corrected
+ later by mutation.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Resource">
+<summary>
+ Represents resources.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Id">
+<summary>
+ An alias for resource identifiers.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Body.WriteHtml(IntelliFactory.WebSharper.Resources.Context,System.Web.UI.HtmlTextWriter)">
+<summary>
+ Renders the body to HTML.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Body">
+<summary>
+ Represents resource bodies that can be rendered to HTML.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Code">
+<summary>
+ An alias for literal JavaScript resource bodies.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Location.Evaluate(IntelliFactory.WebSharper.Resources.Context)">
+<summary>
+ Evaluates this location to a URL in the given context.
+ Fails for assembly locations when the assembly is not
+ compiled to JavaScript.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Location">
+<summary>
+ Represents resource locations that evaluate to URLs.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Part.FixedPart">
+<summary>
+ A fixed part always evaluates to the given text.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Part.ConfigurablePart">
+<summary>
+ A configurable part evaluates to the value of the application
+ setting, if set, or the default value otherwise.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.Part.Evaluate(System.Collections.Generic.IDictionary{System.String,System.String})">
+<summary>
+ Evaluates the configurable part with a given configuration context.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Part">
+<summary>
+ Represents configurable parts of a text content (such as a URL or script).
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.IEFilter">
+<summary>
+ Represents conditional comment filters for Internet Explorer
+ resources.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Resources.Context.GetWebResourceUrl">
+<summary>
+ Constructs URLs to point to embedded resources.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Resources.Context.GetAssemblyUrl">
+<summary>
+ Constructs URLs to JavaScript-compiled assemblies,
+ returns None for other assemblies.
+</summary>
+</member>
+<member name="F:IntelliFactory.WebSharper.Resources.Context.AppSettings">
+<summary>
+ Provides a configuration settings collection.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.Context">
+<summary>
+ Defines the context in which resources can be rendered.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources.AppSetting">
+<summary>
+ An alias for application setting names.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Resources.GetCustomDependencies(IntelliFactory.WebSharper.Attributes.Target)">
+<summary>
+ Parses custom attributes to detect resource dependencies.
+</summary>
+</member>
+<member name="P:IntelliFactory.WebSharper.Resources.Log">
+<summary>
+ Logs messages related to resource handling.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Resources">
+
+</member>
+</members>
+</doc>

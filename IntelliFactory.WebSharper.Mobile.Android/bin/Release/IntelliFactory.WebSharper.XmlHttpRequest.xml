@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>Generator</name></assembly>
+<members>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.XmlHttpRequest.Definition">
+<summary>
+ The definition is based on http://www.w3.org/TR/XMLHttpRequest/.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.XmlHttpRequest.Main">
+
+</member>
+</members>
+</doc>

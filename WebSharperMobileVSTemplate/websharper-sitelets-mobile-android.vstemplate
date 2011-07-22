@@ -1,0 +1,15 @@
+﻿<VSTemplate Type="Project" Version="3.0.0"
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>WebSharper 2.3 HTML Application (Sitelets for Android)</Name>
+    <Description>WebSharper 2.3 HTML Application (Sitelets for Android)</Description>
+    <ProjectType>FSharp</ProjectType>
+    <DefaultName>WebSharperMobileApp</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="websharper-sitelets-mobile-android.fsproj">
+      <ProjectItem>mobile.config</ProjectItem>
+      <ProjectItem>Main.fs</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

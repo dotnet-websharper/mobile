@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>IntelliFactory.WebSharper.Control</name></assembly>
+<members>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.CommonExtensions">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.Concurrent.ConcurrentBuilder">
+<summary>
+ Computation expression builder.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.Concurrent.Continuation`1">
+<summary>
+ Represents concurrent computations (CCs) producing a value of type &apos;T.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Zip``3(Microsoft.FSharp.Core.FSharpFunc`2{``0,Microsoft.FSharp.Core.FSharpFunc`2{``1,``2}},IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0},IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``1})">
+<summary>
+ Performs parallel combination of two computations.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.StartChild``1(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0})">
+<summary>
+ Starts the child computation within the current computation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Parallel``1(System.Collections.Generic.IEnumerable{IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0}})">
+<summary>
+ Creates a CC that executes several CCs in parallel.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Sleep(System.Int32)">
+<summary>
+ Creates a sleeping CC.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.AwaitEvent``1(Microsoft.FSharp.Control.IEvent{Microsoft.FSharp.Control.FSharpHandler{``0},``0})">
+<summary>
+ Creates a CC that waits for an event to happen once.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Start(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{Microsoft.FSharp.Core.Unit})">
+<summary>
+ Schedules a CC for execution.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.StartWithContinuations``1(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0},Microsoft.FSharp.Core.FSharpFunc`2{``0,Microsoft.FSharp.Core.Unit},Microsoft.FSharp.Core.FSharpFunc`2{System.Exception,Microsoft.FSharp.Core.Unit})">
+<summary>
+ Runs a computation with the given continuation functions.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.FromContinuations``1(Microsoft.FSharp.Core.FSharpFunc`2{Microsoft.FSharp.Core.FSharpFunc`2{``0,Microsoft.FSharp.Core.Unit},Microsoft.FSharp.Core.FSharpFunc`2{Microsoft.FSharp.Core.FSharpFunc`2{System.Exception,Microsoft.FSharp.Core.Unit},Microsoft.FSharp.Core.Unit}})">
+<summary>
+ Builds a CC from a continuations-passing-style computation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Catch``1(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0})">
+<summary>
+ Creates a computation that returns either the value
+ or the exception raised if the computation fails.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.TryWith``1(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0},Microsoft.FSharp.Core.FSharpFunc`2{System.Exception,IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0}})">
+<summary>
+ Captures exceptions in the concurrent computation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.TryFinally``1(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0},Microsoft.FSharp.Core.FSharpFunc`2{Microsoft.FSharp.Core.Unit,Microsoft.FSharp.Core.Unit})">
+<summary>
+ Makes sure that a certain code always runs regardless of exceptions.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Delay``1(Microsoft.FSharp.Core.FSharpFunc`2{Microsoft.FSharp.Core.Unit,IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0}})">
+<summary>
+ Embeds the construction of a CC by delaying it until first use.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Ignore``1(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0})">
+<summary>
+ Creates an asynchronous computation that runs the given computation
+ and ignores it&apos;s result.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Bind``2(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0},Microsoft.FSharp.Core.FSharpFunc`2{``0,IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``1}})">
+<summary>
+ Embeds a continuation in a CC.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Map``2(Microsoft.FSharp.Core.FSharpFunc`2{``0,``1},IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0})">
+<summary>
+ Maps over the result of a CC.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Run``1(IntelliFactory.WebSharper.Control.Concurrent.Concurrent{``0},Microsoft.FSharp.Core.FSharpFunc`2{IntelliFactory.WebSharper.Control.Concurrent.Result{``0},Microsoft.FSharp.Core.Unit})">
+<summary>
+ Runs a computation with the given continuation.
+</summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Control.Concurrent.Return``1(``0)">
+<summary>
+ Produces a CC that returns immediately.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.Concurrent">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.Disposable">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.Event">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.EventModule">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.ExtraTopLevelOperators">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.HotStream.HotStream`1">
+<summary>
+ Implementation for &quot;hot stream&quot;.
+ Subscribers to hot streams will only observe the latest
+ and future values.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.HotStream">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.Observable">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.ObservableModule">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.WebSharper.Control.Observer">
+
+</member>
+</members>
+</doc>

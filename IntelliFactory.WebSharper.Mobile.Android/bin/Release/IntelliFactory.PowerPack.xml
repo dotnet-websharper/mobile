@@ -1,0 +1,1579 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>IntelliFactory.PowerPack</name></assembly>
+<members>
+<member name="M:IntelliFactory.PowerPack.AssemblyLoading.AddSearchPath(System.String)">
+<summary>
+ Adds a search path to the assembly loader of the current domain.
+ Caution: assemblies cannot be unloaded without disposing the
+ application domain.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.AssemblyLoading.handler">
+<summary>
+ Adding a custom assembly resolver.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.AssemblyLoading.paths">
+<summary>
+ A mapping for all located assemblies.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.AssemblyLoading.syncRoot">
+<summary>
+ A synchronization object.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.AssemblyLoading">
+<summary>
+ Performs assembly loading from an arbitrary folder by using a
+ slave AppDomain open in that folder.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.AttributeHelpers.AttributeTarget">
+<summary>
+ Unifies different attribute targets (objects that carry attributes).
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.AttributeHelpers.HasAttribute``1(IntelliFactory.PowerPack.AttributeHelpers.AttributeTarget)">
+<summary>
+ Tests if a custom attribute has been defined on a member.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.AttributeHelpers.GetAttribute``1(IntelliFactory.PowerPack.AttributeHelpers.AttributeTarget)">
+<summary>
+ Retrieves a single custom attribute in a type-safe manner.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.AttributeHelpers.GetAttributes``1(IntelliFactory.PowerPack.AttributeHelpers.AttributeTarget)">
+<summary>
+ Retrieves all matching custom attributes.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.AttributeHelpers.HasAttributeOfType(System.Type,IntelliFactory.PowerPack.AttributeHelpers.AttributeTarget)">
+<summary>
+ Tests if an attribute of a given type is defined on the target.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.AttributeHelpers.GetAttributeByType(System.Type,IntelliFactory.PowerPack.AttributeHelpers.AttributeTarget)">
+<summary>
+ Retrieves all matching custom attributes.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.AttributeHelpers.GetAttributesByType(System.Type,IntelliFactory.PowerPack.AttributeHelpers.AttributeTarget)">
+<summary>
+ Retrieves all matching custom attributes.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.AttributeHelpers.|IsMember|IsUnionCase|IsParameter|IsAssembly|IsModule|(IntelliFactory.PowerPack.AttributeHelpers.AttributeTarget)">
+<summary>
+ Matches an AttributeTarget value unifying MemberInfo targets.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.AttributeHelpers.MemberTarget(System.Reflection.MemberInfo)">
+<summary>
+ Constructs an AttributeTarget from a MemberInfo.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.AttributeHelpers">
+<summary>
+ Provides utilities to work with custom attributes.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.ErrorMonad.Builder.ReturnFrom``1(``0)">
+<summary>
+ Implements returning a monadic value.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ErrorMonad.Builder.Return``1(``0)">
+<summary>
+ Implements return.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ErrorMonad.Builder.Bind``2(IntelliFactory.PowerPack.ErrorMonad.Partial{``0},Microsoft.FSharp.Core.FSharpFunc`2{``0,IntelliFactory.PowerPack.ErrorMonad.Partial{``1}})">
+<summary>
+ Implements bind.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.ErrorMonad.Builder">
+<summary>
+ Defines the workflow builder.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.PowerPack.ErrorMonad.Partial`1.Value">
+<summary>
+ Interprets the current computation as an option value.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.ErrorMonad.Partial`1.Error">
+<summary>
+ Returns the error, if any.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.ErrorMonad.Partial`1">
+<summary>
+ Represents a computation with a notion of failure.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ErrorMonad.Map``2(Microsoft.FSharp.Core.FSharpFunc`2{``0,IntelliFactory.PowerPack.ErrorMonad.Partial{``1}},System.Collections.Generic.IEnumerable{``0})">
+<summary>
+ Maps a partial function over a sequence.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.ErrorMonad">
+<summary>
+ Provides a workflow builder for partial computations.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.Generics.Shape`1">
+<summary>
+ Represents the capability to split the object into a tag and
+ some child objects, and then rebuild it with possibly modified
+ children.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Union">
+<summary>
+ Invoked when deriving a trait for a union type.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Tuple">
+<summary>
+ Invoked when deriving a trait for a tuple type.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Record">
+<summary>
+ Invoked when deriving a trait for a record type.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Function">
+<summary>
+ Invoked when deriving a trait for a function type, with the
+ domain and range traits passed as arguments.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Fail">
+<summary>
+ Invoked when a derivation fails
+ (the type is not a class or an ADT).
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Delay">
+<summary>
+ Proves that the trait being derived is lazy.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Default">
+<summary>
+ Provides a default derivation rule that is always tried
+ before all other rules.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Class">
+<summary>
+ Invoked when deriving a trait for a class.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.Generics.TraitRules`1.Array">
+<summary>
+ Invoked when deriving a trait for an array type, with
+ the type itself and the trait of the element type.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.Generics.TraitRules`1">
+<summary>
+ Defines the derivation rules for a given trait.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.Generics.Trait`1">
+<summary>
+ Represents a generic trait, a property of every type.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.Generics.ShapeRules">
+<summary>
+ Defines the rules for deriving the Shape trait on all types.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.Generics.NewTrait``1(IntelliFactory.PowerPack.Generics.TraitRules{``0})">
+<summary>
+ Compiles TraitRules to a Trait. The Trait is stateful as it uses
+ a memo table to avoid repeated derivations.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.Generics">
+<summary>
+ Provides facilities for generic programming. GP is a way of abstracting
+ over the domain of all possible algebraic data types and classes.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.IssueReporting.Directory">
+<summary>
+ Represents the folder where the report is to be located.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.IssueReporting.Guard``1(IntelliFactory.PowerPack.IssueReporting.Directory,Microsoft.FSharp.Core.FSharpFunc`2{Microsoft.FSharp.Core.Unit,``0})">
+<summary>
+ Guards an action by reporting exceptions instead of throwing them.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.IssueReporting.ReportException(IntelliFactory.PowerPack.IssueReporting.Directory,System.Exception)">
+<summary>
+ Reports an exception, writing a log file in the given directory.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.IssueReporting.Report(IntelliFactory.PowerPack.IssueReporting.Directory,System.String)">
+<summary>
+ Reports an issue, writing a log file in the given directory.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.IssueReporting">
+<summary>
+ Provides facilities to report application issues, including
+ environment information and stack traces.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.MemberShapes.MemberShape">
+<summary>
+ Represents the shape of a member.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.MemberShapes.FieldShape">
+<summary>
+ Represents the shape of a field.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.MemberShapes.PropertyShape">
+<summary>
+ Represents the shape of a property.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.MemberShapes.MethodShape">
+<summary>
+ Represents the shape of a method or a constructor.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.MemberShapes.TypeShape">
+<summary>
+ Represents the shape of a type. Is safely comparable.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MemberShapes.GetShape(System.Reflection.MemberInfo)">
+<summary>
+ Gets the shape of a member.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MemberShapes">
+<summary>
+ Provides an opaque representation of MemberInfo objects that can be
+ used for comparison or hashing. Critically, the shapes of class members
+ do not depend on the shape of the declaring class. This means that
+ the shapes can be used to compare methods for having the same signature
+ even when they are defined in distinct classes.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.PowerPack.Memoization.Table`2.Item(`0)">
+<summary>
+ Gets an value from the table by key.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.Memoization.Table`2.Count">
+<summary>
+ Returns the entry count.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.Memoization.Table`2.Remove(`0)">
+<summary>
+ Removes an entry from the table by key.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.Memoization.Table`2.Clear">
+<summary>
+ Clears the table.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.Memoization.Table`2">
+<summary>
+ Represents a table of values.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.Memoization.Memoize``2(Microsoft.FSharp.Core.FSharpFunc`2{``0,``1})">
+<summary>
+ Memoizes a pure function.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.Memoization.Tabulate``2(Microsoft.FSharp.Core.FSharpFunc`2{``0,``1})">
+<summary>
+ Tabulates a pure function, improving its efficiency.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.Memoization">
+<summary>
+ Tabulates pure functions.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(System.Reflection.MemberInfo)">
+<summary>
+ Constructs a member representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(System.Type)">
+<summary>
+ Constructs a type representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(IntelliFactory.PowerPack.MetaId.TypeId)">
+<summary>
+ Lifts a type representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(System.Reflection.PropertyInfo)">
+<summary>
+ Constructs a property representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(IntelliFactory.PowerPack.MetaId.PropertyId)">
+<summary>
+ Lifts a property representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(System.Reflection.MethodInfo)">
+<summary>
+ Constructs a method representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(IntelliFactory.PowerPack.MetaId.MethodId)">
+<summary>
+ Lifts a method representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(System.Reflection.FieldInfo)">
+<summary>
+ Constructs a field representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(IntelliFactory.PowerPack.MetaId.FieldId)">
+<summary>
+ Lifts a field representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(System.Reflection.ConstructorInfo)">
+<summary>
+ Constructs a constructor representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.Of(IntelliFactory.PowerPack.MetaId.ConstructorId)">
+<summary>
+ Lifts a constructor representation.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a binary writer.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MemberId.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from a binary reader.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MetaId.MemberId">
+<summary>
+ Represents constructors, fields, methods, properties and types.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.PropertyId.Of(System.Reflection.PropertyInfo)">
+<summary>
+ Constructs the representation of a given property.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.PropertyId.Matches(IntelliFactory.PowerPack.MetaId.PropertyId)">
+<summary>
+ Tests if another property has a matching name and indexer types.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.PropertyId.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a binary writer.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.PropertyId.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from a binary reader.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MetaId.PropertyId">
+<summary>
+ Represents properties.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.FieldId.Of(System.Reflection.FieldInfo)">
+<summary>
+ Constructs the representation of a given field.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.FieldId.Matches(IntelliFactory.PowerPack.MetaId.FieldId)">
+<summary>
+ Tests if another field has the same name.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.FieldId.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a binary writer.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.FieldId.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from a binary reader.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MetaId.FieldId">
+<summary>
+ Represents fields.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MethodId.Of(System.Reflection.MethodInfo)">
+<summary>
+ Computes the representation of a given method.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MethodId.Matches(IntelliFactory.PowerPack.MetaId.MethodId)">
+<summary>
+ Tests if the given method has the same name and parameter signature.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MethodId.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a binary writer.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.MethodId.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from a binary reader.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MetaId.MethodId">
+<summary>
+ Represents methods.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.ConstructorId.Of(System.Reflection.ConstructorInfo)">
+<summary>
+ Computes the representation for a given constructor.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.ConstructorId.Matches(IntelliFactory.PowerPack.MetaId.ConstructorId)">
+<summary>
+ Tests if another constructor has the same signature.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.ConstructorId.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a binary writer.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.ConstructorId.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from a binary reader.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MetaId.ConstructorId">
+<summary>
+ Represents constructors.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.ParamId.Of(System.Reflection.ParameterInfo)">
+<summary>
+ Computes the representation for a given ParameterInfo.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.ParamId.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a binary writer.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.ParamId.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from a binary reader.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MetaId.ParamId">
+<summary>
+ Represents parameters.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.TypeId.TryLoad(System.Type[])">
+<summary>
+ Attempts to load the System.Type object using System.Type.GetType.
+ This method might force the runtime to dynamically link against
+ the assembly containing the type. You can pass Type arguments to
+ specialize the generic type once it is loaded.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.TypeId.Of(System.Type)">
+<summary>
+ Computes the TypeId for a given Type.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.TypeId.Load(System.Type[])">
+<summary>
+ Same as TryLoad, but throws an exception on failure.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.TypeId.BinaryWrite(System.IO.BinaryWriter)">
+<summary>
+ Writes to a binary writer.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.MetaId.TypeId.BinaryRead(System.IO.BinaryReader)">
+<summary>
+ Reads from a binary reader.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MetaId.TypeId">
+<summary>
+ Represents types.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.MetaId">
+<summary>
+ Represents metadata definitions in a form that can be serialized,
+ deserialized and used for comparison and hashing without linking to
+ the assemblies that define the described types. The module provides
+ custom descriptors for types, methods, fields, properties and parameters.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.MethodInvocation.Compile(System.Reflection.MethodInfo)">
+<summary>
+ Compiles a method to a fast invoke function.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.MethodInvocation">
+<summary>
+ Implements dynamic method invocation that is faster than
+ methodInfo.Invoke for methods with a small number of arguments (0-3).
+ Falls back on methodInfo.Invoke for larger numbers of arguments.
+ The implementation does not use Reflection.Emit.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.OptionParser.Parser`1.Help">
+<summary>
+ The list of help page lines.
+</summary>
+</member>
+<member name="F:IntelliFactory.PowerPack.OptionParser.Parser`1.Parse">
+<summary>
+ Parses the argument list.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.OptionParser.Parser`1">
+<summary>
+ Represents an argument parser.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.OptionParser.Result`1.Parsed">
+<summary>
+ Parsing succeeded.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.OptionParser.Result`1.Missing">
+<summary>
+ The argument is missing.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.OptionParser.Result`1.Failed">
+<summary>
+ The parser failed with a given error message.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.OptionParser.Result`1">
+<summary>
+ Represents the result of parsing command-line arguments.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.OptionParser.Message">
+<summary>
+ An alias for a string representing
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.OptionParser.Argument">
+<summary>
+ An alias for a string passed as a command-line argument.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.OptionParser.Directory">
+<summary>
+ Parses a path to a directory.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.OptionParser.InputFile">
+<summary>
+ Parses a path to a readable file.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.OptionParser.OutputFile">
+<summary>
+ Parses a path to a writeable file.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.PowerPack.OptionParser.Double">
+<summary>
+ Parses a double.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.OptionParser.Int">
+<summary>
+ Parses an integer.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Scalar``1(Microsoft.FSharp.Core.FSharpFunc`2{System.String,System.Tuple`2{System.Boolean,``0}})">
+<summary>
+ Parses single-argument values, for example Scalar Int32.TryParse.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Choose``2(Microsoft.FSharp.Core.FSharpFunc`2{``0,Microsoft.FSharp.Core.FSharpFunc`2{Microsoft.FSharp.Collections.FSharpList{System.String},IntelliFactory.PowerPack.OptionParser.Result{``1}}},IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Transforms Parsed results with a given function.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Switch(System.String)">
+<summary>
+ Constructs a switch argument parser. It tests if any of the arguments
+ matches the keyword.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Keyword``1(System.String,IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Constructs a keyword argument parser. It matches at any
+ point in the argument list after a given keyword.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Default``1(``0,IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Transforms Missing results to the default result.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Option``1(IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Transforms Missing results to None, and Parsed results
+ to Some.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Required``1(System.String,IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Makes the parser argument required by transforming
+ missing results to Failed results with a given message.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Expect(System.String)">
+<summary>
+ Matches the exact keyword, returns Missing otherwise.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.HelpHeader``1(Microsoft.FSharp.Collections.FSharpList{System.String},IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Adds a header to the parser&apos;s help message list.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Help``1(Microsoft.FSharp.Collections.FSharpList{System.String},IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Assigns the help message list to the parser.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.OptionParser.String">
+<summary>
+ Reads one argument as a string. Returns Missing if no more arguments
+ are available.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.OptionParser.Unit">
+<summary>
+ Succeeds immediately with a unit.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Failure``1(System.String,IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Sets the failing message of the parser.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Map``2(Microsoft.FSharp.Core.FSharpFunc`2{``0,``1},IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Maps over a parser.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Transform``2(Microsoft.FSharp.Core.FSharpFunc`2{IntelliFactory.PowerPack.OptionParser.Result{``0},IntelliFactory.PowerPack.OptionParser.Result{``1}},IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Transforms the successful parse result.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Const``1(``0)">
+<summary>
+ Provides a constant parser that immediately succeeds.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.List``1(IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Parses zero or more times to get a list.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Anywhere``1(IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Transforms a parser to match at any position.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Apply``2(IntelliFactory.PowerPack.OptionParser.Parser{Microsoft.FSharp.Core.FSharpFunc`2{``0,``1}},IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Defines the applicative composition of parsers.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Add``1(IntelliFactory.PowerPack.OptionParser.Parser{``0},IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Adds two parsers.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.OptionParser.Parse``1(IntelliFactory.PowerPack.OptionParser.Parser{``0})">
+<summary>
+ Parses the command-line arguments of the current process.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.OptionParser">
+<summary>
+ Provides combinators for parsing command-line arguments and displaying
+ usage help messages.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.IsStatic(System.Reflection.MemberInfo)">
+<summary>
+ Tests if a member is static.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetLocation(System.Reflection.MemberInfo)">
+<summary>
+ Gets a short, readable location representation for a MemberInfo,
+ consisting of the FullName of the declaring type and the simple name.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetDefinition(System.Type)">
+<summary>
+ Gets the generic definition of a type. Is identity on non-generic types.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetProperties(System.Type)">
+<summary>
+ Retrieves all properties.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetProperty(System.Type,System.String)">
+<summary>
+ Gets a property by name.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetNestedTypes(System.Type)">
+<summary>
+ Retrieves all nested types.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetNestedType(System.Type,System.String)">
+<summary>
+ Gets a nested type by name.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetMethods(System.Type)">
+<summary>
+ Retrieves all methods.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetMethod(System.Type,System.String)">
+<summary>
+ Gets a method by name.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetFields(System.Type)">
+<summary>
+ Retrieves all fields.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetField(System.Type,System.String)">
+<summary>
+ Retrieves a field by name.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetConstructors(System.Type)">
+<summary>
+ Retrieves all constructors.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetUnionTagReader(System.Type)">
+<summary>
+ Computes the union tag reader.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetUnionReader(Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Computes the union reader.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetUnionConstructor(Microsoft.FSharp.Reflection.UnionCaseInfo)">
+<summary>
+ Computes the union constructor.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetRecordReader(System.Type)">
+<summary>
+ Computes the record reader.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetRecordConstructor(System.Type)">
+<summary>
+ Computes the record constructor.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetUnionCases(System.Type)">
+<summary>
+ Retrieves all union cases.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetRecordFields(System.Type)">
+<summary>
+ Retrieves the record fields.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetExceptionFields(System.Type)">
+<summary>
+ Gets all exception fields of an exception type.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.IsUnionCase(System.Type)">
+<summary>
+ Tests if a type is an F# union case.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.IsUnion(System.Type)">
+<summary>
+ Tests if a type is an F# union.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.IsRecord(System.Type)">
+<summary>
+ Tests if a type is an F# record.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.IsException(System.Type)">
+<summary>
+ Tests if a type is an F# exception.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.ReflectionHelpers.bindingFlags">
+<summary>
+ Exposes the default binding flags.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.IsModuleProperty(System.Reflection.MemberInfo)">
+<summary>
+ Tests if a member is a let-bound module property or its getter.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.IsParamArray(System.Reflection.MethodBase)">
+<summary>
+ Tests if a method accepts ParamArray arguments.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetSourceName(System.Reflection.MemberInfo)">
+<summary>
+ Retrieves the SourceName, if any, falling back to the standard name.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.ReflectionHelpers.GetType(System.String)">
+<summary>
+ Loads a type by its name. This is an improved version of
+ System.Type.GetType that works for .NET 4.0 types that F# emulates,
+ such as System.Lazy.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.ReflectionHelpers">
+<summary>
+ Provides utilities for reflection.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.PowerPack.SimpleReflection.ConcreteMethod.MethodDefinition">
+<summary>
+ The generating definition.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.SimpleReflection.ConcreteMethod.MethodArguments">
+<summary>
+ The generic arguments.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.SimpleReflection.ConcreteMethod">
+<summary>
+ Represents a method definition specialized to concrete types.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.PowerPack.SimpleReflection.MethodDefinition.MethodSignature">
+<summary>
+ The types of the parameters.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.SimpleReflection.MethodDefinition.MethodName">
+<summary>
+ The name of the method.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.SimpleReflection.MethodDefinition.MethodGenerics">
+<summary>
+ The number of generic arguments expected.
+</summary>
+</member>
+<member name="P:IntelliFactory.PowerPack.SimpleReflection.MethodDefinition.IsStaticMethod">
+<summary>
+ True if the method is static.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.SimpleReflection.MethodDefinition">
+<summary>
+ Represents a generic method signature in a way that abstracts
+ the declaring type information. Useful to distinguish overloads
+ and to look up methods with the same signature on different types.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.SimpleReflection.ParameterType">
+<summary>
+ Represents a parameter type. May include method or
+ class generic placeholders.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.PowerPack.SimpleReflection.ConcreteType.TypeDefinition">
+<summary>
+ The type definition that generated this concrete type.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.SimpleReflection.ConcreteType">
+<summary>
+ Represents concrete types (for example, `list&lt;int&gt;`).
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.SimpleReflection.TypeDefinition">
+<summary>
+ Represents a type definition (for example, `list&lt;_&gt;`) that 
+ can generate concrete types.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.BindToConcreteMethod(IntelliFactory.PowerPack.SimpleReflection.ConcreteType,IntelliFactory.PowerPack.SimpleReflection.ConcreteMethod)">
+<summary>
+ Performs late binding to a given concrete method.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.SpecializeMethod(IntelliFactory.PowerPack.SimpleReflection.MethodDefinition,Microsoft.FSharp.Collections.FSharpList{IntelliFactory.PowerPack.SimpleReflection.ConcreteType})">
+<summary>
+ Specializes a method definition to concrete generic arguments.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.LoadConcreteMethod(IntelliFactory.PowerPack.SimpleReflection.ConcreteType,IntelliFactory.PowerPack.SimpleReflection.ConcreteMethod)">
+<summary>
+ Uses reflection to load a concrete method on a given concrete type.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.GetConcreteMethod(System.Reflection.MethodInfo)">
+<summary>
+ Reflects a method info into a concrete method. Fails for generic
+ method definitions, null.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.LoadMethodDefinition(IntelliFactory.PowerPack.SimpleReflection.TypeDefinition,IntelliFactory.PowerPack.SimpleReflection.MethodDefinition)">
+<summary>
+ Uses reflection to load a method info object on a given 
+ type with a matching definition.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.GetMethodDefinition(System.Reflection.MethodInfo)">
+<summary>
+ Reflects a method and obtains its definition.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.GetParameterType(System.Type)">
+<summary>
+ Parses a type handle as a parameter type.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.LoadConcreteType(IntelliFactory.PowerPack.SimpleReflection.ConcreteType)">
+<summary>
+ Uses reflection to attempt to load a concrete type into a type handle.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.SpecializeType(IntelliFactory.PowerPack.SimpleReflection.TypeDefinition,Microsoft.FSharp.Collections.FSharpList{IntelliFactory.PowerPack.SimpleReflection.ConcreteType})">
+<summary>
+ Builds a concrete type by specializing a type definition. Fails when
+ given the wrong number of type arguments.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.GetConcreteType(System.Type)">
+<summary>
+ Parses a concrete type from a type handle.
+ Fails for generic parameters, null.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.LoadTypeDefinition(IntelliFactory.PowerPack.SimpleReflection.TypeDefinition)">
+<summary>
+ Uses reflection to try to load a type definition.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.SimpleReflection.GetTypeDefinition(System.Type)">
+<summary>
+ Gets the type definition of a given type. Fails for null and
+ generic parameters.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="T:IntelliFactory.PowerPack.SimpleReflection">
+<summary>
+ Provides a simplified reflection API.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.Specialization.IGeneric`2.Run``1(`0)">
+<summary>
+ Runs the computation. Note the generic &apos;T3 argument.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.Specialization.IGeneric`2">
+<summary>
+ Represents a generic algorithm.
+</summary>
+</member>
+<member name="M:IntelliFactory.PowerPack.Specialization.Specialize``2(IntelliFactory.PowerPack.Specialization.IGeneric{``0,``1})">
+<summary>
+ Specializes the generic algorithm.
+</summary>
+</member>
+<member name="T:IntelliFactory.PowerPack.Specialization">
+<summary>
+ Makes generic arguments specializable by runtime System.Type values.
+</summary>
+</member>
+</members>
+</doc>
