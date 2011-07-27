@@ -10,6 +10,7 @@
     <RootNamespace>$(Name)</RootNamespace>
     <AssemblyName>IntelliFactory.WebSharper.Mobile.Android</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FullDeploy>true</FullDeploy>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,4 +40,7 @@
     <Compile Include="WebSharper.fs" />
   </ItemGroup>
   <Import Project="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.FSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetPath) $(ProjectDir)\..\bin\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

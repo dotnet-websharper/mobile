@@ -4,14 +4,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2afa2a9a-057b-414e-8fd5-6856aa801ada}</ProjectGuid>
+    <ProjectGuid>{7a498538-42e8-4708-8e92-8180c49eb0a6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <Name>WebSharperSiteletsOffline</Name>
     <RootNamespace>$(Name)</RootNamespace>
-    <AssemblyName>WebSharperApp</AssemblyName>
+    <AssemblyName>WebSharperSiteletsOffline</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <WebSharperSiteletsOfflineDirectory>$(MSBuildProjectDirectory)\bin\html</WebSharperSiteletsOfflineDirectory>
-    <FullDeploy>true</FullDeploy>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,12 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mobile.config" />
     <Compile Include="Main.fs" />
   </ItemGroup>
-  <Import Project="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.Mobile.Android.Sitelets.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+  <Import Project="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.Sitelets.targets" />
 </Project>

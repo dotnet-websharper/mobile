@@ -19,37 +19,16 @@ module SampleSite =
     // Module containing client-side controls
     module Client =
         open IntelliFactory.WebSharper.Html
-        open IntelliFactory.WebSharper.Mobile.Android//.Testing // the .Testing module will allow you to test your application on a desktop browser (but then it would not run on a
-                                                                // mobile device).
 
-        type IndexControl() =
+        type MyControl() =
             inherit IntelliFactory.WebSharper.Web.Control ()
 
             [<JavaScript>]
             override this.Body =
-                if Mobile.Storage.Load "message" <> "Hello from page 2!" then
-                    Mobile.Storage.Store "message" "Go to page 2."
-                Div [] :> _
+                let s = Some 4
+                let n : int option = None
+                I [Text "Client control"] :> IPagelet
 
-        type Page2Control() =
-            inherit IntelliFactory.WebSharper.Web.Control ()
-
-            [<JavaScript>]
-            override this.Body =
-                Mobile.Storage.Store "message" "Hello from page 2!"
-                I [Text "Client control"] :> _
-
-        type Page1Control() =
-            inherit IntelliFactory.WebSharper.Web.Control ()
-
-            [<JavaScript>]
-            override this.Body =
-                Mobile.Alert "Hello!"
-                let loc = Mobile.GetLocation()
-                let locT = "Lat: " + loc.Lat.ToString() + "; Long: " + loc.Long.ToString()
-                let acc = Mobile.GetAcceleration()
-                let accT = "X: " + acc.X.ToString() + "; Y: " + acc.Y.ToString() + "; Z: " + acc.Z.ToString()
-                P [ Text locT; Br [] :> _; Text accT; Br [] :> _; Text ("The message is: " + Mobile.Storage.Load "message") ] :> _
     
     let Template title body : Content<Action> =
         PageContent <| fun context ->
@@ -67,7 +46,6 @@ module SampleSite =
                     LI [A [HRef (ctx.Link Action.Page1)] -< [Text "Page 1"]]
                     LI [A [HRef (ctx.Link Action.Page2)] -< [Text "Page 2"]]
                 ]
-                Div [new Client.IndexControl()]
             ]
 
     let Page1 =
@@ -76,7 +54,7 @@ module SampleSite =
             [
                 H1 [Text "Page 1"]
                 A [HRef url] -< [Text "Page 2"]
-                Div [new Client.Page1Control()]
+                    
             ]
 
     let Page2 =
@@ -84,7 +62,7 @@ module SampleSite =
             [
                 H1 [Text "Page 2"]
                 A [HRef <| ctx.Link Action.Page1] -< [Text "Page 1"]
-                Div [new Client.Page2Control ()]
+                Div [new Client.MyControl ()]
             ]
         
     let MySitelet =

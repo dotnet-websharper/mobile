@@ -19,7 +19,7 @@ module SampleSite =
     // Module containing client-side controls
     module Client =
         open IntelliFactory.WebSharper.Html
-        open IntelliFactory.WebSharper.Mobile.Android//.Testing // the .Testing module will allow you to test your application on a desktop browser (but then it would not run on a
+        open IntelliFactory.WebSharper.Mobile.WP7//.Testing // the .Testing module will allow you to test your application on a desktop browser (but then it would not run on a
                                                                 // mobile device).
 
         type IndexControl() =

@@ -14,6 +14,7 @@
     <Name>ws_mobile</Name>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <ReferencePath>X:\if\if-ws-mobile-templates\ws_mobile\</ReferencePath>
+    <FullDeploy>true</FullDeploy>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,6 +26,7 @@
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <DocumentationFile>bin\Debug\ws_mobile.XML</DocumentationFile>
+    <StartArguments>"X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobileWP7\." "X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobileWP7\bin\html." "WebSharperSiteletsOffline.dll"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -34,6 +36,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
+    <StartArguments>
+    </StartArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildBinPath)\Microsoft.Build.Tasks.v4.0.dll')" />
@@ -44,6 +48,12 @@
   <ItemGroup>
     <Compile Include="Program.fs" />
     <None Include="IntelliFactory.WebSharper.Mobile.Android.Sitelets.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="IntelliFactory.WebSharper.Mobile.WP7.Sitelets.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="IntelliFactory.WebSharper.Mobile.Android.WP7.Sitelets.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

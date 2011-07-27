@@ -6,48 +6,64 @@ open System.Text
 open System.Xml.Linq
 open Ionic.Zip
 
-(*let createForSymbian dir name =
-    let output = sprintf "%s\\%s.wgz" dir name
+let collectFiles dir =
+    let rec collectFilesUtil dir =
+        [
+            yield!
+                Directory.GetFiles(dir)
+                |> Array.map Choice1Of2
 
-    let directStream input output =
-        use readStream : Stream = input
-        use writeStream : Stream = output
-        let length = 256
-        let buffer = Array.create length 0uy
-        let mutable bytesRead = readStream.Read(buffer, 0, length)
-        while bytesRead > 0 do
-            writeStream.Write(buffer, 0, bytesRead)
-            bytesRead <- readStream.Read(buffer, 0, length)
+            let dirs = Directory.GetDirectories(dir)
 
-    let streamToString input =
-        use readStream : Stream = input
-        let length = 256
-        let buffer = Array.create length 0uy
-        let bytesRead = ref <| readStream.Read(buffer, 0, length)
-        [|
-            while !bytesRead > 0 do
-                yield! buffer.[ 0 .. !bytesRead - 1 ]
-                bytesRead := readStream.Read(buffer, 0, length)
-        |]
-        |> Array.map char
-        |> fun x -> System.String x
+            yield! dirs |> Array.map Choice2Of2
 
-    let read = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("sym-app.wgz.zip")
-    let write = File.Create output
+            for d in dirs do
+                yield! collectFilesUtil d
+        ]
+    collectFilesUtil dir
+    |> List.map (function
+                    | Choice1Of2 s -> Choice1Of2 s.[ dir.Length .. ]
+                    | Choice2Of2 s -> Choice2Of2 s.[ dir.Length .. ])
+    |> List.partition (function Choice1Of2 _ -> true | _ -> false)
+    |> fun (a, b) ->
+        let f = List.map (fun (Choice1Of2 s | Choice2Of2 s) -> s)
+        f a, f b
 
-    directStream read write
-
-    let zip = new ZipFile(output)
+let createForWP7 (template : string) dir name =
+    let zip = new ZipFile(template)
     
+    do
+        zip.Entries
+        |> Seq.filter (fun e -> e.FileName.StartsWith "www")
+        |> fun e -> zip.RemoveEntries (ResizeArray e)
+
     zip.AddDirectory(dir, "www") |> ignore
 
-    let read = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Info.plist")
-    let plist = (streamToString read).Replace("$APPNAME$", name)
-    zip.AddEntry("www/Info.plist", plist) |> ignore
+    let fileListing = sprintf "%s\\fileListing.txt" dir
 
-    zip.Save output*)
+    let list = File.CreateText fileListing
+    using list (fun list ->
 
-let createForAndroid (template : string) dir name =
+        let files, dirs = collectFiles dir
+    
+        for d in dirs do
+            list.WriteLine d
+
+        list.WriteLine()
+
+        for f in files do
+            if f <> "\\fileListing.txt" then
+                list.WriteLine f
+
+        list.WriteLine())
+
+    zip.AddFile (fileListing, "/") |> ignore
+
+    zip.Save(sprintf "%s\\%s.xap" dir name)
+
+    fileListing
+
+let createForAndroid wp7 (template : string) dir name =
     let zip = new ZipFile(template)
     
     let sourceFiles =
@@ -57,8 +73,8 @@ let createForAndroid (template : string) dir name =
 
     zip.AddDirectory(dir, "assets/www") |> ignore
 
-    //if symbian then
-    //    zip.RemoveEntry (sprintf "%s\\%s.wgz" dir name)
+    if wp7 then
+        zip.RemoveEntry (sprintf "%s\\%s.xap" dir name)
 
     zip
 
@@ -74,7 +90,7 @@ let main [| pdir; dir; name |] =
         else dir
     let name = name.[0 .. name.Length - 5]
 
-    try File.Delete (sprintf "%s\\%s.wgz" dir name)
+    try File.Delete (sprintf "%s\\%s.xap" dir name)
     with _ -> ()
 
     Directory.GetFiles(dir)
@@ -84,14 +100,19 @@ let main [| pdir; dir; name |] =
     let doc = XDocument.Load (pdir + "\\mobile.config")
     
     let androidBuilds =
-        doc .Element(XName.Get "configuration")
-            .Element(XName.Get "androidBuilds")
-            .Elements(XName.Get "build")
-        |> List.ofSeq
+        try
+            doc .Element(XName.Get "configuration")
+                .Element(XName.Get "androidBuilds")
+                .Elements(XName.Get "build")
+            |> List.ofSeq
+        with _ -> []
 
-    //let symbian = doc.Element(XName.Get "configuration").Elements(XName.Get "symbian") |> Seq.isEmpty |> not
-    //if symbian then
-    //    createForSymbian dir name
+    let wp7Elems = doc.Element(XName.Get "configuration").Elements(XName.Get "wp7")
+    let wp7 = Seq.length wp7Elems = 1
+    if wp7 then
+        let template = (Seq.head wp7Elems).Attribute(XName.Get "template").Value
+        createForWP7 (sprintf "%s\\%s" pdir template) dir name
+        |> File.Delete
 
     let androids =
         
@@ -99,7 +120,7 @@ let main [| pdir; dir; name |] =
             androidBuilds
             |> List.map (fun b ->
                         let template = b.Element(XName.Get "templateApk").Value
-                        b, template, createForAndroid (sprintf "%s\\%s" pdir template) dir name)
+                        b, template, createForAndroid wp7 (sprintf "%s\\%s" pdir template) dir name)
         
         androids
         |> List.choose (fun (b, n, z) ->
