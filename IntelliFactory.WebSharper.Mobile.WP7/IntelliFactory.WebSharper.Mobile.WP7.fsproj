@@ -44,4 +44,11 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IntelliFactory.WebSharper.Mobile.Default\IntelliFactory.WebSharper.Mobile.Default.fsproj">
+      <Name>IntelliFactory.WebSharper.Mobile.Default</Name>
+      <Project>{aab5b3c8-d106-4ed6-b1a2-9db4cfb30d19}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

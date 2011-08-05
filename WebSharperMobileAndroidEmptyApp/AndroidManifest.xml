@@ -3,11 +3,15 @@
       android:versionCode="1"
       android:versionName="1.0"
 	  package="com.intellifactory.websharper.mobile"> <!-- change here -->
-    <uses-sdk android:minSdkVersion="8" /> <!-- change here? -->
+    <uses-sdk android:minSdkVersion="7"/> <!-- change here? -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.CAMERA"></uses-permission>
+    <uses-feature android:name="android.hardware.camera"></uses-feature>
+    <uses-feature android:name="android.hardware.camera.autofocus"></uses-feature>
 
-    <application android:icon="@drawable/icon" android:label="WebSharperApp"> <!-- change here -->
+    <application android:label="WebSharperApp" android:icon="@drawable/icon"> <!-- change here -->
         <activity android:name=".WebSharperMobileActivity"
                   android:label="WebSharperApp"> <!-- change here -->
             <intent-filter>

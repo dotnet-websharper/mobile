@@ -19,16 +19,40 @@ module SampleSite =
     // Module containing client-side controls
     module Client =
         open IntelliFactory.WebSharper.Html
-        open IntelliFactory.WebSharper.Mobile.WP7//.Testing // the .Testing module will allow you to test your application on a desktop browser (but then it would not run on a
-                                                                // mobile device).
+        open IntelliFactory.WebSharper.Mobile
+
+        [<JavaScript>]
+        let support =
+            WP7.EnableWP7Support()
+            Android.EnableAndroidSupport()
+
+        [<Rpc>]
+        let f x = async { return x + 3 }
+        
+        [<Rpc>]
+        let g (x : int) =
+            async {
+                return
+                    [ 1I .. bigint x ]
+                    |> List.reduce (*)
+                    |> string
+                }
+
+        [<Rpc>]
+        let saveImage (content : string) =
+            async {
+                let img = sprintf "img%d.bmp" (DateTime.Now.ToBinary())
+                File.WriteAllText(img, content)
+                return img
+                }
 
         type IndexControl() =
             inherit IntelliFactory.WebSharper.Web.Control ()
 
             [<JavaScript>]
             override this.Body =
-                if Mobile.Storage.Load "message" <> "Hello from page 2!" then
-                    Mobile.Storage.Store "message" "Go to page 2."
+                if Mobile.StorageLoad "message" <> "Hello from page 2!" then
+                    Mobile.StorageStore "message" "Go to page 2."
                 Div [] :> _
 
         type Page2Control() =
@@ -36,8 +60,36 @@ module SampleSite =
 
             [<JavaScript>]
             override this.Body =
-                Mobile.Storage.Store "message" "Hello from page 2!"
-                I [Text "Client control"] :> _
+                try
+                    Mobile.StorageStore "message" "Hello from page 2!"
+                    Div [
+                        P [Text "Click me!"]
+                        |>! OnClick (fun this _ ->
+                                        async {
+                                            let! content = g 12
+                                            this.Text <- content
+                                            }
+                                        |> Async.Start)
+                        I [Text ("Client control page ")]
+                        |>! OnAfterRender (fun this ->
+                                            async {
+                                                let! f = f -1
+                                                this.Text <- this.Text + (string f)
+                                                }
+                                            |> Async.Start)
+                        Img []
+                        |>! OnAfterRender (fun this ->
+                                            async {
+                                                try
+                                                    let! content = Mobile.GetPhotoFromCamera (800, 600)
+                                                    let! src = saveImage content
+                                                    this.SetAttribute ("src", src)
+                                                with e -> Mobile.Alert e.Message
+                                            }
+                                            |> Async.Start)
+                    ] :> _
+                with e ->
+                    Div [ Text ("Error: " + e.Message) ] :> _
 
         type Page1Control() =
             inherit IntelliFactory.WebSharper.Web.Control ()
@@ -49,7 +101,7 @@ module SampleSite =
                 let locT = "Lat: " + loc.Lat.ToString() + "; Long: " + loc.Long.ToString()
                 let acc = Mobile.GetAcceleration()
                 let accT = "X: " + acc.X.ToString() + "; Y: " + acc.Y.ToString() + "; Z: " + acc.Z.ToString()
-                P [ Text locT; Br [] :> _; Text accT; Br [] :> _; Text ("The message is: " + Mobile.Storage.Load "message") ] :> _
+                P [ Text locT; Br [] :> _; Text accT; Br [] :> _; Text ("The message is: " + Mobile.StorageLoad "message") ] :> _
     
     let Template title body : Content<Action> =
         PageContent <| fun context ->
@@ -113,5 +165,5 @@ type MySampleWebsite() =
         member this.Actions =
             SampleSite.MyActions
 
-[<assembly: WebsiteAttribute(typeof<MySampleWebsite>)>]
+[<assembly: Website(typeof<MySampleWebsite>)>]
 do ()

@@ -13,24 +13,25 @@
 <script type="text/javascript">
 function updateLocation()
 {
-	var data = websharper.location();
-	document.getElementById('output').innerText = "Successs! ='" + data.lat + "'&'" + data.lng + "'";
+	var data = eval('' + websharperBridge.location());
+	document.getElementById('output').innerText = "Successs! ='" + data.Lat + "'&'" + data.Long + "'";
 	//setTimeout("updateLocation()", 500);
 }
 
-updateLocation();
+//updateLocation();
 
-document.write('Here!!');
+//document.write('Here!!');
 
 function test()
 {
-   var loc = eval("({ lat : 31.2, lng : 20.4 })");
+   var loc = eval("({ Lat : 31.2, Long : 20.4 })");
    var res=eval(loc);
-   var __8=res.lat;
+   var __8=res.Lat;
    var at=__8.toString();
-   var __12=res.lng;
+   var __12=res.Long;
    var ng=__12.toString();
    show(at + " " + ng);
+   //websharperBridge.alert("Hey!");
 }
 
 function show(txt)

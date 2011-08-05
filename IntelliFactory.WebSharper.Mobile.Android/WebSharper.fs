@@ -1,55 +1,109 @@
-﻿namespace IntelliFactory.WebSharper.Mobile.Android
+﻿module IntelliFactory.WebSharper.Mobile.Android
 
 open IntelliFactory.WebSharper
 open IntelliFactory.WebSharper.Html
 open IntelliFactory.WebSharper.Html5
 open IntelliFactory.WebSharper.Json
+open IntelliFactory.WebSharper.Mobile
 
-[<RequireQualifiedAccess>]
-module Mobile =
+type private AndroidServerLocationResource() =
+    inherit Resources.BaseResource("android.websharperBridge.serverLocation.js")
 
-    type Location =
-        {
-            Lat : float
-            Long : float
-        }
-    
-    type Acceleration =
-        {
-            X : float
-            Y : float
-            Z : float
-        }
-
-    [<Inline "eval('' + $s)">]
-    let private eval (s : string) = unbox null
-
-    [<Inline "websharperBridge.alert($s)">]
-    /// Displays a message to the client, --without-- waiting for confirmation to continue.
-    let Alert (s : string) = ()
-
-    [<Inline "websharperBridge.log($s)">]
-    /// Logs a message to the debug console.
-    let Log (s : string) = ()
-
-    [<Inline "websharperBridge.location()">]
-    let private bLocation () = ""
+[<Require(typeof<AndroidServerLocationResource>)>]
+module private Ajax =
 
     [<JavaScript>]
-    /// Returns the current location of the device.
-    let GetLocation : unit -> Location = bLocation >> eval
+    let private callbacks = new System.Collections.Generic.Dictionary<int,obj>()
+
+    [<JavaScript>]
+    let private failureCallbacks = new System.Collections.Generic.Dictionary<int,obj>()
+
+    [<JavaScript>]
+    let mutable private callbackCounter = 0
+
+    [<JavaScript>]
+    let setCallbacks success failure =
+        let cbc = callbackCounter
+        callbackCounter <- callbackCounter + 1
+        callbacks.[cbc] <- success
+        failureCallbacks.[cbc] <- failure
+        "IntelliFactory.WebSharper.Mobile.Android.Mobile.callbacks.get_Item(" + cbc.ToString() + ")",
+            "IntelliFactory.WebSharper.Mobile.Android.Mobile.failureCallbacks.get_Item(" + cbc.ToString() + ")"
+
+    (*[<Inline "websharperBridge.ajax($url, $headers, $content, $callback, $fail)">]
+    let private ajax (url : string) (headers : string) (content : string) (callback : string) (fail : string) = ()
+
+    type private AjaxProvider =
+    | AjaxProvider
+
+        interface Remoting.Config.IAjaxProvider with
+            [<JavaScript>]
+            member this.Async url headers data cb fail =
+                let escape =
+                    String.map (function
+                                | '.' -> '@'
+                                | ',' -> '#'
+                                | c -> c)
+                let headers =
+                    headers
+                    |> List.map (fun (k, v) -> escape k + ";" + escape v)
+                    |> List.reduce (fun a b -> a + "," + b)
+                let ok, no = setCallbacks cb fail
+                ajax url headers data ok no
+
+            [<JavaScript>]
+            member this.Call url headers data = raise (System.NotSupportedException "Support for synchronous RPC calls was dropped.")
+
+    [<JavaScript>]
+    let private updateAjaxProvider() =
+        Remoting.Config.AjaxProvider <- AjaxProvider :> Remoting.Config.IAjaxProvider*)
+
+[<Require(typeof<AndroidServerLocationResource>)>]
+type private AndroidMobileProvider [<JavaScript>] () =
+    
+    [<Inline "websharperBridge.alert($s)">]
+    let bAlert (s : string) = ()
+
+    [<Inline "websharperBridge.log($s)">]
+    let bLog (s : string) = ()
+
+    [<Inline "eval('' + $s)">]
+    let eval (s : string) = unbox null
+    
+    [<Inline "websharperBridge.location()">]
+    let bLocation () = ""
 
     [<Inline "websharperBridge.acceleration()">]
-    let private bAcceleration () = ""
+    let bAcceleration () = ""
 
-    [<JavaScript>] // scale not verified. Suspected to be 1=1<m/s^2>
-    /// Returns the current acceleration of the device.
-    let GetAcceleration : unit -> Acceleration = bAcceleration >> eval
+    [<Inline "websharperBridge.camera($width, $height, $success, $fail)">]
+    let bPhotoFromCamera (width : int) (height : int) (success : string) (fail : string) = ()
 
-    type Storage =
+    [<JavaScript>]
+    let photoFromCamera (width, height) (success, fail, _) =
+        let success, fail = Ajax.setCallbacks (success << fun s -> "" + s) fail
+        bPhotoFromCamera width height success fail
+
+    interface MobileProvider with
+
         [<JavaScript>]
-        /// Loads from the local storage dictionary.
-        static member Load k =
+        override __.Alert s = bAlert s
+
+        [<JavaScript>]
+        override __.Log s = bLog s
+
+        [<JavaScript>]
+        override __.GetLocation () = bLocation() |> eval
+
+        [<JavaScript>]
+        override __.GetAcceleration () = bAcceleration() |> eval
+        
+        [<JavaScript>]
+        override __.GetPhotoFromCamera (width, height) =
+            Async.FromContinuations (photoFromCamera (width, height))
+
+        [<JavaScript>]
+        override __.StorageLoad k =
             try
                 Window.Self.LocalStorage.GetItem k
                 |> function
@@ -58,14 +112,11 @@ module Mobile =
             with _ -> ""
 
         [<JavaScript>]
-        /// Saves to the local storage dictionary.
-        static member Store k v = Window.Self.LocalStorage.SetItem (k, v)
+        override __.StorageStore k v = Window.Self.LocalStorage.SetItem (k, v)
 
-    type JsonStorage =
         [<JavaScript>]
-        /// Loads from the local storage dictionary.
-        static member Load k =
-            Storage.Load k
+        override this.JsonStorageLoad k =
+            (this :> MobileProvider).StorageLoad k
             |> function
                 | "" -> "[]"
                 | x -> x
@@ -73,31 +124,17 @@ module Mobile =
             |> unbox
 
         [<JavaScript>]
-        /// Saves to the local storage dictionary.
-        static member Store k v = Storage.Store k (Json.Stringify v)
+        override this.JsonStorageStore k v = (this :> MobileProvider).StorageStore k (Json.Stringify v)
 
-module Testing =
+module private ProviderHolder =
+    [<JavaScript>]
+    let provider = AndroidMobileProvider()
 
-    [<RequireQualifiedAccess>]
-    module Mobile =
-        
-        [<Inline "alert($s)">]
-        /// Displays a message to the client, waiting for confirmation to continue.
-        let Alert (s : string) = ()
+[<Inline "android_init()">]
+let private androidInit () = ()
 
-        [<Inline "console.log($s)">]
-        /// Logs a message to the debug console.
-        let Log (s : string) = ()
-
-        [<JavaScript>]
-        /// Returns the current acceleration of the device.
-        let GetLocation () : Mobile.Location =
-            { Lat = 0.; Long = 0. }
-
-        [<JavaScript>]
-        /// Returns the current acceleration of the device.
-        let GetAcceleration () : Mobile.Acceleration =
-            { X = 0.; Y = 0.; Z = -9.8 }
-
-        type Storage = Mobile.Storage
-        type JsonStorage = Mobile.JsonStorage
+[<JavaScript>]
+let EnableAndroidSupport () =
+    ignore Mobile
+    ignore IntelliFactory.WebSharper.Remoting.Config.EndPoint
+    androidInit()

@@ -19,7 +19,9 @@ prohibited without the written consent of the copyright holder.
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-	<Reference Include="IntelliFactory.WebSharper.Mobile.WP7" />
+      <Reference Include="IntelliFactory.WebSharper.Mobile.Default" />
+      <Reference Include="IntelliFactory.WebSharper.Mobile.WP7" />
+	  <Reference Include="IntelliFactory.WebSharper.Mobile.Android" />
   </ItemGroup>
   <Import Project="$(WEBSHARPER_HOME)/IntelliFactory.WebSharper.FSharp.targets" />
   <UsingTask AssemblyFile="IntelliFactory.WebSharper.Sitelets.Build.dll"

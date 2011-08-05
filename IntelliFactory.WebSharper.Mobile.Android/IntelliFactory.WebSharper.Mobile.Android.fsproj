@@ -29,6 +29,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
+  <Import Project="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.FSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetPath) $(ProjectDir)\..\bin\</PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="assemblyinfo.fs" />
+    <Compile Include="WebSharper.fs" />
+    <EmbeddedResource Include="android.websharperBridge.serverLocation.js" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
@@ -36,11 +45,10 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="assemblyinfo.fs" />
-    <Compile Include="WebSharper.fs" />
+    <ProjectReference Include="..\IntelliFactory.WebSharper.Mobile.Default\IntelliFactory.WebSharper.Mobile.Default.fsproj">
+      <Name>IntelliFactory.WebSharper.Mobile.Default</Name>
+      <Project>{aab5b3c8-d106-4ed6-b1a2-9db4cfb30d19}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
-  <Import Project="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.FSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(ProjectDir)\..\bin\</PostBuildEvent>
-  </PropertyGroup>
 </Project>

@@ -47,13 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.fs" />
-    <None Include="IntelliFactory.WebSharper.Mobile.Android.Sitelets.targets">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="IntelliFactory.WebSharper.Mobile.WP7.Sitelets.targets">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="IntelliFactory.WebSharper.Mobile.Android.WP7.Sitelets.targets">
+    <None Include="IntelliFactory.WebSharper.Mobile.Sitelets.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

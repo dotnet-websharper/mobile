@@ -22,6 +22,18 @@ module SampleSite =
         open IntelliFactory.WebSharper.Mobile.Android//.Testing // the .Testing module will allow you to test your application on a desktop browser (but then it would not run on a
                                                                 // mobile device).
 
+        [<Rpc>]
+        let f x = async { return x + 3 }
+        
+        [<Rpc>]
+        let g (x : int) =
+            async {
+                return
+                    [ 1I .. bigint x ]
+                    |> List.reduce (*)
+                    |> string
+                }
+
         type IndexControl() =
             inherit IntelliFactory.WebSharper.Web.Control ()
 
@@ -37,7 +49,25 @@ module SampleSite =
             [<JavaScript>]
             override this.Body =
                 Mobile.Storage.Store "message" "Hello from page 2!"
-                I [Text "Client control"] :> _
+                try
+                    Div [
+                        P [Text "Click me!"]
+                        |>! OnClick (fun this _ ->
+                                        async {
+                                            let! content = g 10
+                                            this.Text <- content
+                                            }
+                                        |> Async.Start)
+                        I [Text ("Client control page ")]
+                        |>! OnAfterRender (fun this ->
+                                            async {
+                                                let! f = f -1
+                                                this.Text <- this.Text + (string f)
+                                                }
+                                            |> Async.Start)
+                    ] :> _
+                with e ->
+                    Div [ Text ("Error: " + string e.Message) ] :> _
 
         type Page1Control() =
             inherit IntelliFactory.WebSharper.Web.Control ()
@@ -113,5 +143,5 @@ type MySampleWebsite() =
         member this.Actions =
             SampleSite.MyActions
 
-[<assembly: WebsiteAttribute(typeof<MySampleWebsite>)>]
+[<assembly: Website(typeof<MySampleWebsite>)>]
 do ()

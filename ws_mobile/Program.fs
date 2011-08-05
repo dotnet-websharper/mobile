@@ -73,8 +73,9 @@ let createForAndroid wp7 (template : string) dir name =
 
     zip.AddDirectory(dir, "assets/www") |> ignore
 
-    if wp7 then
-        zip.RemoveEntry (sprintf "%s\\%s.xap" dir name)
+    try
+        zip.RemoveEntry (sprintf "assets\www\\%s.xap" name)
+    with _ -> ()
 
     zip
 
@@ -106,6 +107,15 @@ let main [| pdir; dir; name |] =
                 .Elements(XName.Get "build")
             |> List.ofSeq
         with _ -> []
+
+    let serverLocationDispose =
+        let elems = doc.Element(XName.Get "configuration").Elements(XName.Get "serverLocation")
+        if Seq.length elems = 1 then
+            let serverLocation = sprintf "%s\\serverLocation.txt" dir
+            File.WriteAllText(serverLocation, (Seq.head elems).Value)
+            fun _ -> File.Delete serverLocation
+        else
+            ignore
 
     let wp7Elems = doc.Element(XName.Get "configuration").Elements(XName.Get "wp7")
     let wp7 = Seq.length wp7Elems = 1
@@ -148,5 +158,7 @@ let main [| pdir; dir; name |] =
         p.Start() |> ignore
         p.StandardInput.WriteLine(passphrase)
         p.StandardOutput.ReadToEnd() |> ignore
+
+    serverLocationDispose()
 
     0

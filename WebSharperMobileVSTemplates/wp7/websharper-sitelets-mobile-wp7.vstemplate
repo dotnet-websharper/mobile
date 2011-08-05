@@ -1,8 +1,8 @@
 ﻿<VSTemplate Type="Project" Version="3.0.0"
             xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
-    <Name>WebSharper 2.3 Mobile for Android and Windows Phone 7 (Offline)</Name>
-    <Description>WebSharper 2.3 Mobile for Android and Windows Phone 7 (Offline)</Description>
+    <Name>WebSharper 2.3 Mobile for Windows Phone 7 (Offline)</Name>
+    <Description>WebSharper 2.3 Mobile for Windows Phone 7 (Offline)</Description>
     <ProjectType>FSharp</ProjectType>
     <DefaultName>WebSharperMobileApp</DefaultName>
   </TemplateData>

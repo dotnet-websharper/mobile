@@ -1,78 +1,130 @@
-﻿namespace IntelliFactory.WebSharper.Mobile.WP7
+﻿module IntelliFactory.WebSharper.Mobile.WP7
 
 open IntelliFactory.WebSharper
 open IntelliFactory.WebSharper.Html
 open IntelliFactory.WebSharper.Html5
 open IntelliFactory.WebSharper.Json
+open IntelliFactory.WebSharper.Mobile
 
 type private WP7NotifyResource() =
     inherit Resources.BaseResource("windows.phone.7.notify.js")
 
-[<RequireQualifiedAccess>]
 [<Require(typeof<WP7NotifyResource>)>]
-module Mobile =
+module private Ajax =
 
-    type Location =
-        {
-            Lat : float
-            Long : float
-        }
-    
-    type Acceleration =
-        {
-            X : float
-            Y : float
-            Z : float
-        }
+    // AJAX area
 
     [<JavaScript>]
-    let mutable private result : obj = box ""
+    let private callbacks = new System.Collections.Generic.Dictionary<int,obj>()
+
+    [<JavaScript>]
+    let private failureCallbacks = new System.Collections.Generic.Dictionary<int,obj>()
+
+    [<JavaScript>]
+    let mutable private callbackCounter = 0
+
+    [<JavaScript>]
+    let setCallbacks success failure =
+        let cbc = callbackCounter
+        callbackCounter <- callbackCounter + 1
+        callbacks.[cbc] <- success
+        failureCallbacks.[cbc] <- failure
+        "IntelliFactory.WebSharper.Mobile.WP7.Ajax.callbacks.get_Item(" + cbc.ToString() + ")",
+            "IntelliFactory.WebSharper.Mobile.WP7.Ajax.failureCallbacks.get_Item(" + cbc.ToString() + ")"
+
+    [<Inline "callNotify('ajax.' + $url + '.' + $headers + '.' + $content + '.' + $callback + '.' + $fail)">]
+    let private ajax (url : string) (headers : string) (content : string) (callback : string) (fail : string) = ()
+
+    type private AjaxProvider =
+    | AjaxProvider
+
+        interface Remoting.Config.IAjaxProvider with
+            [<JavaScript>]
+            member this.Async url headers data cb fail =
+                let escape (s : string) = s.Replace('.', '@').Replace(',', '#')
+                let headers =
+                    headers
+                    |> List.map (fun (k, v) -> escape k + ";" + escape v)
+                    |> List.reduce (fun a b -> a + "," + b)
+                let ok, no = setCallbacks cb fail
+                let data =
+                    if data.IndexOf '.' > -1 then escape data
+                    else data
+                ajax (escape url) headers (escape data) (escape ok) (escape no)
+
+            [<JavaScript>]
+            member this.Call url headers data = raise (System.NotSupportedException "Support for synchronous RPC calls was dropped.")
+
+    [<JavaScript>]
+    let private updateAjaxProvider() =
+        Remoting.Config.AjaxProvider <- AjaxProvider :> Remoting.Config.IAjaxProvider
+
+[<JavaScript>]
+let mutable private result : obj = box ""
+
+[<Require(typeof<WP7NotifyResource>)>]
+type private WP7MobileProvider [<JavaScript>] () =
 
     [<Inline "callNotify('alert.' + $s)">]
-    /// Displays a message to the client, waiting for confirmation to continue.
-    let Alert (s : string) = ()
+    let bAlert (s : string) = ()
 
     [<Inline "callNotify('log.' + $s)">]
-    /// Logs a message to the debug console.
-    let Log (s : string) = ()
+    let bLog (s : string) = ()
 
     [<Inline "callNotify('location.')">]
-    let private bLocation () = ()
-
-    [<JavaScript>]
-    /// Returns the current location of the device.
-    let GetLocation () : Location =
-        bLocation()
-        unbox result
+    let bLocation () = ()
 
     [<Inline "callNotify('acceleration.')">]
-    let private bAcceleration () = ()
+    let bAcceleration () = ()
 
-    [<JavaScript>] //! it seems that the scale is 1 = 9.81<m/s^2>
-    /// Returns the current acceleration of the device.
-    let GetAcceleration () : Acceleration =
-        bAcceleration()
-        unbox result
+    [<Inline "callNotify('camera.' + $width + '.' + $height + '.' + $callback + '.' + $fail)">]
+    let bPhotoFromCamera (width : string) (height : string) (callback : string) (fail : string) = ()
+
+    [<JavaScript>]
+    let photoFromCamera (width, height) (callback, fail, _) =
+        let escape (s : string) = s.Replace('.', '@').Replace(',', '#')
+        let callback, fail = Ajax.setCallbacks callback fail
+        bPhotoFromCamera (string width) (string height) (escape callback) (escape fail)
 
     [<Inline "callNotify('localStorage.load.' + $k)">]
-    let private storageLoad k = ()
+    let storageLoad k = ()
 
-    type Storage =
+    [<Inline "callNotify('localStorage.store.' + $k + '.' + $v)">]
+    let bStorageStore (k : string) (v : string) = ()
+
+    interface MobileProvider with
+
         [<JavaScript>]
-        /// Loads from the local storage dictionary.
-        static member Load k : string =
+        override __.Alert s = bAlert s
+
+        [<JavaScript>]
+        override __.Log s = bLog s
+
+        [<JavaScript>]
+        override __.GetLocation () : Location =
+            bLocation()
+            unbox result
+
+        [<JavaScript>]
+        override __.GetAcceleration () : Acceleration =
+            bAcceleration()
+            unbox result
+
+        [<JavaScript>]
+        override __.GetPhotoFromCamera (width, height) =
+            Async.FromContinuations (photoFromCamera (width, height))
+
+        [<JavaScript>]
+        override __.StorageLoad k : string =
             storageLoad k
             unbox result
 
-        [<Inline "callNotify('localStorage.store.' + $k + '.' + $v)">]
-        /// Saves to the local storage dictionary.
-        static member Store (k : string) (v : string) = ()
-
-    type JsonStorage =
         [<JavaScript>]
-        /// Loads from the local storage dictionary.
-        static member Load k =
-            Storage.Load k
+        override __.StorageStore k v = bStorageStore k v
+
+        [<JavaScript>]
+        override this.JsonStorageLoad k =
+            (this :> MobileProvider).StorageLoad k
             |> function
                 | "" -> "[]"
                 | x -> x
@@ -80,58 +132,18 @@ module Mobile =
             |> unbox
 
         [<JavaScript>]
-        /// Saves to the local storage dictionary.
-        static member Store k v = Storage.Store k (Json.Stringify v)
+        override this.JsonStorageStore k v = (this :> MobileProvider).StorageStore k (Json.Stringify v)
 
-module Testing =
+module private ProviderHolder =
+    [<JavaScript>]
+    let provider = WP7MobileProvider()
 
-    [<RequireQualifiedAccess>]
-    module Mobile =
-        
-        [<Inline "alert($s)">]
-        /// Displays a message to the client, waiting for confirmation to continue.
-        let Alert (s : string) = ()
+[<Inline "wp7_init()">]
+let private wp7Init () = ()
 
-        [<Inline "console.log($s)">]
-        /// Logs a message to the debug console.
-        let Log (s : string) = ()
-        
-        [<JavaScript>]
-        /// Returns the current location of the device.
-        let GetLocation () : Mobile.Location =
-            { Lat = 0.; Long = 0. }
-
-        [<JavaScript>]
-        /// Returns the current acceleration of the device.
-        let GetAcceleration () : Mobile.Acceleration =
-            { X = 0.; Y = 0.; Z = -9.8 }
-
-        type Storage =
-            [<JavaScript>]
-            /// Loads from the local storage dictionary.
-            static member Load k =
-                try
-                    Window.Self.LocalStorage.GetItem k
-                    |> function
-                        | x when x = null -> ""
-                        | x -> x
-                with _ -> ""
-
-            [<JavaScript>]
-            /// Saves to the local storage dictionary.
-            static member Store k v = Window.Self.LocalStorage.SetItem (k, v)
-
-        type JsonStorage =
-            [<JavaScript>]
-            /// Loads from the local storage dictionary.
-            static member Load k =
-                Storage.Load k
-                |> function
-                    | "" -> "[]"
-                    | x -> x
-                |> Json.Parse
-                |> unbox
-
-            [<JavaScript>]
-            /// Saves to the local storage dictionary.
-            static member Store k v = Storage.Store k (Json.Stringify v)
+[<JavaScript>]
+let EnableWP7Support () =
+    ignore Mobile
+    ignore IntelliFactory.WebSharper.Remoting.Config.EndPoint
+    ignore IntelliFactory.WebSharper.Remoting.Config.AjaxProvider
+    wp7Init()
