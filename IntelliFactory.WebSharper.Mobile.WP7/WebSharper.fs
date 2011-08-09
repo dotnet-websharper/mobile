@@ -32,8 +32,16 @@ module private Ajax =
         "IntelliFactory.WebSharper.Mobile.WP7.Ajax.callbacks.get_Item(" + cbc.ToString() + ")",
             "IntelliFactory.WebSharper.Mobile.WP7.Ajax.failureCallbacks.get_Item(" + cbc.ToString() + ")"
 
-    [<Inline "callNotify('ajax.' + $url + '.' + $headers + '.' + $content + '.' + $callback + '.' + $fail)">]
-    let private ajax (url : string) (headers : string) (content : string) (callback : string) (fail : string) = ()
+    [<Inline "callNotify('ajax.' + $url + '.' + $headers + '.' + $cookies + '.' + $content + '.' + $callback + '.' + $fail)">]
+    let private ajax (url : string) (headers : string) (cookies : string) (content : string) (callback : string) (fail : string) = ()
+
+    [<Inline "document.cookie">]
+    let private cookieString() = ""
+
+    [<JavaScript>]
+    let cookies () =
+        cookieString().Split([|';'|])
+        |> Array.map (fun s -> let parts = s.Split([|'='|]) in parts.[0], parts.[1])
 
     type private AjaxProvider =
     | AjaxProvider
@@ -46,11 +54,15 @@ module private Ajax =
                     headers
                     |> List.map (fun (k, v) -> escape k + ";" + escape v)
                     |> List.reduce (fun a b -> a + "," + b)
+                let cookies =
+                    cookies()
+                    |> Array.map (fun (k, v) -> escape k + ";" + escape v)
+                    |> Array.reduce (fun a b -> a + "," + b)
                 let ok, no = setCallbacks cb fail
                 let data =
                     if data.IndexOf '.' > -1 then escape data
                     else data
-                ajax (escape url) headers (escape data) (escape ok) (escape no)
+                ajax (escape url) headers cookies (escape data) (escape ok) (escape no)
 
             [<JavaScript>]
             member this.Call url headers data = raise (System.NotSupportedException "Support for synchronous RPC calls was dropped.")
@@ -111,8 +123,8 @@ type private WP7MobileProvider [<JavaScript>] () =
             unbox result
 
         [<JavaScript>]
-        override __.GetPhotoFromCamera (width, height) =
-            Async.FromContinuations (photoFromCamera (width, height))
+        override __.GetPhotoFromCamera () = //(width, height)
+            Async.FromContinuations (photoFromCamera (0, 0))
 
         [<JavaScript>]
         override __.StorageLoad k : string =

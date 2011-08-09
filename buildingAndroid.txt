@@ -1,0 +1,45 @@
+clean:
+	delete /target/
+
+resource-src:
+	aapt package -m -J src -M AndroidManifest.xml -S res -I android.jar
+
+compile-main:
+	resource-src
+	mkdir target/main-classes
+	javac -encoding ascii -target 1.5 -sourcepath src -d target/main-classes -bootclasspath android.jar -classpath positron.jar
+
+dex:
+	compile-main
+	dx --dex --output=target/classes.dex taget/main-classes positron.jar
+
+package-res:
+	aapt package -f -M AndroidManifest.xml -S res -I android.jar -F target/notepad.ap_
+
+package-apk:
+	dex
+	package-res
+	apkbuilder target/notepad.apk -z target/notepad.ap_ -f target/classes.dex -rf src -rj lib
+
+----------
+
+Dependency files:
+
+src folder (single *.java file, buried deep)
+AndroidManifest.xml
+res folder (icons, placeholder *.xml files)
+lib folder (?)
+android.jar (!)
+NO positron.jar!
+
+----------
+
+~delete~ target
+aapt package -m -J src -M AndroidManifest.xml -S res -I android.jar
+mkdir target/main-classes
+javac -encoding ascii -target 1.5 -sourcepath src -d target/main-classes -bootclasspath android.jar
+dx --dex --output=target/classes.dex target/main-classes
+aapt package -f -M AndroidManifest.xml -S res -I android.jar -F target/notepad.ap_
+apkbuilder target/notepad.apk -z target/notepad.ap_ -f target/classes.dex -rf src -rj lib
+*jarsigner*
+zipalign -f 4 _.apk _.apk

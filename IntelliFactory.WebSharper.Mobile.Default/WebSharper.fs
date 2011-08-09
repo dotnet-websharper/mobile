@@ -35,9 +35,10 @@ type MobileProvider =
     abstract member GetAcceleration : unit -> Acceleration
     
     /// <summary>Returns a photo from the camera.</summary>
-    /// <param name="maxWidth">The maximum width of the image.</param>
-    /// <param name="maxHeight">The maximum height of the image.</param>
-    abstract member GetPhotoFromCamera : maxWidth : int * maxHeight : int -> Async<Image>
+    // / <param name="maxWidth">The maximum width of the image.</param>
+    // / <param name="maxHeight">The maximum height of the image.</param>
+    //abstract member GetPhotoFromCamera : maxWidth : int * maxHeight : int -> Async<Image>
+    abstract member GetPhotoFromCamera : unit -> Async<Image>
     
     /// Loads a value from local storage.
     abstract member StorageLoad : string -> string
@@ -76,7 +77,7 @@ type private DefaultMobileProvider [<JavaScript>] () =
             { X = 0.; Y = 0.; Z = -9.81 }
 
         [<JavaScript>]
-        override __.GetPhotoFromCamera (_, _) = async { return "" }
+        override __.GetPhotoFromCamera () = async { return "" } //(_, _)
 
         [<JavaScript>]
         override __.StorageLoad k =

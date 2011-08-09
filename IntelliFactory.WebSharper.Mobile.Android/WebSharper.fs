@@ -99,8 +99,8 @@ type private AndroidMobileProvider [<JavaScript>] () =
         override __.GetAcceleration () = bAcceleration() |> eval
         
         [<JavaScript>]
-        override __.GetPhotoFromCamera (width, height) =
-            Async.FromContinuations (photoFromCamera (width, height))
+        override __.GetPhotoFromCamera () = //(width, height)
+            Async.FromContinuations (photoFromCamera (0, 0))
 
         [<JavaScript>]
         override __.StorageLoad k =

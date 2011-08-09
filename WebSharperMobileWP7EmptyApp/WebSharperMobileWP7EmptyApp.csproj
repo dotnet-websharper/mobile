@@ -80,6 +80,7 @@
   <ItemGroup>
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
+    <None Include="www\index.html~" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplicationIcon.png">
@@ -88,7 +89,30 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="fileListing.txt" />
     <Content Include="SplashScreenImage.jpg" />
+    <Content Include="www\index.html" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Collections\WebSharper.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Control\WebSharper.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Core\WebSharper.js" />
+    <Resource Include="www\Scripts\IntelliFactory.WebSharper.Formlet\ActionAdd.png" />
+    <Resource Include="www\Scripts\IntelliFactory.WebSharper.Formlet\ActionCheck.png" />
+    <Resource Include="www\Scripts\IntelliFactory.WebSharper.Formlet\ActionDelete.png" />
+    <Resource Include="www\Scripts\IntelliFactory.WebSharper.Formlet\ErrorIcon.png" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Formlet\Formlet.css" />
+    <Resource Include="www\Scripts\IntelliFactory.WebSharper.Formlet\InfoIcon.png" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Html\WebSharper.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.JQuery\jquery-1.6.1.min.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Json\json2-min.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Mobile.Default\WebSharper.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Mobile.WP7\WebSharper.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Mobile.WP7\windows.phone.7.notify.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Remoting\WebSharper.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.Web\WebSharper.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper.XmlHttpRequest\XMLHttpRequest.js" />
+    <Content Include="www\Scripts\IntelliFactory.WebSharper\Runtime.min.js" />
+    <Content Include="www\Scripts\WebSharperApp\WebSharper.js" />
+    <Content Include="www\serverLocation.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
@@ -101,4 +125,7 @@
   </Target>
   -->
   <ProjectExtensions />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)WebSharperApp.xap $(ProjectDir)\..\bin\mobileWP7.xap</PostBuildEvent>
+  </PropertyGroup>
 </Project>

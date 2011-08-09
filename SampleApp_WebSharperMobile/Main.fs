@@ -16,16 +16,9 @@ module SampleSite =
         | Page1
         | Page2
 
-    // Module containing client-side controls
-    module Client =
-        open IntelliFactory.WebSharper.Html
-        open IntelliFactory.WebSharper.Mobile
-
-        [<JavaScript>]
-        let support =
-            WP7.EnableWP7Support()
-            Android.EnableAndroidSupport()
-
+    // Module containing server-side functions
+    module Server =
+        
         [<Rpc>]
         let f x = async { return x + 3 }
         
@@ -34,17 +27,49 @@ module SampleSite =
             async {
                 return
                     [ 1I .. bigint x ]
-                    |> List.reduce (*)
+                    |> List.reduce ( * )
                     |> string
                 }
 
         [<Rpc>]
         let saveImage (content : string) =
-            async {
-                let img = sprintf "img%d.bmp" (DateTime.Now.ToBinary())
-                File.WriteAllText(img, content)
-                return img
-                }
+            try
+                let context = System.Web.HttpContext.Current
+                async {
+                    try
+                        let path =
+                            sprintf "img%d.bmp" (DateTime.Now.ToBinary())
+                            |> context.Server.MapPath
+                        (*let hpath =
+                            sprintf "hex%d.txt" (DateTime.Now.ToBinary())
+                            |> context.Server.MapPath
+                        File.WriteAllText(hpath, content)*)
+                        do
+                            use sr = new System.IO.StringReader(content)
+                            use fs = File.Create(path)
+                            let mutable read = 1
+                            let chars = Array.create 10000 ' '
+                            let bytes = Array.create 5000 0uy
+                            while read <> 0 do
+                                read <- sr.Read(chars, 0, 10000)
+                                for i in 0 .. 2 .. (read - 1) do
+                                    bytes.[i / 2] <- Convert.ToByte(sprintf "%c%c" chars.[i] chars.[i + 1], 16)
+                                fs.Write(bytes, 0, read / 2)
+                        return (sprintf "http://%s" (path.Substring(path.IndexOf("test.intellifactory.com")).Replace('\\', '/')))
+                    with e -> return e.Message
+                    }
+            with e -> async { return (sprintf "Context saving error: %s" e.Message) }
+
+    // Module containing client-side controls
+    module Client =
+        open IntelliFactory.WebSharper.Mobile
+        open IntelliFactory.WebSharper.Html
+        open Server
+
+        [<JavaScript>]
+        let support =
+            WP7.EnableWP7Support()
+            //Android.EnableAndroidSupport()
 
         type IndexControl() =
             inherit IntelliFactory.WebSharper.Web.Control ()
@@ -81,7 +106,7 @@ module SampleSite =
                         |>! OnAfterRender (fun this ->
                                             async {
                                                 try
-                                                    let! content = Mobile.GetPhotoFromCamera (800, 600)
+                                                    let! content = Mobile.GetPhotoFromCamera () //(800, 600)
                                                     let! src = saveImage content
                                                     this.SetAttribute ("src", src)
                                                 with e -> Mobile.Alert e.Message

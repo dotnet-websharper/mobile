@@ -13,7 +13,7 @@
 
     <application android:label="WebSharperApp" android:icon="@drawable/icon"> <!-- change here -->
         <activity android:name=".WebSharperMobileActivity"
-                  android:label="WebSharperApp"> <!-- change here -->
+                  android:label="WebSharperApp"> <!-- change here twice -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -10,7 +10,8 @@
     <RootNamespace>ws_mobile</RootNamespace>
     <AssemblyName>ws_mobile</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <Name>ws_mobile</Name>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
     <ReferencePath>X:\if\if-ws-mobile-templates\ws_mobile\</ReferencePath>
@@ -26,7 +27,8 @@
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
     <DocumentationFile>bin\Debug\ws_mobile.XML</DocumentationFile>
-    <StartArguments>"X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobileWP7\." "X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobileWP7\bin\html." "WebSharperSiteletsOffline.dll"</StartArguments>
+    <StartArguments>"X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobile\." "X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobile\bin\html." "X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobile\bin\Debug\WebSharperApp.dll."</StartArguments>
+    <StartWorkingDirectory>C:\Program Files\IntelliFactory\WebSharper\2.3</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
@@ -47,6 +49,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.fs" />
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="IntelliFactory.WebSharper.Mobile.Sitelets.targets">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -62,11 +67,8 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-	     Other similar extension points exist, see Microsoft.Common.targets.
-	<Target Name="BeforeBuild">
-	</Target>
-	<Target Name="AfterBuild">
-	</Target>
-	-->
+  <PropertyGroup>
+    <PostBuildEvent>del $(ProjectDir)\..\bin\App.config
+del $(ProjectDir)\..\bin\ws_mobile.exe.config</PostBuildEvent>
+  </PropertyGroup>
 </Project>

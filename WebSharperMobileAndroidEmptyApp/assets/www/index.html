@@ -24,7 +24,7 @@ function updateLocation()
 
 function test()
 {
-   var loc = eval("({ Lat : 31.2, Long : 20.4 })");
+   var loc = eval('' + websharperBridge.location());
    var res=eval(loc);
    var __8=res.Lat;
    var at=__8.toString();

@@ -35,12 +35,6 @@ namespace WebSharperMobileWP7EmptyApp
         }
     }
 
-    struct KeyValueTuple
-    {
-        public string key;
-        public string value;
-    }
-
     public partial class MainPage : PhoneApplicationPage
     {
         Accelerometer accelerometer;
@@ -71,18 +65,28 @@ namespace WebSharperMobileWP7EmptyApp
             aZ = e.Z;
         }
 
-        private HttpWebRequest CallAjax(string methodArg, Action<string, string> callback)
+        private HttpWebRequest CallAjax(string methodArg, Action<CookieCollection, string, string> callback)
         {
             var args = methodArg.Split('.');
             var uri = args[0].Replace('@', '.');
-            var headers = ParseHeadersArray(args[1]);
-            var content = args[2].Replace('@', '.');
-            var callbackF = args[3];
+            var headers = ParsePairsArray(args[1]);
+            var cookies = ParsePairsArray(args[2]);
+            var content = args[3].Replace('@', '.');
+            var callbackF = args[4];
             HttpWebRequest wr = HttpWebRequest.CreateHttp(uri);
             foreach (var p in headers)
                 try
                 {
-                    wr.Headers[p.key] = p.value;
+                    wr.Headers[p[0]] = p[1];
+                }
+                catch { }
+            var uriHost = new Uri(uri);
+            foreach (var c in cookies)
+                try
+                {
+                    var cookie = new Cookie(c[0], c[2]);
+                    cookie.Expires = DateTime.Parse(c[1]);
+                    wr.CookieContainer.Add(uriHost, cookie);
                 }
                 catch { }
             wr.ContentType = "application/x-www-form-urlencoded";
@@ -101,7 +105,8 @@ namespace WebSharperMobileWP7EmptyApp
                         using (var sr = new StreamReader(response.GetResponseStream()))
                         {
                             var result = sr.ReadToEnd();
-                            callback(callbackF, result);
+                            var httpresponse = (HttpWebResponse)response;
+                            callback(httpresponse.Cookies, callbackF, result);
                         }
                     }
                     else
@@ -140,10 +145,17 @@ namespace WebSharperMobileWP7EmptyApp
                     dotIndex = arg.IndexOf('.');
                     try
                     {
-                        CallAjax(arg, (callback, result) =>
+                        CallAjax(arg, (cookies, callback, result) =>
                           {
-                              var evalArg = string.Format("{0}.call(null,JSON.stringify({1}))", callback.Replace('@', '.'), result);
-                              ui.BeginInvoke(() => WB.InvokeScript("eval", evalArg));
+                              ui.BeginInvoke(() => {
+                                  foreach (var i in cookies)
+                                  {
+                                      var c = (Cookie)i;
+                                      WB.InvokeScript("eval", string.Format("document.cookie = \"{0}={1}; expires=\" + new Date({2}).toGMTString();", c.Name, c.Value, c.Expires.ToString("yyyy, MM, dd HH, mm, ss, 0")));
+                                  }
+                                  var evalArg = string.Format("{0}.call(null,JSON.stringify({1}))", callback.Replace('@', '.'), result);
+                                  WB.InvokeScript("eval", evalArg);
+                              });
                           });
                     }
                     catch (Exception err)
@@ -255,28 +267,10 @@ namespace WebSharperMobileWP7EmptyApp
             }
         }
 
-        private IEnumerable<KeyValueTuple> ParseHeadersArray(string input)
+        private IEnumerable<string[]> ParsePairsArray(string input)
         {
-            if (input == "")
-                yield break;
-            var scIndex = input.IndexOf(';');
-            var commaIndex = input.IndexOf(',');
-            if (commaIndex > -1)
-            {
-                var tuple = new KeyValueTuple();
-                tuple.key = input.safeSubstring(0, scIndex);
-                tuple.value = input.safeSubstring(scIndex + 1, commaIndex - scIndex - 1).Replace('#', ',');
-                yield return tuple;
-                foreach (var k in ParseHeadersArray(input.safeSubstring(commaIndex + 1)))
-                    yield return k;
-            }
-            else
-            {
-                var tuple = new KeyValueTuple();
-                tuple.key = input.safeSubstring(0, scIndex);
-                tuple.value = input.safeSubstring(scIndex + 1).Replace('@', '.').Replace('#', ',');
-                yield return tuple;
-            }
+            foreach (var i in input.Split(','))
+                yield return i.Split(';').Select(s => s.Replace('#', ',').Replace('@', '.')).ToArray();
         }
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
@@ -332,7 +326,7 @@ namespace WebSharperMobileWP7EmptyApp
                         {
                             LoadFile(storage, "www" + f);
                         }
-                        catch { }
+                        catch { MessageBox.Show(f); }
                 }
             }
         }

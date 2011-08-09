@@ -13,6 +13,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -37,7 +38,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		env = this;
-		Log.d("D", "WAAH!?");
 		wv = new WebView(this);
 		wv.getSettings().setJavaScriptEnabled(true);
 		wv.getSettings().setDomStorageEnabled(true);
@@ -48,18 +48,15 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		try
 		{
 			myManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-	        List<Sensor> sensors = myManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-	        if(sensors.size() > 0)
-	        {
-	          accSensor = sensors.get(0);
-	          myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
-	        }
-	        Log.d("D", "No E@onCreate");
+			List<Sensor> sensors = myManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+			if(sensors.size() > 0)
+			{
+				accSensor = sensors.get(0);
+				myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
+			}
 		}
 		catch (Exception e)
-		{
-			Log.d("D", "E@onCreate: " + e.getMessage());
-		}
+		{ }
 	}
 
 	@Override
@@ -87,35 +84,29 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 	class WebSharperBridge implements LocationListener
 	{
 		double lat = 31.5, lng = 30.2;
-		
+
 		public void pause()
 		{
-			Log.d("D", "pause");
 			LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
 			locationManager.removeUpdates(this);
 		}
-		
+
 		public void resume()
 		{
-			Log.d("D", "resume");
+			LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
+			Criteria locationCriteria = new Criteria();
+			locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
+			locationManager.requestLocationUpdates(locationManager.getBestProvider(locationCriteria, true), 100, 0, this);
+			//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 0, this);
 			try
 			{
-				alert("A");
-				LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
-				alert("B");
-				locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 0, this);
-				alert("C");
-				lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
-				alert("D");
-				lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
-				alert("E");
+				lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude(); // or GPS?
+				lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude(); // or GPS?
 			}
 			catch (Exception e)
-			{
-				alert(e.getMessage() + ": " + e.toString());
-			}
+			{ }
 		}
-		
+
 		public void onLocationChanged(Location location) {
 			alert("Location!");
 			lat = location.getLatitude();
@@ -124,7 +115,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 
 		public String serverLocation()
 		{
-			Log.d("D", "serverLocation");
 			try
 			{
 				InputStream is = getAssets().open("www/serverLocation.txt");
@@ -194,7 +184,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 
 		public String location()
 		{
-			Log.d("D", "location");
 			return "({ Lat : " + lat + ", Long : " + lng + " })";
 		}
 
@@ -203,7 +192,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			return "({ X : " + acceleration[0] + ", Y : " + acceleration[1] + ", Z : " + acceleration[2] + " })";
 		}
 
-		/*public void camera(int maxHeight, int maxWidth, final String callback, final String fail)
+		public void camera(int maxHeight, int maxWidth, final String callback, final String fail)
 		{
 			try
 			{
@@ -217,7 +206,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 				}
 				else
 					if (params.getPictureSize().height > maxHeight)
-						params.setPictureSize((int)(maxHeight / cameraRatio), maxHeight);*//*
+						params.setPictureSize((int)(maxHeight / cameraRatio), maxHeight);*/
 				//params.setPictureFormat(ImageFormat.RGB_565);
 				cmr.setParameters(params);
 				final SurfaceView sv = new SurfaceView(env);
@@ -252,11 +241,10 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			{
 				wv.loadUrl("javascript:" + fail + ".call(null,\"" + e.getMessage() + "\")");
 			}
-		}*/
+		}
 
 		public void alert(final String msg)
 		{
-			Log.d("D", "alert");
 			env.runOnUiThread(new Runnable() {
 				public void run()
 				{
