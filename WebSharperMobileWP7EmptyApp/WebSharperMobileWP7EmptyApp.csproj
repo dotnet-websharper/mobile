@@ -80,7 +80,6 @@
   <ItemGroup>
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
-    <None Include="www\index.html~" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplicationIcon.png">
@@ -111,6 +110,8 @@
     <Content Include="www\Scripts\IntelliFactory.WebSharper.Web\WebSharper.js" />
     <Content Include="www\Scripts\IntelliFactory.WebSharper.XmlHttpRequest\XMLHttpRequest.js" />
     <Content Include="www\Scripts\IntelliFactory.WebSharper\Runtime.min.js" />
+    <Content Include="www\Scripts\WebSharperApp\Application.css" />
+    <Content Include="www\Scripts\WebSharperApp\jquery.mobile.monkey.patch.js" />
     <Content Include="www\Scripts\WebSharperApp\WebSharper.js" />
     <Content Include="www\serverLocation.txt" />
   </ItemGroup>

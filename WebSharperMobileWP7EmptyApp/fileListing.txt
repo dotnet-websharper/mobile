@@ -16,7 +16,6 @@
 
 \index.html
 \serverLocation.txt
-\index.html~
 \Scripts\IntelliFactory.WebSharper\Runtime.min.js
 \Scripts\IntelliFactory.WebSharper.Collections\WebSharper.js
 \Scripts\IntelliFactory.WebSharper.Control\WebSharper.js
@@ -37,4 +36,6 @@
 \Scripts\IntelliFactory.WebSharper.Web\WebSharper.js
 \Scripts\IntelliFactory.WebSharper.XmlHttpRequest\XMLHttpRequest.js
 \Scripts\WebSharperApp\WebSharper.js
+\Scripts\WebSharperApp\jquery.mobile.monkey.patch.js
+\Scripts\WebSharperApp\Application.css
 

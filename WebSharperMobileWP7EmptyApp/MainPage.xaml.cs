@@ -42,6 +42,7 @@ namespace WebSharperMobileWP7EmptyApp
         GeoCoordinateWatcher geoWatcher;
         Dictionary<string, string> localStorage = new Dictionary<string, string>();
         Dispatcher ui = null;
+        CookieContainer cookieContainer = new CookieContainer();
 
         public MainPage()
         {
@@ -68,10 +69,10 @@ namespace WebSharperMobileWP7EmptyApp
         private HttpWebRequest CallAjax(string methodArg, Action<CookieCollection, string, string> callback)
         {
             var args = methodArg.Split('.');
-            var uri = args[0].Replace('@', '.');
+            var uri = args[0].Replace('#', ',').Replace('@', '.');
             var headers = ParsePairsArray(args[1]);
             var cookies = ParsePairsArray(args[2]);
-            var content = args[3].Replace('@', '.');
+            var content = args[3].Replace('#', ',').Replace('@', '.');
             var callbackF = args[4];
             HttpWebRequest wr = HttpWebRequest.CreateHttp(uri);
             foreach (var p in headers)
@@ -86,9 +87,10 @@ namespace WebSharperMobileWP7EmptyApp
                 {
                     var cookie = new Cookie(c[0], c[2]);
                     cookie.Expires = DateTime.Parse(c[1]);
-                    wr.CookieContainer.Add(uriHost, cookie);
+                    cookieContainer.Add(uriHost, cookie);
                 }
                 catch { }
+            wr.CookieContainer = cookieContainer;
             wr.ContentType = "application/x-www-form-urlencoded";
             wr.Method = "POST";
             wr.BeginGetRequestStream(ac1 =>
@@ -106,7 +108,7 @@ namespace WebSharperMobileWP7EmptyApp
                         {
                             var result = sr.ReadToEnd();
                             var httpresponse = (HttpWebResponse)response;
-                            callback(httpresponse.Cookies, callbackF, result);
+                            callback(cookieContainer.GetCookies(httpresponse.ResponseUri), callbackF, result);
                         }
                     }
                     else
@@ -148,11 +150,26 @@ namespace WebSharperMobileWP7EmptyApp
                         CallAjax(arg, (cookies, callback, result) =>
                           {
                               ui.BeginInvoke(() => {
-                                  foreach (var i in cookies)
+                                  if (cookies != null)
                                   {
-                                      var c = (Cookie)i;
-                                      WB.InvokeScript("eval", string.Format("document.cookie = \"{0}={1}; expires=\" + new Date({2}).toGMTString();", c.Name, c.Value, c.Expires.ToString("yyyy, MM, dd HH, mm, ss, 0")));
+                                      /*foreach (var cookie in cookies.Split('\r', '\n').Where(x => x.Trim() != ""))
+                                      {
+                                          var name = cookie.Substring(0, cookie.IndexOf('='));
+                                          var value = cookie.Substring(name.Length + 2, cookie.IndexOf(';'));
+                                          var expiresIndex = cookie.IndexOf("expires");
+                                          var expires = cookie.Substring(expiresIndex + 8, cookie.IndexOf(';', expiresIndex));
+                                          var code = string.Format("document.cookie = \"{0}={1}; expires={2}\";", name, value, expires);
+                                          WB.InvokeScript("eval", code);
+                                      }*/
+                                      foreach (var i in cookies)
+                                      {
+                                          var c = (Cookie)i;
+                                          var code = string.Format("document.cookie = \"{0}={1}; expires=\" + new Date({2}).toGMTString();", c.Name, c.Value, c.Expires.ToString("yyyy, MM, dd HH, mm, ss, 0"));
+                                          WB.InvokeScript("eval", code);
+                                      }
                                   }
+                                  else
+                                      MessageBox.Show("No cookies.");
                                   var evalArg = string.Format("{0}.call(null,JSON.stringify({1}))", callback.Replace('@', '.'), result);
                                   WB.InvokeScript("eval", evalArg);
                               });
@@ -292,30 +309,19 @@ namespace WebSharperMobileWP7EmptyApp
 
                 using (var sr = new StreamReader(Application.GetResourceStream(new Uri("fileListing.txt", UriKind.Relative)).Stream))
                 {
-                    var list = sr.ReadToEnd();
-
                     while (true)
                     {
-                        var index = list.IndexOf('\r');
-                        if (index == 0)
-                        {
-                            list = list.Substring(2);
-                            break;
-                        }
-                        dirs.Add(list.Substring(0, index));
-                        list = list.Substring(index + 2);
+                        var line = sr.ReadLine();
+                        if (line == "") break;
+                        dirs.Add(line);
                     }
 
                     while (true)
                     {
-                        var index = list.IndexOf('\r');
-                        if (index == 0)
-                        {
-                            list = list.Substring(2);
-                            break;
-                        }
-                        files.Add(list.Substring(0, index));
-                        list = list.Substring(index + 2);
+                        if (sr.EndOfStream) break;
+                        var line = sr.ReadLine();
+                        if (line == "") break;
+                        files.Add(line);
                     }
 
                     foreach (var d in dirs)
@@ -326,7 +332,7 @@ namespace WebSharperMobileWP7EmptyApp
                         {
                             LoadFile(storage, "www" + f);
                         }
-                        catch { MessageBox.Show(f); }
+                        catch { if (!f.EndsWith(".png")) MessageBox.Show(f); }
                 }
             }
         }

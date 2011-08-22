@@ -21,7 +21,7 @@ prohibited without the written consent of the copyright holder.
 	<ItemGroup>
 		<Reference Include="IntelliFactory.WebSharper.Mobile.Default" />
         <Reference Include="IntelliFactory.WebSharper.Mobile.WP7" />
-        <1--<Reference Include="IntelliFactory.WebSharper.Mobile.Android" />-->
+        <!--<Reference Include="IntelliFactory.WebSharper.Mobile.Android" />-->
 	</ItemGroup>
 	<Import Project="$(WEBSHARPER_HOME)/IntelliFactory.WebSharper.FSharp.targets" />
 	<UsingTask AssemblyFile="IntelliFactory.WebSharper.Sitelets.Build.dll"

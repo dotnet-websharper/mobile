@@ -12,6 +12,9 @@ type private WP7NotifyResource() =
 [<Require(typeof<WP7NotifyResource>)>]
 module private Ajax =
 
+    [<Inline("$0.split($1)")>]
+    let Split (str : string) (delim : char) : string[] = [||]
+    
     // AJAX area
 
     [<JavaScript>]
@@ -40,24 +43,31 @@ module private Ajax =
 
     [<JavaScript>]
     let cookies () =
-        cookieString().Split([|';'|])
-        |> Array.map (fun s -> let parts = s.Split([|'='|]) in parts.[0], parts.[1])
+        if cookieString() = "" then [||]
+        else
+            Split (cookieString()) ';'
+            |> Array.map (fun s -> let parts = (Split s '=') in parts.[0], parts.[1])
 
     type private AjaxProvider =
-    | AjaxProvider
+        | AjaxProvider
 
         interface Remoting.Config.IAjaxProvider with
             [<JavaScript>]
             member this.Async url headers data cb fail =
                 let escape (s : string) = s.Replace('.', '@').Replace(',', '#')
                 let headers =
-                    headers
-                    |> List.map (fun (k, v) -> escape k + ";" + escape v)
-                    |> List.reduce (fun a b -> a + "," + b)
+                    if headers = [] then ""
+                    else
+                        headers
+                        |> List.map (fun (k, v) -> escape k + ";" + escape v)
+                        |> List.reduce (fun a b -> a + "," + b)
                 let cookies =
-                    cookies()
-                    |> Array.map (fun (k, v) -> escape k + ";" + escape v)
-                    |> Array.reduce (fun a b -> a + "," + b)
+                    let cookies = cookies()
+                    if cookies = [||] then ""
+                    else
+                        cookies
+                        |> Array.map (fun (k, v) -> escape k + ";" + escape v)
+                        |> Array.reduce (fun a b -> a + "," + b)
                 let ok, no = setCallbacks cb fail
                 let data =
                     if data.IndexOf '.' > -1 then escape data
