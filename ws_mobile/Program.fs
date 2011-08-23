@@ -45,9 +45,9 @@ type AssemblyInfo =
     }
     member this.Genre =
         if this.isGame then
-            "app.game"
+            "apps.game"
         else
-            "app.normal"
+            "apps.normal"
 
 let collectFiles dir =
     let rec collectFilesUtil dir =
@@ -103,12 +103,11 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
 
     do
         let man = Path.Combine (pdir, "WMAppManifest.xml")
-        tfDelete man
-        zip.["WMAppManifest.xml"].Extract pdir
         zip.RemoveEntry "WMAppManifest.xml"
-        let wmam = File.ReadAllText man
+        let wmam = File.ReadAllText "WMAppManifest.xml"
         let wmam =
             wmam.Replace("$(TITLE)", info.title)
+                .Replace("$(SAFETITLE)", info.title.Replace(" ", ""))
                 .Replace("$(GUID)", info.guid)
                 .Replace("$(VERSION)", info.version)
                 .Replace("$(GENRE)", info.Genre)
@@ -202,7 +201,7 @@ let main [| pdir; dir; asmpath |] =
             guid =  
                 try
                     (asm.GetCustomAttributes(typeof<GuidAttribute>, true).[0] :?> GuidAttribute).Value
-                with _ -> ""
+                with _ -> System.Guid.NewGuid().ToString()
             version =
                 try
                     (asm.GetCustomAttributes(typeof<AssemblyFileVersionAttribute>, true).[0] :?> AssemblyFileVersionAttribute).Version
@@ -212,6 +211,7 @@ let main [| pdir; dir; asmpath |] =
                     Seq.isEmpty <| doc . Element(XName.Get "configuration")
                                         .Element(XName.Get "wp7")
                                         .Elements(XName.Get "isgame")
+                    |> not
                 with _ -> false
             author = company
             publisher = company
