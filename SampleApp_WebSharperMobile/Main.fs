@@ -40,10 +40,6 @@ module SampleSite =
                         let path =
                             sprintf "img%d.bmp" (DateTime.Now.ToBinary())
                             |> context.Server.MapPath
-                        (*let hpath =
-                            sprintf "hex%d.txt" (DateTime.Now.ToBinary())
-                            |> context.Server.MapPath
-                        File.WriteAllText(hpath, content)*)
                         do
                             use sr = new System.IO.StringReader(content)
                             use fs = File.Create(path)
@@ -69,7 +65,7 @@ module SampleSite =
         [<JavaScript>]
         let support =
             WP7.EnableWP7Support()
-            //Android.EnableAndroidSupport()
+            Android.EnableAndroidSupport()
 
         type IndexControl() =
             inherit IntelliFactory.WebSharper.Web.Control ()
@@ -79,42 +75,6 @@ module SampleSite =
                 if Mobile.StorageLoad "message" <> "Hello from page 2!" then
                     Mobile.StorageStore "message" "Go to page 2."
                 Div [] :> _
-
-        type Page2Control() =
-            inherit IntelliFactory.WebSharper.Web.Control ()
-
-            [<JavaScript>]
-            override this.Body =
-                try
-                    Mobile.StorageStore "message" "Hello from page 2!"
-                    Div [
-                        P [Text "Click me!"]
-                        |>! OnClick (fun this _ ->
-                                        async {
-                                            let! content = g 12
-                                            this.Text <- content
-                                            }
-                                        |> Async.Start)
-                        I [Text ("Client control page ")]
-                        |>! OnAfterRender (fun this ->
-                                            async {
-                                                let! f = f -1
-                                                this.Text <- this.Text + (string f)
-                                                }
-                                            |> Async.Start)
-                        Img []
-                        |>! OnAfterRender (fun this ->
-                                            async {
-                                                try
-                                                    let! content = Mobile.GetPhotoFromCamera () //(800, 600)
-                                                    let! src = saveImage content
-                                                    this.SetAttribute ("src", src)
-                                                with e -> Mobile.Alert e.Message
-                                            }
-                                            |> Async.Start)
-                    ] :> _
-                with e ->
-                    Div [ Text ("Error: " + e.Message) ] :> _
 
         type Page1Control() =
             inherit IntelliFactory.WebSharper.Web.Control ()
@@ -128,6 +88,47 @@ module SampleSite =
                 let accT = "X: " + acc.X.ToString() + "; Y: " + acc.Y.ToString() + "; Z: " + acc.Z.ToString()
                 P [ Text locT; Br [] :> _; Text accT; Br [] :> _; Text ("The message is: " + Mobile.StorageLoad "message") ] :> _
     
+        type Page2Control() =
+            inherit IntelliFactory.WebSharper.Web.Control ()
+
+            [<JavaScript>]
+            override this.Body =
+                try
+                    Mobile.StorageStore "message" "Hello from page 2!"
+                    Div [
+                        P [Text "Click me!"]
+                        |>! OnClick (fun this _ ->
+                                        try
+                                            async {
+                                                let! content = g 12
+                                                this.Text <- content
+                                                }
+                                            |> Async.Start
+                                        with e -> Mobile.Alert ("Error: " + e.Message))
+                        I [Text ("Client control page ")]
+                        |>! OnAfterRender (fun this ->
+                                            try
+                                                async {
+                                                    let! f = f -1
+                                                    this.Text <- this.Text + (string f)
+                                                    }
+                                                |> Async.Start
+                                            with e -> Mobile.Alert ("Error: " + e.Message))
+                        Img []
+                        |>! OnAfterRender (fun this ->
+                                            async {
+                                                try
+                                                    let! content = Mobile.GetPhotoFromCamera () //(800, 600)
+                                                    let! src = saveImage content
+                                                    this.SetAttribute ("src", src)
+                                                    return ()
+                                                with e -> Mobile.Alert e.Message
+                                            }
+                                            |> Async.Start)
+                    ] :> _
+                with e ->
+                    Div [ Text ("Error: " + e.Message) ] :> _
+
     let Template title body : Content<Action> =
         PageContent <| fun context ->
             { Page.Default with 

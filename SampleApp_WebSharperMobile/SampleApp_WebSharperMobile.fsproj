@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="assemblyInfo.fs" />
     <None Include="mobile.config" />
     <Compile Include="Main.fs" />
   </ItemGroup>

@@ -3,3 +3,5 @@ syntax: regexp
 (bin|obj|Bin|Obj)
 ^.build
 .suo$
+#
+\~

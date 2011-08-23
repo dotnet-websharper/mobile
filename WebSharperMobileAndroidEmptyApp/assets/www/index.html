@@ -25,13 +25,19 @@ function updateLocation()
 function test()
 {
    var loc = eval('' + websharperBridge.location());
-   var res=eval(loc);
-   var __8=res.Lat;
+   var __8=loc.Lat;
    var at=__8.toString();
-   var __12=res.Long;
+   var __12=loc.Long;
    var ng=__12.toString();
-   show(at + " " + ng);
-   //websharperBridge.alert("Hey!");
+   var acc = eval('' + websharperBridge.acceleration());
+   var res=eval(loc);
+   var __9=acc.X;
+   var x=__9.toString();
+   var __13=acc.Y;
+   var y=__13.toString();
+   var __17=acc.Z;
+   var z=__17.toString();
+   show(at + " " + ng + ";" + x + " " + y + " " + z);
 }
 
 function show(txt)

@@ -27,36 +27,8 @@ module private Ajax =
         callbackCounter <- callbackCounter + 1
         callbacks.[cbc] <- success
         failureCallbacks.[cbc] <- failure
-        "IntelliFactory.WebSharper.Mobile.Android.Mobile.callbacks.get_Item(" + cbc.ToString() + ")",
-            "IntelliFactory.WebSharper.Mobile.Android.Mobile.failureCallbacks.get_Item(" + cbc.ToString() + ")"
-
-    (*[<Inline "websharperBridge.ajax($url, $headers, $content, $callback, $fail)">]
-    let private ajax (url : string) (headers : string) (content : string) (callback : string) (fail : string) = ()
-
-    type private AjaxProvider =
-    | AjaxProvider
-
-        interface Remoting.Config.IAjaxProvider with
-            [<JavaScript>]
-            member this.Async url headers data cb fail =
-                let escape =
-                    String.map (function
-                                | '.' -> '@'
-                                | ',' -> '#'
-                                | c -> c)
-                let headers =
-                    headers
-                    |> List.map (fun (k, v) -> escape k + ";" + escape v)
-                    |> List.reduce (fun a b -> a + "," + b)
-                let ok, no = setCallbacks cb fail
-                ajax url headers data ok no
-
-            [<JavaScript>]
-            member this.Call url headers data = raise (System.NotSupportedException "Support for synchronous RPC calls was dropped.")
-
-    [<JavaScript>]
-    let private updateAjaxProvider() =
-        Remoting.Config.AjaxProvider <- AjaxProvider :> Remoting.Config.IAjaxProvider*)
+        "IntelliFactory.WebSharper.Mobile.Android.Ajax.callbacks.get_Item(" + cbc.ToString() + ")",
+            "IntelliFactory.WebSharper.Mobile.Android.Ajax.failureCallbacks.get_Item(" + cbc.ToString() + ")"
 
 [<Require(typeof<AndroidServerLocationResource>)>]
 type private AndroidMobileProvider [<JavaScript>] () =

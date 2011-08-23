@@ -28,7 +28,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DocumentationFile>bin\Debug\ws_mobile.XML</DocumentationFile>
     <StartArguments>"X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobile\." "X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobile\bin\html." "X:\if\if-ws-mobile-templates\SampleApp_WebSharperMobile\bin\Debug\WebSharperApp.dll."</StartArguments>
-    <StartWorkingDirectory>C:\Program Files\IntelliFactory\WebSharper\2.3</StartWorkingDirectory>
+    <StartWorkingDirectory>X:\if\if-ws-mobile-templates\ws_mobile\bin\Debug</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>

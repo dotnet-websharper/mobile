@@ -9,7 +9,7 @@ open Ionic.Zip
 let tfDelete file =
     if File.Exists file then File.Delete file
 
-let runProc proc (args : string []) (input : seq<string>) =
+let runProc proc (args : seq<string>) (input : seq<string>) =
     use p = new Process()
     let si = ProcessStartInfo()
     si.Arguments <- System.String.Join(" ", args)
@@ -20,12 +20,14 @@ let runProc proc (args : string []) (input : seq<string>) =
     si.RedirectStandardOutput <- true
     si.RedirectStandardError <- true
     p.StartInfo <- si
-    eprintfn "%s %s" proc si.Arguments
     p.Start() |> ignore
     for line in input do
         p.StandardInput.WriteLine line
     p.StandardOutput.ReadToEnd() |> ignore
+    stderr.WriteLine(p.StandardError.ReadToEnd())
     p.WaitForExit()
+
+let quote = sprintf @"""%s"""
 
 type AssemblyInfo =
     {
@@ -112,7 +114,7 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
                 .Replace("$(GENRE)", info.Genre)
                 .Replace("$(AUTHOR)", info.author)
                 .Replace("$(PUBLISHER)", info.publisher)
-                .Replace("$(DESCRIPTION", info.description)
+                .Replace("$(DESCRIPTION)", info.description)
         File.WriteAllText (man, wmam)
         zip.AddFile (man, "/") |> ignore
         disposeList.Add man
@@ -147,8 +149,8 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
     
     fileListing
 
-let createForAndroid wp7 (template : string) dir name =
-    let zip = new ZipFile(template)
+let createForAndroid (template : string) dir name =
+    use zip = new ZipFile(template)
     
     let sourceFiles =
         zip.Entries
@@ -161,7 +163,21 @@ let createForAndroid wp7 (template : string) dir name =
         zip.RemoveEntry (sprintf @"assets\www\%s.xap" name)
     with _ -> ()
 
-    zip
+    for e in List.ofSeq zip.EntryFileNames do
+        let startsWith' (this : string) (prefix : string) = this.Length >= prefix.Length && this.Replace('\\', '/').[ 0 .. prefix.Length - 1 ] = prefix
+        let onlyTwo = lazy (
+            e
+            |> String.collect (function
+                            | '\\'
+                            | '/' -> " "
+                            | _ -> "")
+            |> String.length
+            |> (=) 2
+            )
+        if startsWith' e "assets/www/mobileBuildAndroid" || (e.EndsWith ".apk" && startsWith' e "assets/www" && onlyTwo.Value) then
+            zip.RemoveEntry e
+
+    zip.Save()
 
 [<EntryPoint>]
 let main [| pdir; dir; asmpath |] =
@@ -176,7 +192,7 @@ let main [| pdir; dir; asmpath |] =
         let company =
             try
                 (asm.GetCustomAttributes(typeof<AssemblyCompanyAttribute>, true).[0] :?> AssemblyCompanyAttribute).Company
-            with _ -> ""
+            with _ -> "Company"
         {
             title =
                 try
@@ -263,99 +279,121 @@ let main [| pdir; dir; asmpath |] =
         let androids =
             androidBuilds
             |> List.map (fun b ->
-                        let template = b.Element(XName.Get "templateApk").Value
-                        b, template, createForAndroid wp7 (sprintf "%s\\%s" pdir template) dir name)
+                        let output = b.Element(XName.Get "outputPackage").Value
+                        b, output)
         
         androids
-        |> List.choose (fun (b, n, z) ->
-                        use z = z
-                        z.Save (Path.Combine (dir, n))
+        |> List.choose (fun (b, n) ->
                         if b.Elements(XName.Get "signAndroid") |> Seq.isEmpty |> not then
-                            Some (b, n)
+                            Some (b, n, b.Element(XName.Get "sdkVersion").Value)
                         else
                             None)
 
-    (*
+    // solves error when build folder already exists
+    if Directory.Exists(Path.Combine(dir, "mobileBuildAndroid")) then
+        Directory.Delete(Path.Combine(dir, "mobileBuildAndroid"), true)
+
     do // create build env in html
         let args =
-            [|
+            [
             "mobileBuildAndroid"
-            Path.Combine(dir, "mobileBuildAndroid")
+            Path.Combine(dir, "mobileBuildAndroid") |> quote
             "/E /C /I /Q /Y"
-            |]
+            ]
         runProc "xcopy.exe" args []
 
-    for b, n in androids do
+    for b, n, sdkV in androids do
         let env = Path.Combine(dir, "mobileBuildAndroid")
+        let android =
+            System.Environment.GetEnvironmentVariable("ANDROID_HOME")
+            |> function
+                | null -> sprintf @"""%s\..\platforms\android-%s\android.jar""" (System.Environment.GetEnvironmentVariable("ANDROID_SDK")) sdkV
+                | sdk -> sprintf @"""%s\..\platforms\android-%s\android.jar""" sdk sdkV
         do // clean target
             if Directory.Exists(Path.Combine(env, "target")) then
                 Directory.Delete(Path.Combine(env, "target"), true)
-        do
+        do // manifest
             let man = Path.Combine(env, "AndroidManifest.xml")
-            File.Copy(man, Path.Combine(env, "AndroidManifest.xml_bu"))
             let wmam =
                 File.ReadAllText(man)
                     .Replace("$(TITLE)", info.title)
+                    .Replace("$(SAFETITLE)", info.title.Replace(" ", ""))
                     .Replace("$(VERSION)", info.version)
                     .Replace("$(AUTHOR)", info.author)
                     .Replace("$(PUBLISHER)", info.publisher)
-                    .Replace("$(DESCRIPTION", info.description)
+                    .Replace("$(DESCRIPTION)", info.description)
+                    .Replace("$(SDKVERSION)", sdkV)
             File.WriteAllText (man, wmam)
+        do // activity source, change package name
+            let file = Path.Combine(env, "src\WebSharperMobileActivity.java")
+            let wfile =
+                File.ReadAllText(file)
+                    .Replace("$(SAFETITLE)", info.title.Replace(" ", ""))
+                    .Replace("$(AUTHOR)", info.author)
+                    .Replace("$(PUBLISHER)", info.publisher)
+            File.WriteAllText (file, wfile)
         do // aapt package -m -J src -M AndroidManifest.xml -S res -I android.jar
             let args =
-                [|
+                [
                 "package -m -J"
-                sprintf @"%s\src -M %s\AndroidManifest.xml -S %s\res -I android.jar" env env env
-                |]
+                sprintf @"""%s\src"" -M ""%s\AndroidManifest.xml"" -S ""%s\res"" -I" env env env
+                android
+                ]
             runProc "aapt.exe" args []
         do // mkdir target/main-classes
             Directory.CreateDirectory (Path.Combine(env, @"target\main-classes")) |> ignore
-        do // javac -encoding ascii -target 1.5 -sourcepath src -d target\main-classes -bootclasspath android.jar
+        do // ? javac -encoding ascii -target 1.5 -sourcepath src -d target\main-classes -bootclasspath android.jar
             let args =
-                [|
+                [
                 "-encoding ascii -target 1.5 -sourcepath"
-                sprintf @"%s\target\src -d %s\target\main-classes -bootclasspath android.jar" env env
-                |]
+                sprintf @"""%s\target"" -d ""%s\target\main-classes"" -bootclasspath" env env
+                android
+                sprintf @"""%s\src\WebSharperMobileActivity.java""" env
+                ]
             runProc "javac.exe" args []
         do // dx --dex --output=target/classes.dex target/main-classes
             let args =
-                [| sprintf @"--dex --output=%s\target\classes.dex %s\target\main-classes" env env |]
+                [ sprintf @"--dex --output=%s\target\classes.dex %s\target\main-classes" env env ]
             runProc "dx.bat" args []
-        do // aapt package -f -M AndroidManifest.xml -S res -I android.jar -F target/notepad.ap_
+        do // aapt package -f -M AndroidManifest.xml -S res -I android.jar -F target/app.ap_
             let args =
-                [|
+                [
                 "package -f -M"
-                sprintf @"%s\AndroidManifest.xml -S %s\res -I android.jar -F %s\target\notepad.ap_" env env env
-                |]
+                sprintf @"""%s\AndroidManifest.xml"" -S ""%s\res"" -I" env env
+                android
+                sprintf @"-F ""%s\target\app.ap_""" env
+                ]
             runProc "aapt.exe" args []
-        do // apkbuilder target/notepad.apk -z target/notepad.ap_ -f target/classes.dex -rf src -rj lib
+        do // apkbuilder target/___.apk -z target/app.ap_ -f target/classes.dex -rf src // -rj lib
             let args =
-                [| sprintf @"%s\target\notepad.apk -z %s\target\notepad.ap_ -f %s\target\classes.dex -rf %s\src -rj lib" env env env env |]
+                [ sprintf @"""%s\target\__%s"" -u -z ""%s\target\app.ap_"" -f ""%s\target\classes.dex"" -rf ""%s\src""" env n env env env ]
             runProc "apkbuilder.bat" args []
         do // copy from html\bin to html
-            File.Copy (Path.Combine(dir, "mobileAndroidBuild\\bin\\" + n), Path.Combine(dir, n))
+            File.Copy (Path.Combine(dir, "mobileBuildAndroid\\target\\__" + n), Path.Combine(dir, "__" + n))
+        do // actually fill contents (those are the www things)
+            //System.Threading.Thread.Sleep 15000
+            createForAndroid (Path.Combine (dir, "__" + n)) dir name
         do // *jarsigner*
             let key = b.Element(XName.Get "key").Value
             let alias = b.Element(XName.Get "alias").Value
             let passphrase = b.Element(XName.Get "passphrase").Value
             let args =
-                [|
+                [
                 "-verbose"
                 "-keystore"
-                Path.Combine (pdir, key)
-                Path.Combine (dir, n)
+                Path.Combine (pdir, key) |> quote
+                Path.Combine (dir, "__" + n) |> quote
                 alias
-                |]
+                ]
             runProc "jarsigner.exe" args [passphrase]
-        do // zipalign -f 4 _.apk _.apk
-           runProc "zipalign.exe" [| "-f 4"; n; n |] []
-        do // restore AndroidManifest.xml
-            File.Delete "AndroidManifest.xml"
-            File.Move("AndroidManifest.xml_bu", "AndroidManifest.xml")
+        do // zipalign -f 4 ___.apk _.apk
+            runProc "zipalign.exe" [ "-f 4"; Path.Combine (dir, "__" + n) |> quote; Path.Combine (dir, n) |> quote ] []
+        do // remove unaligned file
+            File.Delete (Path.Combine (dir, "__" + n))
 
     do // delete building env from html
-        Directory.Delete(Path.Combine(dir, "mobileBuildAndroid"))
-    *)
+        Directory.Delete(Path.Combine(dir, "mobileBuildAndroid"), true)
+
     serverLocationDispose()
 
     0

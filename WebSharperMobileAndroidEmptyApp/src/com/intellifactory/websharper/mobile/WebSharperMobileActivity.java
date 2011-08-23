@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 public class WebSharperMobileActivity extends Activity implements SensorEventListener {
 	SensorManager myManager;
@@ -36,7 +37,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 		env = this;
 		wv = new WebView(this);
 		wv.getSettings().setJavaScriptEnabled(true);
@@ -83,7 +83,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 
 	class WebSharperBridge implements LocationListener
 	{
-		double lat = 31.5, lng = 30.2;
+		double lat = 0, lng = 0;
 
 		public void pause()
 		{
@@ -97,7 +97,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			Criteria locationCriteria = new Criteria();
 			locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
 			locationManager.requestLocationUpdates(locationManager.getBestProvider(locationCriteria, true), 100, 0, this);
-			//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 0, this);
 			try
 			{
 				lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude(); // or GPS?
@@ -108,7 +107,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		}
 
 		public void onLocationChanged(Location location) {
-			alert("Location!");
 			lat = location.getLatitude();
 			lng = location.getLongitude();
 		}
@@ -131,57 +129,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			}
 		}
 
-		/*public void ajax(final String url, final String headers, final String content, final String callback, final String fail)
-		{
-			new Thread(new Runnable() {
-				public void run()
-				{
-					HttpClient httpclient = new DefaultHttpClient();
-				    HttpPost httppost = new HttpPost(url);
-
-				    try {
-				        ParseHeadersArray(httppost, headers);
-				        StringEntity ent = new StringEntity(content);
-				        ent.setContentType(new BasicHeader("Content-Type", "application/x-www-form-urlencoded"));
-				        httppost.setEntity(ent);
-
-				        HttpResponse response = httpclient.execute(httppost);
-
-				        String s = "";
-				        String line = "";
-
-				        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-				        while ((line = rd.readLine()) != null) s += line;
-
-				        wv.loadUrl("javascript:" + callback + ".call(null,JSON.stringify(" + s + "))");
-				    } catch (Exception e) {
-				        wv.loadUrl("javascript:" + fail + ".call(null,\"" + e.getMessage() + "\")");
-				    }
-				}
-			}).start();
-		}
-
-		private void ParseHeadersArray(HttpPost httppost, String input)
-        {
-            if (input == "")
-                return;
-            int scIndex = input.indexOf(';');
-            int commaIndex = input.indexOf(',');
-            if (commaIndex > -1)
-            {
-            	String key = input.substring(0, scIndex);
-                String value = input.substring(scIndex + 1, commaIndex - scIndex - 1).replace('#', ',');
-                httppost.setHeader(key, value);
-                ParseHeadersArray(httppost, input.substring(commaIndex + 1));
-            }
-            else
-            {
-                String key = input.substring(0, scIndex);
-                String value = input.substring(scIndex + 1).replace('@', '.').replace('#', ',');
-                httppost.setHeader(key, value);
-            }
-        }*/
-
 		public String location()
 		{
 			return "({ Lat : " + lat + ", Long : " + lng + " })";
@@ -198,16 +145,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			{
 				cmr = Camera.open();
 				Camera.Parameters params = cmr.getParameters();
-				/*double frameRatio = (double)maxHeight / (double)maxWidth, cameraRatio = (double)params.getPictureSize().height / (double)params.getPictureSize().width;
-				if (frameRatio > cameraRatio)
-				{
-					if (params.getPictureSize().width > maxWidth)
-						params.setPictureSize(maxWidth, (int)(maxWidth * cameraRatio));
-				}
-				else
-					if (params.getPictureSize().height > maxHeight)
-						params.setPictureSize((int)(maxHeight / cameraRatio), maxHeight);*/
-				//params.setPictureFormat(ImageFormat.RGB_565);
 				cmr.setParameters(params);
 				final SurfaceView sv = new SurfaceView(env);
 				sv.setOnLongClickListener(new View.OnLongClickListener() {
@@ -217,9 +154,21 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 						Camera.PictureCallback jpegCallback=new Camera.PictureCallback() { 
 
 							public void onPictureTaken(byte[] data, Camera camera) {
-								wv.loadUrl("javascript:" + callback + ".call(null,\"" + String.format("%x", data).toUpperCase() + "\")");
+								StringBuffer sb = new StringBuffer(data.length * 2);
+								for (int i = 0; i < data.length; i++) {
+									int v = data[i] & 0xff;
+									if (v < 16) {
+										sb.append('0');
+									}
+									sb.append(Integer.toHexString(v));
+								}
+								wv.loadUrl("javascript:" + callback + ".call(null,\"" + sb.toString().toUpperCase() + "\")");
 								camera.release();
-								env.setContentView(wv);
+								env.runOnUiThread(new Runnable() {
+									public void run()
+									{
+										env.setContentView(wv);
+									}});
 								cmr = null;
 							}
 						};
@@ -235,7 +184,8 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 					}});
 				cmr.setPreviewDisplay(sv.getHolder());
 				cmr.startPreview();
-
+				Toast toast = Toast.makeText(env, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
+				toast.show();
 			}
 			catch (Exception e)
 			{
