@@ -1,0 +1,16 @@
+﻿<VSTemplate Type="Project" Version="3.0.0"
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>WebSharper 2.3 Mobile Sample Application (Offline)</Name>
+    <Description>WebSharper 2.3 Mobile Sample Application (Offline)</Description>
+    <ProjectType>FSharp</ProjectType>
+    <DefaultName>WebSharperMobileApp</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="websharper-mobile-offline-sample.fsproj">
+      <ProjectItem>mobile.config</ProjectItem>
+      <ProjectItem>assemblyInfo.fs</ProjectItem>
+      <ProjectItem>Main.fs</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

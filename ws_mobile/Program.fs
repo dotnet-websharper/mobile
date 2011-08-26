@@ -188,16 +188,17 @@ let main [| pdir; dir; asmpath |] =
     let asm = Assembly.LoadFile asmpath
     let doc = XDocument.Load (pdir + @"\mobile.config")
     let info =
+        let title =
+            try
+                (asm.GetCustomAttributes(typeof<AssemblyProductAttribute>, true).[0] :?> AssemblyProductAttribute).Product
+            with _ -> Path.GetFileNameWithoutExtension asmpath
         let company =
             try
                 (asm.GetCustomAttributes(typeof<AssemblyCompanyAttribute>, true).[0] :?> AssemblyCompanyAttribute).Company
             with _ -> "Company"
         {
-            title =
-                try
-                    (asm.GetCustomAttributes(typeof<AssemblyProductAttribute>, true).[0] :?> AssemblyProductAttribute).Product
-                with _ -> Path.GetFileNameWithoutExtension asmpath
-            filename = Path.GetFileNameWithoutExtension asmpath
+            title = title
+            filename = title.Replace(" ", "")
             guid =  
                 try
                     (asm.GetCustomAttributes(typeof<GuidAttribute>, true).[0] :?> GuidAttribute).Value
@@ -305,10 +306,21 @@ let main [| pdir; dir; asmpath |] =
     for b, n, sdkV in androids do
         let env = Path.Combine(dir, "mobileBuildAndroid")
         let android =
-            System.Environment.GetEnvironmentVariable("ANDROID_HOME")
-            |> function
-                | null -> sprintf @"""%s\..\platforms\android-%s\android.jar""" (System.Environment.GetEnvironmentVariable("ANDROID_SDK")) sdkV
-                | sdk -> sprintf @"""%s\..\platforms\android-%s\android.jar""" sdk sdkV
+            let rec getFor sdkV =
+                let android =
+                    System.Environment.GetEnvironmentVariable("ANDROID_HOME")
+                    |> function
+                        | null -> sprintf @"%s\..\platforms\android-%s\android.jar" (System.Environment.GetEnvironmentVariable("ANDROID_SDK")) sdkV
+                        | sdk -> sprintf @"%s\..\platforms\android-%s\android.jar" sdk sdkV
+                if File.Exists android then
+                    android
+                else
+                    match int sdkV with
+                    | 0 ->
+                        eprintfn "android.jar was not found!"
+                        failwith "android.jar was not found!"
+                    | sdkV -> getFor (string (sdkV - 1))
+            sprintf @"""%s""" (getFor sdkV)
         do // clean target
             if Directory.Exists(Path.Combine(env, "target")) then
                 Directory.Delete(Path.Combine(env, "target"), true)
