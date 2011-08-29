@@ -6,7 +6,8 @@ open IntelliFactory.WebSharper.Html5
 open IntelliFactory.WebSharper.Json
 open IntelliFactory.WebSharper.Mobile
 
-/// Cannot be used through "Online" Sitelets. This is by-design.
+[<assembly: System.Web.UI.WebResource("android.websharperBridge.serverLocation.js", "text/javascript", PerformSubstitution = true)>]
+do ()
 type private AndroidServerLocationResource() =
     inherit Resources.BaseResource("android.websharperBridge.serverLocation.js")
 

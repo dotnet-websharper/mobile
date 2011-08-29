@@ -6,9 +6,9 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{aab5b3c8-d106-4ed6-b1a2-9db4cfb30d19}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <Name>WebSharperLibrary</Name>
+    <Name>IntelliFactory.WebSharper.Mobile.Default</Name>
     <RootNamespace>$(Name)</RootNamespace>
-    <AssemblyName>IntelliFactory.WebSharper.Mobile.Default</AssemblyName>
+    <AssemblyName>$(Name)</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FullDeploy>true</FullDeploy>
   </PropertyGroup>
@@ -39,7 +39,8 @@
     <Compile Include="assemblyinfo.fs" />
     <Compile Include="WebSharper.fs" />
   </ItemGroup>
-  <Import Project="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.FSharp.targets" />
+  <!--<Import Project="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.FSharp.targets" />-->
+  <Import Project="$(INTELLIFACTORY)/build\IntelliFactory.WebSharper.FSharp-2.3.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) $(ProjectDir)\..\bin\</PostBuildEvent>
   </PropertyGroup>

@@ -24,7 +24,13 @@ let runProc proc (args : seq<string>) (input : seq<string>) =
     for line in input do
         p.StandardInput.WriteLine line
     p.StandardOutput.ReadToEnd() |> ignore
-    stderr.WriteLine(p.StandardError.ReadToEnd())
+    
+    p.StandardError.ReadToEnd().Trim()
+    |> function
+        | "THIS TOOL IS DEPRECATED. See --help for more information."
+        | "Enter Passphrase for keystore:" -> ()
+        | s -> stderr.WriteLine s
+
     p.WaitForExit()
 
 let quote = sprintf @"""%s"""

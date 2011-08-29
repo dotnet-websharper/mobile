@@ -6,7 +6,8 @@ open IntelliFactory.WebSharper.Html5
 open IntelliFactory.WebSharper.Json
 open IntelliFactory.WebSharper.Mobile
 
-/// Cannot be used through "Online" Sitelets. This is by-design.
+[<assembly: System.Web.UI.WebResource("windows.phone.7.notify.js", "text/javascript", PerformSubstitution = true)>]
+do ()
 type private WP7NotifyResource() =
     inherit Resources.BaseResource("windows.phone.7.notify.js")
 
