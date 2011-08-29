@@ -5,6 +5,10 @@
         <conf name="build" />
         <conf name="default" />
     </configurations>
+	<publications>
+		<artifact name="ws_mobile" ext="exe" type="bin" conf="default"/>
+		
+	</publications>
     <dependencies>
         <dependency name="if-ws" rev="latest.integration" />
         <dependency name="if-json" rev="latest.integration" />
@@ -21,5 +25,6 @@
         <dependency name="if-ws-remoting" rev="latest.integration" conf="default" />
         <dependency name="if-ws-sitelets" rev="latest.integration" conf="default" />
         <dependency name="if-build-sitelets" rev="latest.integration" conf="default" />
+		<dependency name="dotnetzip" org="codeplex.com" rev="2.0.0" revConstraint="latest.integration" conf="default" branch="default"/>
     </dependencies>
 </ivy-module>

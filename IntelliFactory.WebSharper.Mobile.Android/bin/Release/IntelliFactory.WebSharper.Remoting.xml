@@ -7,25 +7,23 @@
  Implements late binding to Remoting methods.
 </summary>
 </member>
-<member name="M:IntelliFactory.WebSharper.Remoting.Client.Async(System.String,System.String,System.String,System.Object[])">
-<summary>
- Sends an asynchronous RPC message.
-</summary>
-</member>
-<member name="M:IntelliFactory.WebSharper.Remoting.Client.Call(System.String,System.String,System.String,System.Object[])">
-<summary>
- Sends a synchronous message to the server and waits for the reply.
-</summary>
-</member>
-<member name="M:IntelliFactory.WebSharper.Remoting.Client.Send(System.String,System.String,System.String,System.Object[])">
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Send(System.String,System.String,System.Object[])">
 <summary>
  Sends a message to the server without waiting for a reply.
 </summary>
 </member>
-<member name="M:IntelliFactory.WebSharper.Remoting.Client.Rpc(System.Boolean,System.String,System.String,System.Object[],Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Core.FSharpFunc`2{System.Boolean,Microsoft.FSharp.Core.FSharpFunc`2{System.Object,Microsoft.FSharp.Core.Unit}}})">
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Async(System.String,System.String,System.Object[])">
 <summary>
- Sends an RPC message.
+ Sends an asynchronous RPC message.
 </summary>
+</member>
+<member name="M:IntelliFactory.WebSharper.Remoting.Client.Call(System.String,System.String,System.Object[])">
+<summary>
+ Sends a synchronous message to the server and waits for the reply.
+</summary>
+</member>
+<member name="">
+
 </member>
 <member name="M:IntelliFactory.WebSharper.Remoting.Client.Parse(System.String)">
 <summary>
@@ -56,6 +54,55 @@
 <member name="T:IntelliFactory.WebSharper.Remoting.Client">
 <summary>
  Provides client-side (JavaScript) remoting facilities.
+</summary>
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="">
+
+</member>
+<member name="P:IntelliFactory.WebSharper.Remoting.Config.EndPoint">
+<summary>
+ The URL to the remoting endpoint. Defaults to the current URL:
+ the server that serves the application usually also handles
+ remoting requests. In mobile scenarios this property is set to
+ the deployed address of the server application.
+</summary>
+</member>
+<member name="T:IntelliFactory.WebSharper.Remoting.Config">
+<summary>
+ Provides static configuration.
 </summary>
 </member>
 <member name="P:IntelliFactory.WebSharper.Remoting.Extensions.Log">
@@ -275,14 +322,6 @@
 <member name="T:IntelliFactory.WebSharper.RemotingPervasives.IRpcHandlerFactory">
 <summary>
  Constructs RPC handlers.
-</summary>
-</member>
-<member name="">
-
-</member>
-<member name="P:IntelliFactory.WebSharper.RemotingPervasives.RpcAttribute.Url">
-<summary>
- The expression resolving to the URL to call.
 </summary>
 </member>
 <member name="">
