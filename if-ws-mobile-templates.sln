@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSharperMobileWP7EmptyApp
 		{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19} = {AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SampleApp_WebSharperMobile", "SampleApp_WebSharperMobile\SampleApp_WebSharperMobile.fsproj", "{300AFF85-9D50-407E-BE1B-B639B6ED3E47}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.Mobile.Default", "IntelliFactory.WebSharper.Mobile.Default\IntelliFactory.WebSharper.Mobile.Default.fsproj", "{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}"
 EndProject
 Global
@@ -70,14 +68,6 @@ Global
 		{33DD8D3C-1446-4CB7-955F-EC7EEAA78216}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{33DD8D3C-1446-4CB7-955F-EC7EEAA78216}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{33DD8D3C-1446-4CB7-955F-EC7EEAA78216}.Release|x86.ActiveCfg = Release|Any CPU
-		{300AFF85-9D50-407E-BE1B-B639B6ED3E47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{300AFF85-9D50-407E-BE1B-B639B6ED3E47}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{300AFF85-9D50-407E-BE1B-B639B6ED3E47}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{300AFF85-9D50-407E-BE1B-B639B6ED3E47}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{300AFF85-9D50-407E-BE1B-B639B6ED3E47}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{300AFF85-9D50-407E-BE1B-B639B6ED3E47}.Release|Any CPU.Build.0 = Release|Any CPU
-		{300AFF85-9D50-407E-BE1B-B639B6ED3E47}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{300AFF85-9D50-407E-BE1B-B639B6ED3E47}.Release|x86.ActiveCfg = Release|Any CPU
 		{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
