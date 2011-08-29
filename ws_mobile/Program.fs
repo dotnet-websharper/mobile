@@ -1,4 +1,5 @@
-﻿open System.Diagnostics
+﻿open System
+open System.Diagnostics
 open System.IO
 open System.Reflection
 open System.Runtime.InteropServices
@@ -25,11 +26,19 @@ let runProc proc (args : seq<string>) (input : seq<string>) =
         p.StandardInput.WriteLine line
     p.StandardOutput.ReadToEnd() |> ignore
     
-    p.StandardError.ReadToEnd().Trim()
-    |> function
-        | "THIS TOOL IS DEPRECATED. See --help for more information."
-        | "Enter Passphrase for keystore:" -> ()
-        | s -> stderr.WriteLine s
+    match p.StandardError.ReadToEnd().Trim() with
+    | "THIS TOOL IS DEPRECATED. See --help for more information."
+    | "Enter Passphrase for keystore:"
+    | "" -> ()
+    | s ->
+        let lines = s.Split([| '\r'; '\n' |], StringSplitOptions.RemoveEmptyEntries)
+        if lines.Length = 0 then ()
+        elif lines.Length = 1 then
+            eprintfn "%s : error 0000 : %s" proc lines.[0]
+        else
+            eprintfn "%s : error 0000 : %s" proc lines.[0]
+            for line in Seq.skip 1 lines do eprintfn "%s" line
+        stderr.WriteLine s
 
     p.WaitForExit()
 
@@ -305,7 +314,7 @@ let main [| pdir; dir; asmpath |] =
                 | sdk -> sdk
 
         if sdk = null then
-            eprintfn "Android SDK is not installed."
+            eprintfn "error 0000: Android SDK is not installed."
             -1
         else
 

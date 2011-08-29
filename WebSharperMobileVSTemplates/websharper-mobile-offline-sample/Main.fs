@@ -52,8 +52,8 @@ module SampleSite =
 
             [<JavaScript>]
             override this.Body =
-				Mobile.StorageStore "message" "Hello from page 2!"
-				Div [ Text "Now go to page 1!" ] :> _
+                Mobile.StorageStore "message" "Hello from page 2!"
+                Div [ Text "Now go to page 1!" ] :> _
 
     let Template title body : Content<Action> =
         PageContent <| fun context ->
