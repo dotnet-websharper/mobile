@@ -442,6 +442,8 @@ let main [| pdir; dir; asmpath |] =
         else
             serverLocationDispose()
             0
-    with e ->
-        eprintfn "ws_mobile : error 0000 : %s: %s @ %s" (e.GetType().FullName) e.Message e.StackTrace
-        -1
+    with
+        | Handled -> -1
+        | e ->
+            eprintfn "ws_mobile : error 0000 : %s: %s @ %s" (e.GetType().FullName) e.Message e.StackTrace
+            -1
