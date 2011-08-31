@@ -7,6 +7,8 @@ open System.Text
 open System.Xml.Linq
 open Ionic.Zip
 
+#nowarn "25"
+
 exception Handled
 
 let tfDelete file =
@@ -23,14 +25,18 @@ let runProc proc (args : seq<string>) (input : seq<string>) =
     si.RedirectStandardOutput <- true
     si.RedirectStandardError <- true
     p.StartInfo <- si
-    p.Start() |> ignore
+    try
+        p.Start() |> ignore
+    with _ ->
+        eprintfn "ws_mobile : error 0000 : Could not start process \"%s\"." proc
+        raise Handled
     for line in input do
         p.StandardInput.WriteLine line
     p.StandardOutput.ReadToEnd() |> ignore
     
     match p.StandardError.ReadToEnd().Trim() with
-    | l when l.StartsWith "THIS TOOL IS DEPRECATED. See --help for more information."
-                || l.StartsWith "Enter Passphrase for keystore:" -> ()
+    | "THIS TOOL IS DEPRECATED. See --help for more information."
+    | "Enter Passphrase for keystore:"
     | "" -> ()
     | s ->
         let lines = s.Split([| '\r'; '\n' |], StringSplitOptions.RemoveEmptyEntries)
@@ -159,7 +165,11 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
     try zip.RemoveEntry "fileListing.txt" with _ -> ()
     zip.AddFile (fileListing, "/") |> ignore
 
-    zip.Save(sprintf @"%s\%s.xap" dir info.filename)
+    try
+        zip.Save(sprintf @"%s\%s.xap" dir info.filename)
+    with _ ->
+        eprintfn "ws_mobile : error 0000 : Could not save \"%s.xap\". Please make sure it isn't being used by any other process." info.filename
+        raise Handled
 
     for f in disposeList do
         tfDelete f
@@ -413,7 +423,7 @@ let main [| pdir; dir; asmpath |] =
                             let passphrase = b.Element(XName.Get "passphrase").Value
                             let args =
                                 [
-                                "-verbose"
+                                "-digestalg SHA1 -sigalg MD5withRSA"
                                 "-keystore"
                                 Path.Combine (pdir, key) |> quote
                                 Path.Combine (dir, "__" + n) |> quote
@@ -425,7 +435,11 @@ let main [| pdir; dir; asmpath |] =
                         do // remove unaligned file
                             File.Delete (Path.Combine (dir, "__" + n))
                     else
-                        File.Move(Path.Combine (dir, "__" + n), Path.Combine (dir, n))
+                        try
+                            File.Move(Path.Combine (dir, "__" + n), Path.Combine (dir, n))
+                        with _ ->
+                            eprintfn "ws_mobile : error 0000 : Could not save \"%s\". Please make sure it isn't being used by any other process." n
+                            raise Handled
 
                 do // delete building env from html
                     Directory.Delete(Path.Combine(dir, "mobileBuildAndroid"), true)
