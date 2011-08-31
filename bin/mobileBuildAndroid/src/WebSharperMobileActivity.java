@@ -1,3 +1,17 @@
+// $begin{copyright}
+//
+// This file is confidential and proprietary.
+//
+// Copyright (c) IntelliFactory, 2004-2011.
+//
+// All rights reserved.  Reproduction or use in whole or in part is
+// prohibited without the written consent of the copyright holder.
+//-----------------------------------------------------------------
+// $end{copyright}
+//
+// Do not change any of the contents unless you are absolutely certain you know what you are doing.
+//
+
 package com.$(AUTHOR).$(SAFETITLE);
 
 import java.io.InputStream;
@@ -39,14 +53,18 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		super.onCreate(savedInstanceState);
 		env = this;
 		wv = new WebView(this);
+		// enable JavaScript
 		wv.getSettings().setJavaScriptEnabled(true);
+		// enable HTML5 LocalStorage
 		wv.getSettings().setDomStorageEnabled(true);
 		bridge = new WebSharperBridge();
 		wv.loadUrl("file:///android_asset/www/index.html");
+		// in JavaScript, websharperBridge is the Java bridge object (of type WebSharperBridge)
 		wv.addJavascriptInterface(bridge, "websharperBridge");
 		setContentView(wv);
 		try
 		{
+			// request acceleration updates
 			myManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 			List<Sensor> sensors = myManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
 			if(sensors.size() > 0)
@@ -62,6 +80,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 	@Override
 	public void onPause()
 	{
+		// release resources
 		if (cameraNeeded && cmr != null)
 			cmr.release();
 		if (accSensor != null)
@@ -73,6 +92,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 	@Override
 	public void onResume()
 	{
+		// reacquire resources 
 		super.onResume();
 		bridge.resume();
 		if (accSensor != null)
@@ -95,13 +115,14 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		{
 			try
 			{
+				// request location updates
 				LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
 				Criteria locationCriteria = new Criteria();
 				locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
 				locationManager.requestLocationUpdates(locationManager.getBestProvider(locationCriteria, true), 100, 0, this);
 
-				lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude(); // or GPS?
-				lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude(); // or GPS?
+				lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
+				lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
 			}
 			catch (Exception e)
 			{ }
@@ -113,6 +134,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			lng = location.getLongitude();
 		}
 
+		// this function is used for XHR, so JavaScript will know where is the RPC server
 		public String serverLocation()
 		{
 			try
@@ -148,6 +170,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 				cmr = Camera.open();
 				Camera.Parameters params = cmr.getParameters();
 				cmr.setParameters(params);
+				// the surface is the graphical interface for the camera, since Android SDK does not supply a default one
 				final SurfaceView sv = new SurfaceView(env);
 				sv.setOnLongClickListener(new View.OnLongClickListener() {
 					@Override
@@ -213,6 +236,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			});
 		}
 
+		// this function prints to logcat
 		public void log(String msg)
 		{
 			Log.d("DebugJS", msg);
