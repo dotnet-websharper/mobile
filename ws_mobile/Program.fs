@@ -7,6 +7,8 @@ open System.Text
 open System.Xml.Linq
 open Ionic.Zip
 
+exception Handled
+
 let tfDelete file =
     if File.Exists file then File.Delete file
 
@@ -39,7 +41,7 @@ let runProc proc (args : seq<string>) (input : seq<string>) =
             eprintfn "%s : error 0000 : %s" proc lines.[0]
             for line in Seq.skip 1 lines do eprintfn "%s" line
         
-        if lines.Length > 1 then failwith ""
+        if lines.Length > 1 then raise Handled
 
     p.WaitForExit()
 
@@ -344,8 +346,8 @@ let main [| pdir; dir; asmpath |] =
                             else
                                 match int sdkV with
                                 | 0 ->
-                                    eprintfn "android.jar was not found!"
-                                    failwith "android.jar was not found!"
+                                    eprintfn "ws_mobile : error 0000 : android.jar was not found!"
+                                    raise Handled
                                 | sdkV -> getFor (string (sdkV - 1))
                         sprintf @"""%s""" (getFor sdkV)
                     do // clean target
@@ -440,4 +442,6 @@ let main [| pdir; dir; asmpath |] =
         else
             serverLocationDispose()
             0
-    with _ -> -1
+    with e ->
+        eprintfn "ws_mobile : error 0000 : %s: %s @ %s" (e.GetType().FullName) e.Message e.StackTrace
+        -1
