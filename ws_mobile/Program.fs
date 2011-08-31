@@ -295,19 +295,10 @@ let main [| pdir; dir; asmpath |] =
             |> File.Delete
 
         let androids =
-        
-            let androids =
-                androidBuilds
-                |> List.map (fun b ->
-                            let output = b.Element(XName.Get "outputPackage").Value
-                            b, output)
-        
-            androids
-            |> List.choose (fun (b, n) ->
-                            if b.Elements(XName.Get "signAndroid") |> Seq.isEmpty |> not then
-                                Some (b, n, b.Element(XName.Get "sdkVersion").Value)
-                            else
-                                None)
+            androidBuilds
+            |> List.map (fun b ->
+                        let output = b.Element(XName.Get "outputPackage").Value
+                        b, output, b.Element(XName.Get "sdkVersion").Value)
 
         if List.length androids > 0 then
 
@@ -415,23 +406,26 @@ let main [| pdir; dir; asmpath |] =
                     do // actually fill contents (those are the www things)
                         //System.Threading.Thread.Sleep 15000
                         createForAndroid (Path.Combine (dir, "__" + n)) dir name
-                    do // *jarsigner*
-                        let key = b.Element(XName.Get "key").Value
-                        let alias = b.Element(XName.Get "alias").Value
-                        let passphrase = b.Element(XName.Get "passphrase").Value
-                        let args =
-                            [
-                            "-verbose"
-                            "-keystore"
-                            Path.Combine (pdir, key) |> quote
-                            Path.Combine (dir, "__" + n) |> quote
-                            alias
-                            ]
-                        runProc "jarsigner.exe" args [passphrase]
-                    do // zipalign -f 4 ___.apk _.apk
-                        runProc "zipalign.exe" [ "-f 4"; Path.Combine (dir, "__" + n) |> quote; Path.Combine (dir, n) |> quote ] []
-                    do // remove unaligned file
-                        File.Delete (Path.Combine (dir, "__" + n))
+                    if b.Elements(XName.Get "signAndroid") |> Seq.isEmpty |> not then
+                        do // *jarsigner*
+                            let key = b.Element(XName.Get "key").Value
+                            let alias = b.Element(XName.Get "alias").Value
+                            let passphrase = b.Element(XName.Get "passphrase").Value
+                            let args =
+                                [
+                                "-verbose"
+                                "-keystore"
+                                Path.Combine (pdir, key) |> quote
+                                Path.Combine (dir, "__" + n) |> quote
+                                alias
+                                ]
+                            runProc "jarsigner.exe" args [passphrase]
+                        do // zipalign -f 4 ___.apk _.apk
+                            runProc "zipalign.exe" [ "-f 4"; Path.Combine (dir, "__" + n) |> quote; Path.Combine (dir, n) |> quote ] []
+                        do // remove unaligned file
+                            File.Delete (Path.Combine (dir, "__" + n))
+                    else
+                        File.Move(Path.Combine (dir, "__" + n), Path.Combine (dir, n))
 
                 do // delete building env from html
                     Directory.Delete(Path.Combine(dir, "mobileBuildAndroid"), true)
