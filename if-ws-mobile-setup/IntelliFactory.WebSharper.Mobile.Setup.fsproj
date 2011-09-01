@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{734f6237-fdeb-4bdf-93e1-69b818bc3c76}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <Name>IntelliFactory.WebSharper.Mobile.Setup</Name>
+    <RootNamespace>$(Name)</RootNamespace>
+    <AssemblyName>$(Name)</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TemplateDirectory>bin\Release\</TemplateDirectory>
+    <ProgramFiles32>$(MSBuildExtensionsPath32)\..</ProgramFiles32>
+    <AdvInstLocation>"$(ProgramFiles32)\Caphyon\Advanced Installer 8.4\bin\x86\AdvancedInstaller.com"</AdvInstLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <Tailcalls>false</Tailcalls>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>3</WarningLevel>
+    <DocumentationFile>bin\Debug\$(Name).XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <Tailcalls>true</Tailcalls>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <WarningLevel>3</WarningLevel>
+    <DocumentationFile>bin\Release\$(Name).XML</DocumentationFile>
+  </PropertyGroup>
+  <Import Project="$(INTELLIFACTORY)\build\IntelliFactory.FSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks" />
+  <ItemGroup>
+    <Compile Include="Setup.fs" />
+    <None Include="setup.aip" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\if-ws-mobile-android\IntelliFactory.WebSharper.Mobile.Android.fsproj">
+      <Name>IntelliFactory.WebSharper.Mobile.Android</Name>
+      <Project>{82897a8e-a8a9-4a4b-be84-3e11cc88fa50}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\if-ws-mobile-wp7\IntelliFactory.WebSharper.Mobile.WP7.fsproj">
+      <Name>IntelliFactory.WebSharper.Mobile.WP7</Name>
+      <Project>{3fd8f6f7-8ce6-4d96-812d-920916e95bd5}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\if-ws-mobile\IntelliFactory.WebSharper.Mobile.Default.fsproj">
+      <Name>IntelliFactory.WebSharper.Mobile.Default</Name>
+      <Project>{aab5b3c8-d106-4ed6-b1a2-9db4cfb30d19}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\wp7-template\WebSharperMobileWP7EmptyApp.csproj">
+      <Name>WebSharperMobileWP7EmptyApp</Name>
+      <Project>{33dd8d3c-1446-4cb7-955f-ec7eeaa78216}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\ws-mobile\ws_mobile.fsproj">
+      <Name>ws_mobile</Name>
+      <Project>{d5e7fc2d-d0f8-48d4-bff8-1c4cc672acf5}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+  <!-- Packages WebSharper templates into ZIP archives ready for distribution. -->
+  <Target Name="PackageTemplates">
+    <ItemGroup>
+      <Templates Include="..\if-ws-mobile-templates\*\*.vstemplate" />
+    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates"
+             Properties="Template=%(Templates.Filename);DependentBuild=yes" />
+  </Target>
+
+  <Target Name="_PackTemplates">
+    <PropertyGroup>
+      <SourceDirectory>..\if-ws-mobile-templates\$(Template)</SourceDirectory>
+    </PropertyGroup>
+    <ItemGroup>
+      <GeneratedFiles Include="$(SourceDirectory)\**\bin\**\*.*" />
+      <GeneratedFiles Include="$(SourceDirectory)\**\obj\**\*.*" />
+      <GeneratedFiles Include="$(SourceDirectory)\**\Scripts\*.*" />
+      <GeneratedFiles Include="$(SourceDirectory)\**\*.suo" />
+      <GeneratedFiles Include="$(SourceDirectory)\**\*.user" />
+      <VersionControlFiles Include="$(SourceDirectory)\**\.svn\**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(GeneratedFiles)" />
+    <ItemGroup>
+      <InstalledFiles Include="$(SourceDirectory)\**\*.*"
+                      Exclude="bin;@(VersionControlFiles)" />
+    </ItemGroup>
+    <MakeDir Directories="$(TemplateDirectory)" />
+    <MSBuild.ExtensionPack.Compression.DNZip
+        TaskAction="Create"
+        CompressFiles="@(InstalledFiles)"
+        RemoveRoot="$(SourceDirectory)"
+        ZipFileName="$(TemplateDirectory)\$(Template).zip" />
+  </Target>
+
+  <Target Name="CreateInstallerModule">
+    <ReadLinesFromFile File="$(MSBuildProjectDirectory)/../.build/tag" >
+      <Output TaskParameter="Lines" ItemName="TagLines"/>
+    </ReadLinesFromFile>
+    <Exec Command="$(AdvInstLocation) /Edit setup.aip /SetVersion @(TagLines)" />
+    <Exec Command="$(AdvInstLocation) /Build setup.aip" />
+  </Target>
+
+  <Target Name="AfterBuild" 
+          DependsOnTargets="PackageTemplates;CreateInstallerModule" />
+
+</Project>

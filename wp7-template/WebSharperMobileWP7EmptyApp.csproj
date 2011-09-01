@@ -20,7 +20,7 @@
     </SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>WebSharperApp.xap</XapFilename>
+    <XapFilename>mobileWP7.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>WebSharperMobileWP7EmptyApp.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>

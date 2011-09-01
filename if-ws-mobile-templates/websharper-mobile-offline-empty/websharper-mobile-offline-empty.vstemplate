@@ -9,7 +9,7 @@
   <TemplateContent>
     <Project File="websharper-mobile-offline-empty.fsproj">
       <ProjectItem>mobile.config</ProjectItem>
-	  <ProjectItem>assemblyInfo.fs</ProjectItem>
+      <ProjectItem>assemblyInfo.fs</ProjectItem>
       <ProjectItem>Main.fs</ProjectItem>
     </Project>
   </TemplateContent>
