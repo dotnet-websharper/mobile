@@ -62,29 +62,28 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
         // in JavaScript, websharperBridge is the Java bridge object (of type WebSharperBridge)
         wv.addJavascriptInterface(bridge, "websharperBridge");
         setContentView(wv);
-        try
-            {
-                // request acceleration updates
-                myManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-                List<Sensor> sensors = myManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-                if(sensors.size() > 0)
-                    {
-                        accSensor = sensors.get(0);
-                        myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
-                    }
+        try {
+            // request acceleration updates
+            myManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+            List<Sensor> sensors = myManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+            if(sensors.size() > 0) {
+                accSensor = sensors.get(0);
+                myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
             }
-        catch (Exception e)
-            { }
+        } catch (Exception e) { 
+        }
     }
 
     @Override
     public void onPause()
     {
         // release resources
-        if (cameraNeeded && cmr != null)
+        if (cameraNeeded && cmr != null) {
             cmr.release();
-        if (accSensor != null)
+        }
+        if (accSensor != null) {
             myManager.unregisterListener(this);
+        }
         bridge.pause();
         super.onPause();
     }
@@ -95,10 +94,12 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
         // reacquire resources 
         super.onResume();
         bridge.resume();
-        if (accSensor != null)
+        if (accSensor != null) {
             myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
-        if (cameraNeeded)
+        }
+        if (cameraNeeded) {
             cmr = Camera.open();
+        }
     }
 
     class WebSharperBridge implements LocationListener
@@ -113,19 +114,17 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 
         public void resume()
         {
-            try
-                {
-                    // request location updates
-                    LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
-                    Criteria locationCriteria = new Criteria();
-                    locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
-                    locationManager.requestLocationUpdates(locationManager.getBestProvider(locationCriteria, true), 100, 0, this);
+            try {
+                // request location updates
+                LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
+                Criteria locationCriteria = new Criteria();
+                locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
+                locationManager.requestLocationUpdates(locationManager.getBestProvider(locationCriteria, true), 100, 0, this);
 
-                    lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
-                    lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
-                }
-            catch (Exception e)
-                { }
+                lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
+                lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
+            } catch (Exception e) {
+            }
         }
 
         @Override
@@ -138,20 +137,17 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
         // this function is used for XHR, so JavaScript will know where is the RPC server
         public String serverLocation()
         {
-            try
-                {
-                    InputStream is = getAssets().open("www/serverLocation.txt");
-                    int size = is.available();
-                    byte[] buffer = new byte[size];
-                    is.read(buffer);
-                    is.close();
-                    String result = new String(buffer);
-                    return "({ $ : 1, $0 : \"" + result + "\" })";
-                }
-            catch (Exception e)
-                {
-                    return "({ $ : 0 })";
-                }
+            try {
+                InputStream is = getAssets().open("www/serverLocation.txt");
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                is.read(buffer);
+                is.close();
+                String result = new String(buffer);
+                return "({ $ : 1, $0 : \"" + result + "\" })";
+            } catch (Exception e) {
+                return "({ $ : 0 })";
+            }
         }
 
         public String location()
@@ -166,22 +162,20 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 
         public void camera(int maxHeight, int maxWidth, final String callback, final String fail)
         {
-            try
-                {
-                    cmr = Camera.open();
-                    Camera.Parameters params = cmr.getParameters();
-                    cmr.setParameters(params);
-                    // the surface is the graphical interface for the camera, since Android SDK does not supply a default one
-                    final SurfaceView sv = new SurfaceView(env);
-                    sv.setOnLongClickListener(new View.OnLongClickListener() {
-                            @Override
-                            public boolean onLongClick(View v)
-                            {
-                                Camera.PictureCallback jpegCallback=new Camera.PictureCallback() { 
-
-                                        public void onPictureTaken(byte[] data, Camera camera) {
-                                            StringBuffer sb = new StringBuffer(data.length * 2);
-                                            for (int i = 0; i < data.length; i++) {
+            try {
+                cmr = Camera.open();
+                Camera.Parameters params = cmr.getParameters();
+                cmr.setParameters(params);
+                // the surface is the graphical interface for the camera, since Android SDK does not supply a default one
+                final SurfaceView sv = new SurfaceView(env);
+                sv.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v)
+                        {
+                            Camera.PictureCallback jpegCallback=new Camera.PictureCallback() {                                     
+                                    public void onPictureTaken(byte[] data, Camera camera) {
+                                        StringBuffer sb = new StringBuffer(data.length * 2);
+                                        for (int i = 0; i < data.length; i++) {
                                                 int v = data[i] & 0xff;
                                                 if (v < 16) {
                                                     sb.append('0');
@@ -212,13 +206,11 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                     cmr.startPreview();
                     Toast toast = Toast.makeText(env, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
                     toast.show();
-                }
-            catch (Exception e)
-                {
-                    wv.loadUrl("javascript:" + fail + ".call(null,\"" + e.getMessage() + "\")");
-                }
+            } catch (Exception e) {
+                wv.loadUrl("javascript:" + fail + ".call(null,\"" + e.getMessage() + "\")");
+            }
         }
-
+        
         public void alert(final String msg)
         {
             env.runOnUiThread(new Runnable() {
@@ -246,7 +238,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
         @Override
         public void onProviderDisabled(String arg0) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -258,7 +249,6 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
         @Override
         public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
             // TODO Auto-generated method stub
-
         }
     }
 
