@@ -1,5 +1,12 @@
 syntax: regexp
 
-(bin|obj)
+.+bin
+^bin.+dll$
+^bin.+exe$
+^bin.+xap$
+^bin.+targets$
+(obj|Bin|Obj)
 ^.build
 .suo$
+#
+\~

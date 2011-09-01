@@ -1,0 +1,38 @@
+<!--
+$begin{copyright}
+
+This file is confidential and proprietary.
+
+Copyright (c) IntelliFactory, 2004-2011.
+
+All rights reserved.  Reproduction or use in whole or in part is
+prohibited without the written consent of the copyright holder.
+----------------------------------------------------------------
+$end{copyright}
+
+Do not change any of the contents unless you are absolutely certain you know what you are doing.
+-->
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      android:versionCode="1"
+      android:versionName="1.0"
+	  package="com.$(AUTHOR).$(SAFETITLE)">
+    <uses-sdk android:minSdkVersion="$(SDKVERSION)"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.CAMERA"></uses-permission>
+    <uses-feature android:name="android.hardware.camera"></uses-feature>
+    <uses-feature android:name="android.hardware.camera.autofocus"></uses-feature>
+
+    <application android:label="$(TITLE)" android:icon="@drawable/icon">
+        <activity android:name=".WebSharperMobileActivity"
+                  android:label="$(TITLE)">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+</manifest>

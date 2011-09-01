@@ -1,54 +1,183 @@
-﻿// zipalign -f 4 _.apk _.apk ?
-
+﻿open System
 open System.Diagnostics
 open System.IO
+open System.Reflection
+open System.Runtime.InteropServices
 open System.Text
 open System.Xml.Linq
 open Ionic.Zip
 
-(*let createForSymbian dir name =
-    let output = sprintf "%s\\%s.wgz" dir name
+#nowarn "25"
 
-    let directStream input output =
-        use readStream : Stream = input
-        use writeStream : Stream = output
-        let length = 256
-        let buffer = Array.create length 0uy
-        let mutable bytesRead = readStream.Read(buffer, 0, length)
-        while bytesRead > 0 do
-            writeStream.Write(buffer, 0, bytesRead)
-            bytesRead <- readStream.Read(buffer, 0, length)
+exception Handled
 
-    let streamToString input =
-        use readStream : Stream = input
-        let length = 256
-        let buffer = Array.create length 0uy
-        let bytesRead = ref <| readStream.Read(buffer, 0, length)
-        [|
-            while !bytesRead > 0 do
-                yield! buffer.[ 0 .. !bytesRead - 1 ]
-                bytesRead := readStream.Read(buffer, 0, length)
-        |]
-        |> Array.map char
-        |> fun x -> System.String x
+let tfDelete file =
+    if File.Exists file then File.Delete file
 
-    let read = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("sym-app.wgz.zip")
-    let write = File.Create output
-
-    directStream read write
-
-    let zip = new ZipFile(output)
+let runProc proc (args : seq<string>) (input : seq<string>) =
+    use p = new Process()
+    let si = ProcessStartInfo()
+    si.Arguments <- System.String.Join(" ", args)
+    si.CreateNoWindow <- true
+    si.UseShellExecute <- false
+    si.FileName <- proc
+    si.RedirectStandardInput <- true
+    si.RedirectStandardOutput <- true
+    si.RedirectStandardError <- true
+    p.StartInfo <- si
+    try
+        p.Start() |> ignore
+    with _ ->
+        eprintfn "ws_mobile : error 0000 : Could not start process \"%s\"." proc
+        raise Handled
+    for line in input do
+        p.StandardInput.WriteLine line
+    p.StandardOutput.ReadToEnd() |> ignore
     
+    match p.StandardError.ReadToEnd().Trim() with
+    | "THIS TOOL IS DEPRECATED. See --help for more information."
+    | "Enter Passphrase for keystore:"
+    | "" -> ()
+    | s ->
+        let lines = s.Split([| '\r'; '\n' |], StringSplitOptions.RemoveEmptyEntries)
+        if lines.Length = 0 then ()
+        elif lines.Length = 1 then
+            eprintfn "%s : error 0000 : %s" proc lines.[0]
+        else
+            eprintfn "%s : error 0000 : %s" proc lines.[0]
+            for line in Seq.skip 1 lines do eprintfn "%s" line
+        
+        if lines.Length > 1 then raise Handled
+
+    p.WaitForExit()
+
+let quote = sprintf @"""%s"""
+
+type AssemblyInfo =
+    {
+        title : string
+        filename : string
+        guid : string
+        version : string
+        isGame : bool
+        author : string
+        publisher : string
+        description : string
+        icon : string option
+        background : string option
+        splashscreen : string option
+    }
+    member this.Genre =
+        if this.isGame then
+            "apps.game"
+        else
+            "apps.normal"
+
+let collectFiles dir =
+    let rec collectFilesUtil dir =
+        [
+            yield!
+                Directory.GetFiles(dir)
+                |> Array.map Choice1Of2
+
+            let dirs = Directory.GetDirectories(dir)
+
+            yield! dirs |> Array.map Choice2Of2
+
+            for d in dirs do
+                yield! collectFilesUtil d
+        ]
+    collectFilesUtil dir
+    |> List.map (function
+                    | Choice1Of2 s -> Choice1Of2 s.[ dir.Length .. ]
+                    | Choice2Of2 s -> Choice2Of2 s.[ dir.Length .. ])
+    |> List.partition (function Choice1Of2 _ -> true | _ -> false)
+    |> fun (a, b) ->
+        let f = List.map (fun (Choice1Of2 s | Choice2Of2 s) -> s)
+        f a, f b
+
+let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
+
+    let disposeList = System.Collections.Generic.List<string>()
+
+    let zip = new ZipFile(template)
+
+    do
+        zip.Entries
+        |> Seq.filter (fun e -> e.FileName.StartsWith "www")
+        |> fun e -> zip.RemoveEntries (ResizeArray e)
+
+    match info.icon with
+    | Some icon ->
+        zip.RemoveEntry "ApplicationIcon.png"
+        zip.AddFile (Path.Combine (pdir, icon), "/") |> ignore
+    | _ -> ()
+
+    match info.background with
+    | Some background ->
+        zip.RemoveEntry "Background.png"
+        zip.AddFile (Path.Combine (pdir, background), "/") |> ignore
+    | _ -> ()
+
+    match info.splashscreen with
+    | Some splashscreen ->
+        zip.RemoveEntry "SplashScreenImage.jpg"
+        zip.AddFile (Path.Combine (pdir, splashscreen), "/") |> ignore
+    | _ -> ()
+
+    do
+        let man = Path.Combine (pdir, "WMAppManifest.xml")
+        zip.RemoveEntry "WMAppManifest.xml"
+        let wmam = File.ReadAllText "WMAppManifest.xml"
+        let wmam =
+            wmam.Replace("$(TITLE)", info.title)
+                .Replace("$(SAFETITLE)", info.title.Replace(" ", ""))
+                .Replace("$(GUID)", info.guid)
+                .Replace("$(VERSION)", info.version)
+                .Replace("$(GENRE)", info.Genre)
+                .Replace("$(AUTHOR)", info.author)
+                .Replace("$(PUBLISHER)", info.publisher)
+                .Replace("$(DESCRIPTION)", info.description)
+        File.WriteAllText (man, wmam)
+        zip.AddFile (man, "/") |> ignore
+        disposeList.Add man
+
     zip.AddDirectory(dir, "www") |> ignore
 
-    let read = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Info.plist")
-    let plist = (streamToString read).Replace("$APPNAME$", name)
-    zip.AddEntry("www/Info.plist", plist) |> ignore
+    let fileListing = dir + @"\fileListing.txt"
 
-    zip.Save output*)
+    let list = File.CreateText fileListing
+    using list (fun list ->
+
+        let files, dirs = collectFiles dir
+    
+        for d in dirs do
+            list.WriteLine d
+
+        list.WriteLine()
+
+        for f in files do
+            if f <> "\\fileListing.txt" then
+                list.WriteLine f
+
+        list.WriteLine())
+
+    try zip.RemoveEntry "fileListing.txt" with _ -> ()
+    zip.AddFile (fileListing, "/") |> ignore
+
+    try
+        zip.Save(sprintf @"%s\%s.xap" dir info.filename)
+    with _ ->
+        eprintfn "ws_mobile : error 0000 : Could not save \"%s.xap\". Please make sure it isn't being used by any other process." info.filename
+        raise Handled
+
+    for f in disposeList do
+        tfDelete f
+    
+    fileListing
 
 let createForAndroid (template : string) dir name =
-    let zip = new ZipFile(template)
+    use zip = new ZipFile(template)
     
     let sourceFiles =
         zip.Entries
@@ -57,75 +186,272 @@ let createForAndroid (template : string) dir name =
 
     zip.AddDirectory(dir, "assets/www") |> ignore
 
-    //if symbian then
-    //    zip.RemoveEntry (sprintf "%s\\%s.wgz" dir name)
-
-    zip
-
-[<EntryPoint>]
-let main [| pdir; dir; name |] =
-    let pdir =
-        if pdir.[pdir.Length - 1] = '.' then
-            pdir.[0 .. pdir.Length - 2]
-        else pdir
-    let dir =
-        if dir.[dir.Length - 1] = '.' then
-            dir.[0 .. dir.Length - 2]
-        else dir
-    let name = name.[0 .. name.Length - 5]
-
-    try File.Delete (sprintf "%s\\%s.wgz" dir name)
+    try
+        zip.RemoveEntry (sprintf @"assets\www\%s.xap" name)
     with _ -> ()
 
-    Directory.GetFiles(dir)
-    |> Seq.filter (fun e -> e.EndsWith(".apk"))
-    |> Seq.iter (fun name -> File.Delete name)
+    for e in List.ofSeq zip.EntryFileNames do
+        let startsWith' (this : string) (prefix : string) = this.Length >= prefix.Length && this.Replace('\\', '/').[ 0 .. prefix.Length - 1 ] = prefix
+        let onlyTwo = lazy (
+            e
+            |> String.collect (function
+                            | '\\'
+                            | '/' -> " "
+                            | _ -> "")
+            |> String.length
+            |> (=) 2
+            )
+        if startsWith' e "assets/www/mobileBuildAndroid" || (e.EndsWith ".apk" && startsWith' e "assets/www" && onlyTwo.Value) then
+            zip.RemoveEntry e
 
-    let doc = XDocument.Load (pdir + "\\mobile.config")
+    zip.Save()
+
+[<EntryPoint>]
+let main [| pdir; dir; asmpath |] =
+    try
+        let stripDot (this : string) =
+            if this.[this.Length - 1] = '.' then
+                this.[0 .. this.Length - 2]
+            else this
+        let [ pdir; dir; asmpath ] = [ pdir; dir; asmpath ] |> List.map stripDot
+        let asm = Assembly.LoadFile asmpath
+        let doc = XDocument.Load (pdir + @"\mobile.config")
+        let info =
+            let title =
+                try
+                    (asm.GetCustomAttributes(typeof<AssemblyProductAttribute>, true).[0] :?> AssemblyProductAttribute).Product
+                with _ -> Path.GetFileNameWithoutExtension asmpath
+            let company =
+                try
+                    (asm.GetCustomAttributes(typeof<AssemblyCompanyAttribute>, true).[0] :?> AssemblyCompanyAttribute).Company
+                with _ -> "Company"
+            {
+                title = title
+                filename = title.Replace(" ", "")
+                guid =  
+                    try
+                        (asm.GetCustomAttributes(typeof<GuidAttribute>, true).[0] :?> GuidAttribute).Value
+                    with _ -> System.Guid.NewGuid().ToString()
+                version =
+                    try
+                        (asm.GetCustomAttributes(typeof<AssemblyFileVersionAttribute>, true).[0] :?> AssemblyFileVersionAttribute).Version
+                    with _ -> "0.0.0.0"
+                isGame =
+                    try
+                        Seq.isEmpty <| doc . Element(XName.Get "configuration")
+                                            .Element(XName.Get "wp7")
+                                            .Elements(XName.Get "isgame")
+                        |> not
+                    with _ -> false
+                author = company
+                publisher = company
+                description =
+                    try
+                        (asm.GetCustomAttributes(typeof<AssemblyDescriptionAttribute>, true).[0] :?> AssemblyDescriptionAttribute).Description
+                    with _ -> ""
+                icon =
+                    try
+                        doc .Element(XName.Get "configuration")
+                            .Element(XName.Get "wp7")
+                            .Element(XName.Get "icon")
+                            .Value
+                        |> Some
+                    with _ -> None
+                background =
+                    try
+                        doc .Element(XName.Get "configuration")
+                            .Element(XName.Get "wp7")
+                            .Element(XName.Get "background")
+                            .Value
+                        |> Some
+                    with _ -> None
+                splashscreen =
+                    try
+                        doc .Element(XName.Get "configuration")
+                            .Element(XName.Get "wp7")
+                            .Element(XName.Get "splashscreen")
+                            .Value
+                        |> Some
+                    with _ -> None
+            }
+        let name = info.filename
+
+        tfDelete (sprintf @"%s\%s.xap" dir name)
+
+        Directory.GetFiles(dir, "*.apk")
+        |> Array.iter (fun name -> tfDelete name)
     
-    let androidBuilds =
-        doc .Element(XName.Get "configuration")
-            .Element(XName.Get "androidBuilds")
-            .Elements(XName.Get "build")
-        |> List.ofSeq
+        let androidBuilds =
+            try
+                doc .Element(XName.Get "configuration")
+                    .Element(XName.Get "androidBuilds")
+                    .Elements(XName.Get "build")
+                |> List.ofSeq
+            with _ -> []
 
-    //let symbian = doc.Element(XName.Get "configuration").Elements(XName.Get "symbian") |> Seq.isEmpty |> not
-    //if symbian then
-    //    createForSymbian dir name
+        let serverLocationDispose =
+            try
+                let elem = doc.Element(XName.Get "configuration").Element(XName.Get "serverLocation")
+                let serverLocation = dir + @"\serverLocation.txt"
+                File.WriteAllText(serverLocation, elem.Value)
+                fun _ -> tfDelete serverLocation
+            with _ ->
+                ignore
 
-    let androids =
-        
+        let wp7Elems = doc.Element(XName.Get "configuration").Elements(XName.Get "wp7")
+        let wp7 = Seq.length wp7Elems = 1
+        if wp7 then
+            createForWP7 @"mobileWP7.xap" pdir dir info
+            |> File.Delete
+
         let androids =
             androidBuilds
             |> List.map (fun b ->
-                        let template = b.Element(XName.Get "templateApk").Value
-                        b, template, createForAndroid (sprintf "%s\\%s" pdir template) dir name)
-        
-        androids
-        |> List.choose (fun (b, n, z) ->
-                        use z = z
-                        z.Save(sprintf "%s\\%s" dir n)
-                        if b.Elements(XName.Get "signAndroid") |> Seq.isEmpty |> not then
-                            Some (b, n)
-                        else
-                            None)
+                        let output = b.Element(XName.Get "outputPackage").Value
+                        b, output, b.Element(XName.Get "sdkVersion").Value)
 
-    for b, n in androids do
-        let key = b.Element(XName.Get "key").Value
-        let alias = b.Element(XName.Get "alias").Value
-        let passphrase = b.Element(XName.Get "passphrase").Value
-        use p = new Process()
-        let si = ProcessStartInfo()
-        si.Arguments <- sprintf "-verbose -keystore \"%s\\%s\" \"%s\\%s\" %s" pdir key dir n alias
-        si.CreateNoWindow <- true
-        si.UseShellExecute <- false
-        si.FileName <- "jarsigner.exe"
-        si.RedirectStandardInput <- true
-        si.RedirectStandardOutput <- true
-        si.RedirectStandardError <- true
-        p.StartInfo <- si
-        p.Start() |> ignore
-        p.StandardInput.WriteLine(passphrase)
-        p.StandardOutput.ReadToEnd() |> ignore
+        if List.length androids > 0 then
 
-    0
+            let sdk =
+                System.Environment.GetEnvironmentVariable("ANDROID_HOME")
+                |> function
+                    | null -> System.Environment.GetEnvironmentVariable("ANDROID_SDK")
+                    | sdk -> sdk
+
+            if sdk = null then
+                eprintfn "error 0000: Android SDK is not installed."
+                -1
+            else
+
+                // solves error when build folder already exists
+                if Directory.Exists(Path.Combine(dir, "mobileBuildAndroid")) then
+                    Directory.Delete(Path.Combine(dir, "mobileBuildAndroid"), true)
+
+                do // create build env in html
+                    let args =
+                        [
+                        "mobileBuildAndroid"
+                        Path.Combine(dir, "mobileBuildAndroid") |> quote
+                        "/E /C /I /Q /Y"
+                        ]
+                    runProc "xcopy.exe" args []
+
+                for b, n, sdkV in androids do
+                    let env = Path.Combine(dir, "mobileBuildAndroid")
+                    let android =
+                        let rec getFor sdkV =
+                            let android =
+                                sprintf @"%s\..\platforms\android-%s\android.jar" sdk sdkV
+                            if File.Exists android then
+                                android
+                            else
+                                match int sdkV with
+                                | 0 ->
+                                    eprintfn "ws_mobile : error 0000 : android.jar was not found!"
+                                    raise Handled
+                                | sdkV -> getFor (string (sdkV - 1))
+                        sprintf @"""%s""" (getFor sdkV)
+                    do // clean target
+                        if Directory.Exists(Path.Combine(env, "target")) then
+                            Directory.Delete(Path.Combine(env, "target"), true)
+                    do // manifest
+                        let man = Path.Combine(env, "AndroidManifest.xml")
+                        let wmam =
+                            File.ReadAllText(man)
+                                .Replace("$(TITLE)", info.title)
+                                .Replace("$(SAFETITLE)", info.title.Replace(" ", ""))
+                                .Replace("$(VERSION)", info.version)
+                                .Replace("$(AUTHOR)", info.author)
+                                .Replace("$(PUBLISHER)", info.publisher)
+                                .Replace("$(DESCRIPTION)", info.description)
+                                .Replace("$(SDKVERSION)", sdkV)
+                        File.WriteAllText (man, wmam)
+                    do // activity source, change package name
+                        let file = Path.Combine(env, "src\WebSharperMobileActivity.java")
+                        let wfile =
+                            File.ReadAllText(file)
+                                .Replace("$(SAFETITLE)", info.title.Replace(" ", ""))
+                                .Replace("$(AUTHOR)", info.author)
+                                .Replace("$(PUBLISHER)", info.publisher)
+                        File.WriteAllText (file, wfile)
+                    do // aapt package -m -J src -M AndroidManifest.xml -S res -I android.jar
+                        let args =
+                            [
+                            "package -m -J"
+                            sprintf @"""%s\src"" -M ""%s\AndroidManifest.xml"" -S ""%s\res"" -I" env env env
+                            android
+                            ]
+                        runProc "aapt.exe" args []
+                    do // mkdir target/main-classes
+                        Directory.CreateDirectory (Path.Combine(env, @"target\main-classes")) |> ignore
+                    do // ? javac -encoding ascii -target 1.5 -source 1.5 -sourcepath src -d target\main-classes -bootclasspath android.jar
+                        let args =
+                            [
+                            "-encoding ascii -target 1.5 -source 1.5 -sourcepath"
+                            sprintf @"""%s\target"" -d ""%s\target\main-classes"" -bootclasspath" env env
+                            android
+                            sprintf @"""%s\src\WebSharperMobileActivity.java""" env
+                            ]
+                        runProc "javac.exe" args []
+                    do // java -jar path\to\lib\dx.jar --dex "--output=path with spaces.dex" // dx --dex --output=target/classes.dex target/main-classes
+                        let dxJar = sdk + @"\..\platform-tools\lib\dx.jar"
+                        let args =
+                            [ sprintf @"-jar %s --dex ""--output=%s\target\classes.dex"" ""%s\target\main-classes""" dxJar env env ]
+                        runProc "java" args []
+                    do // aapt package -f -M AndroidManifest.xml -S res -I android.jar -F target/app.ap_
+                        let args =
+                            [
+                            "package -f -M"
+                            sprintf @"""%s\AndroidManifest.xml"" -S ""%s\res"" -I" env env
+                            android
+                            sprintf @"-F ""%s\target\app.ap_""" env
+                            ]
+                        runProc "aapt.exe" args []
+                    do // apkbuilder target/___.apk -z target/app.ap_ -f target/classes.dex -rf src // -rj lib
+                        let args =
+                            [ sprintf @"""%s\target\__%s"" -u -z ""%s\target\app.ap_"" -f ""%s\target\classes.dex"" -rf ""%s\src""" env n env env env ]
+                        runProc "apkbuilder.bat" args []
+                    do // copy from html\bin to html
+                        File.Copy (Path.Combine(dir, "mobileBuildAndroid\\target\\__" + n), Path.Combine(dir, "__" + n))
+                    do // actually fill contents (those are the www things)
+                        //System.Threading.Thread.Sleep 15000
+                        createForAndroid (Path.Combine (dir, "__" + n)) dir name
+                    if b.Elements(XName.Get "signAndroid") |> Seq.isEmpty |> not then
+                        do // *jarsigner*
+                            let key = b.Element(XName.Get "key").Value
+                            let alias = b.Element(XName.Get "alias").Value
+                            let passphrase = b.Element(XName.Get "passphrase").Value
+                            let args =
+                                [
+                                "-digestalg SHA1 -sigalg MD5withRSA"
+                                "-keystore"
+                                Path.Combine (pdir, key) |> quote
+                                Path.Combine (dir, "__" + n) |> quote
+                                alias
+                                ]
+                            runProc "jarsigner.exe" args [passphrase]
+                        do // zipalign -f 4 ___.apk _.apk
+                            runProc "zipalign.exe" [ "-f 4"; Path.Combine (dir, "__" + n) |> quote; Path.Combine (dir, n) |> quote ] []
+                        do // remove unaligned file
+                            File.Delete (Path.Combine (dir, "__" + n))
+                    else
+                        try
+                            File.Move(Path.Combine (dir, "__" + n), Path.Combine (dir, n))
+                        with _ ->
+                            eprintfn "ws_mobile : error 0000 : Could not save \"%s\". Please make sure it isn't being used by any other process." n
+                            raise Handled
+
+                do // delete building env from html
+                    Directory.Delete(Path.Combine(dir, "mobileBuildAndroid"), true)
+
+                serverLocationDispose()
+                0
+
+        else
+            serverLocationDispose()
+            0
+    with
+        | Handled -> -1
+        | e ->
+            eprintfn "ws_mobile : error 0000 : %s: %s @ %s" (e.GetType().FullName) e.Message e.StackTrace
+            -1
