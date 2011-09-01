@@ -39,236 +39,237 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 public class WebSharperMobileActivity extends Activity implements SensorEventListener {
-	SensorManager myManager;
-	Sensor accSensor;
-	WebView wv;
-	Activity env;
-	boolean cameraNeeded = false;
-	Camera cmr;
-	WebSharperBridge bridge;
-	float[] acceleration = new float[] { 0, 0, (float) -9.8 };
+    SensorManager myManager;
+    Sensor accSensor;
+    WebView wv;
+    Activity env;
+    boolean cameraNeeded = false;
+    Camera cmr;
+    WebSharperBridge bridge;
+    float[] acceleration = new float[] { 0, 0, (float) -9.8 };
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		env = this;
-		wv = new WebView(this);
-		// enable JavaScript
-		wv.getSettings().setJavaScriptEnabled(true);
-		// enable HTML5 LocalStorage
-		wv.getSettings().setDomStorageEnabled(true);
-		bridge = new WebSharperBridge();
-		wv.loadUrl("file:///android_asset/www/index.html");
-		// in JavaScript, websharperBridge is the Java bridge object (of type WebSharperBridge)
-		wv.addJavascriptInterface(bridge, "websharperBridge");
-		setContentView(wv);
-		try
-		{
-			// request acceleration updates
-			myManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-			List<Sensor> sensors = myManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-			if(sensors.size() > 0)
-			{
-				accSensor = sensors.get(0);
-				myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
-			}
-		}
-		catch (Exception e)
-		{ }
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        env = this;
+        wv = new WebView(this);
+        // enable JavaScript
+        wv.getSettings().setJavaScriptEnabled(true);
+        // enable HTML5 LocalStorage
+        wv.getSettings().setDomStorageEnabled(true);
+        bridge = new WebSharperBridge();
+        wv.loadUrl("file:///android_asset/www/index.html");
+        // in JavaScript, websharperBridge is the Java bridge object (of type WebSharperBridge)
+        wv.addJavascriptInterface(bridge, "websharperBridge");
+        setContentView(wv);
+        try
+            {
+                // request acceleration updates
+                myManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+                List<Sensor> sensors = myManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+                if(sensors.size() > 0)
+                    {
+                        accSensor = sensors.get(0);
+                        myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
+                    }
+            }
+        catch (Exception e)
+            { }
+    }
 
-	@Override
-	public void onPause()
-	{
-		// release resources
-		if (cameraNeeded && cmr != null)
-			cmr.release();
-		if (accSensor != null)
-			myManager.unregisterListener(this);
-		bridge.pause();
-		super.onPause();
-	}
+    @Override
+    public void onPause()
+    {
+        // release resources
+        if (cameraNeeded && cmr != null)
+            cmr.release();
+        if (accSensor != null)
+            myManager.unregisterListener(this);
+        bridge.pause();
+        super.onPause();
+    }
 
-	@Override
-	public void onResume()
-	{
-		// reacquire resources 
-		super.onResume();
-		bridge.resume();
-		if (accSensor != null)
-			myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
-		if (cameraNeeded)
-			cmr = Camera.open();
-	}
+    @Override
+    public void onResume()
+    {
+        // reacquire resources 
+        super.onResume();
+        bridge.resume();
+        if (accSensor != null)
+            myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
+        if (cameraNeeded)
+            cmr = Camera.open();
+    }
 
-	class WebSharperBridge implements LocationListener
-	{
-		double lat = 0, lng = 0;
+    class WebSharperBridge implements LocationListener
+    {
+        double lat = 0, lng = 0;
 
-		public void pause()
-		{
-			LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
-			locationManager.removeUpdates(this);
-		}
+        public void pause()
+        {
+            LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
+            locationManager.removeUpdates(this);
+        }
 
-		public void resume()
-		{
-			try
-			{
-				// request location updates
-				LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
-				Criteria locationCriteria = new Criteria();
-				locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
-				locationManager.requestLocationUpdates(locationManager.getBestProvider(locationCriteria, true), 100, 0, this);
+        public void resume()
+        {
+            try
+                {
+                    // request location updates
+                    LocationManager locationManager = (LocationManager)env.getSystemService(Context.LOCATION_SERVICE);
+                    Criteria locationCriteria = new Criteria();
+                    locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
+                    locationManager.requestLocationUpdates(locationManager.getBestProvider(locationCriteria, true), 100, 0, this);
 
-				lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
-				lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
-			}
-			catch (Exception e)
-			{ }
-		}
+                    lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
+                    lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
+                }
+            catch (Exception e)
+                { }
+        }
 
-		@Override
-		public void onLocationChanged(Location location) {
-			lat = location.getLatitude();
-			lng = location.getLongitude();
-		}
+        @Override
+        public void onLocationChanged(Location location)
+        {
+            lat = location.getLatitude();
+            lng = location.getLongitude();
+        }
 
-		// this function is used for XHR, so JavaScript will know where is the RPC server
-		public String serverLocation()
-		{
-			try
-			{
-				InputStream is = getAssets().open("www/serverLocation.txt");
-				int size = is.available();
-				byte[] buffer = new byte[size];
-				is.read(buffer);
-				is.close();
-				String result = new String(buffer);
-				return "({ $ : 1, $0 : \"" + result + "\" })";
-			}
-			catch (Exception e)
-			{
-				return "({ $ : 0 })";
-			}
-		}
+        // this function is used for XHR, so JavaScript will know where is the RPC server
+        public String serverLocation()
+        {
+            try
+                {
+                    InputStream is = getAssets().open("www/serverLocation.txt");
+                    int size = is.available();
+                    byte[] buffer = new byte[size];
+                    is.read(buffer);
+                    is.close();
+                    String result = new String(buffer);
+                    return "({ $ : 1, $0 : \"" + result + "\" })";
+                }
+            catch (Exception e)
+                {
+                    return "({ $ : 0 })";
+                }
+        }
 
-		public String location()
-		{
-			return "({ Lat : " + lat + ", Long : " + lng + " })";
-		}
+        public String location()
+        {
+            return "({ Lat : " + lat + ", Long : " + lng + " })";
+        }
 
-		public String acceleration()
-		{
-			return "({ X : " + acceleration[0] + ", Y : " + acceleration[1] + ", Z : " + acceleration[2] + " })";
-		}
+        public String acceleration()
+        {
+            return "({ X : " + acceleration[0] + ", Y : " + acceleration[1] + ", Z : " + acceleration[2] + " })";
+        }
 
-		public void camera(int maxHeight, int maxWidth, final String callback, final String fail)
-		{
-			try
-			{
-				cmr = Camera.open();
-				Camera.Parameters params = cmr.getParameters();
-				cmr.setParameters(params);
-				// the surface is the graphical interface for the camera, since Android SDK does not supply a default one
-				final SurfaceView sv = new SurfaceView(env);
-				sv.setOnLongClickListener(new View.OnLongClickListener() {
-					@Override
-					public boolean onLongClick(View v)
-					{
-						Camera.PictureCallback jpegCallback=new Camera.PictureCallback() { 
+        public void camera(int maxHeight, int maxWidth, final String callback, final String fail)
+        {
+            try
+                {
+                    cmr = Camera.open();
+                    Camera.Parameters params = cmr.getParameters();
+                    cmr.setParameters(params);
+                    // the surface is the graphical interface for the camera, since Android SDK does not supply a default one
+                    final SurfaceView sv = new SurfaceView(env);
+                    sv.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v)
+                            {
+                                Camera.PictureCallback jpegCallback=new Camera.PictureCallback() { 
 
-							public void onPictureTaken(byte[] data, Camera camera) {
-								StringBuffer sb = new StringBuffer(data.length * 2);
-								for (int i = 0; i < data.length; i++) {
-									int v = data[i] & 0xff;
-									if (v < 16) {
-										sb.append('0');
-									}
-									sb.append(Integer.toHexString(v));
-								}
-								wv.loadUrl("javascript:" + callback + ".call(null,\"" + sb.toString().toUpperCase() + "\")");
-								camera.release();
-								env.runOnUiThread(new Runnable() {
-									public void run()
-									{
-										env.setContentView(wv);
-									}});
-								cmr = null;
-							}
-						};
-						cmr.takePicture(null, null, jpegCallback);
-						return true;
-					}
-				});
-				sv.setClickable(true);
-				env.runOnUiThread(new Runnable() {
-					public void run()
-					{
-						env.setContentView(sv);
-					}});
-				cmr.setPreviewDisplay(sv.getHolder());
-				cmr.startPreview();
-				Toast toast = Toast.makeText(env, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
-				toast.show();
-			}
-			catch (Exception e)
-			{
-				wv.loadUrl("javascript:" + fail + ".call(null,\"" + e.getMessage() + "\")");
-			}
-		}
+                                        public void onPictureTaken(byte[] data, Camera camera) {
+                                            StringBuffer sb = new StringBuffer(data.length * 2);
+                                            for (int i = 0; i < data.length; i++) {
+                                                int v = data[i] & 0xff;
+                                                if (v < 16) {
+                                                    sb.append('0');
+                                                }
+                                                sb.append(Integer.toHexString(v));
+                                            }
+                                            wv.loadUrl("javascript:" + callback + ".call(null,\"" + sb.toString().toUpperCase() + "\")");
+                                            camera.release();
+                                            env.runOnUiThread(new Runnable() {
+                                                    public void run()
+                                                    {
+                                                        env.setContentView(wv);
+                                                    }});
+                                            cmr = null;
+                                        }
+                                    };
+                                cmr.takePicture(null, null, jpegCallback);
+                                return true;
+                            }
+                        });
+                    sv.setClickable(true);
+                    env.runOnUiThread(new Runnable() {
+                            public void run()
+                            {
+                                env.setContentView(sv);
+                            }});
+                    cmr.setPreviewDisplay(sv.getHolder());
+                    cmr.startPreview();
+                    Toast toast = Toast.makeText(env, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            catch (Exception e)
+                {
+                    wv.loadUrl("javascript:" + fail + ".call(null,\"" + e.getMessage() + "\")");
+                }
+        }
 
-		public void alert(final String msg)
-		{
-			env.runOnUiThread(new Runnable() {
-				public void run()
-				{
-					new AlertDialog.Builder(env)
-					.setMessage(msg)
-					.setNeutralButton("OK", new OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
-						}
-					})
-					.show();
-				}
-			});
-		}
+        public void alert(final String msg)
+        {
+            env.runOnUiThread(new Runnable() {
+                    public void run()
+                    {
+                        new AlertDialog.Builder(env)
+                            .setMessage(msg)
+                            .setNeutralButton("OK", new OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                            .show();
+                    }
+                });
+        }
 
-		// this function prints to logcat
-		public void log(String msg)
-		{
-			Log.d("DebugJS", msg);
-		}
+        // this function prints to logcat
+        public void log(String msg)
+        {
+            Log.d("DebugJS", msg);
+        }
 
-		@Override
-		public void onProviderDisabled(String arg0) {
-			// TODO Auto-generated method stub
+        @Override
+        public void onProviderDisabled(String arg0) {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		@Override
-		public void onProviderEnabled(String arg0) {
-			// TODO Auto-generated method stub
+        @Override
+        public void onProviderEnabled(String arg0) {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		@Override
-		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-			// TODO Auto-generated method stub
+        @Override
+        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+            // TODO Auto-generated method stub
 
-		}
-	}
+        }
+    }
 
-	@Override
-	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub
+    @Override
+    public void onAccuracyChanged(Sensor arg0, int arg1) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	@Override
-	public void onSensorChanged(SensorEvent args) {
-		acceleration = args.values.clone();
-	}
+    @Override
+    public void onSensorChanged(SensorEvent args) {
+        acceleration = args.values.clone();
+    }
 }
