@@ -7,6 +7,7 @@
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="." IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
     <ROW Directory="android_template_Dir" Directory_Parent="APPDIR" DefaultDir="mobile~1|mobileBuildAndroid:androi~1|android-template"/>
+    <ROW Directory="bin_Dir" Directory_Parent="templates_Dir" DefaultDir="vs10:bin"/>
     <ROW Directory="drawable_hdpi_Dir" Directory_Parent="res_Dir" DefaultDir="drawab~1|drawable-hdpi"/>
     <ROW Directory="drawable_ldpi_Dir" Directory_Parent="res_Dir" DefaultDir="drawab~2|drawable-ldpi"/>
     <ROW Directory="drawable_mdpi_Dir" Directory_Parent="res_Dir" DefaultDir="drawab~3|drawable-mdpi"/>
@@ -15,7 +16,6 @@
     <ROW Directory="src_Dir" Directory_Parent="android_template_Dir" DefaultDir="src"/>
     <ROW Directory="templates_Dir" Directory_Parent="APPDIR" DefaultDir="templa~1|templates"/>
     <ROW Directory="values_Dir" Directory_Parent="res_Dir" DefaultDir="values"/>
-    <ROW Directory="vs10_Dir" Directory_Parent="templates_Dir" DefaultDir="vs10"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AndroidManifest.xml" ComponentId="{302EC07E-DFEE-4AAD-BF35-CDDF48FD06F4}" Directory_="android_template_Dir" Attributes="0" KeyPath="AndroidManifest.xml" Type="0"/>
@@ -30,7 +30,7 @@
     <ROW Component="main.xml" ComponentId="{C5BE6941-5647-4F9F-B1B9-5B018C351F74}" Directory_="layout_Dir" Attributes="0" KeyPath="main.xml" Type="0"/>
     <ROW Component="strings.xml" ComponentId="{BCA74821-2279-4E16-A179-ED98F80BB32D}" Directory_="values_Dir" Attributes="0" KeyPath="strings.xml" Type="0"/>
     <ROW Component="templates" ComponentId="{8662E03E-1216-46AE-BE61-9B700F49CA69}" Directory_="templates_Dir" Attributes="0"/>
-    <ROW Component="websharper_mobile_offline_empty.zip" ComponentId="{642369D4-7202-4950-9841-C9DA1195AFDC}" Directory_="vs10_Dir" Attributes="0" KeyPath="websharper_mobile_offline_empty." Type="0"/>
+    <ROW Component="websharper_mobile_offline_empty.zip" ComponentId="{A212A485-B799-408E-9349-EB117DE4B0D5}" Directory_="bin_Dir" Attributes="0" KeyPath="websharper_mobile_offline_empty." Type="0"/>
     <ROW Component="ws_mobile.exe" ComponentId="{CF8E2B52-A369-4C4F-98DD-C9417A1899CF}" Directory_="APPDIR" Attributes="0" KeyPath="ws_mobile.exe"/>
     <ROW Component="ws_mobile.exe.config" ComponentId="{4C4F067F-C175-47A8-89B1-552CFDFD7076}" Directory_="APPDIR" Attributes="0" KeyPath="ws_mobile.exe.config" Type="0"/>
   </COMPONENT>
@@ -54,10 +54,10 @@
     <ROW File="main.xml" Component_="main.xml" FileName="main.xml" Attributes="0" SourcePath="..\android-template\res\layout\main.xml" SelfReg="false" NextFile="strings.xml"/>
     <ROW File="mobileWP7.xap" Component_="ws_mobile.exe.config" FileName="mobile~1.xap|mobileWP7.xap" Attributes="0" SourcePath="..\wp7-template\Bin\Release\mobileWP7.xap" SelfReg="false" NextFile="apkbuilder.bat"/>
     <ROW File="strings.xml" Component_="strings.xml" FileName="strings.xml" Attributes="0" SourcePath="..\android-template\res\values\strings.xml" SelfReg="false" NextFile="WebSharperMobileActivity.java"/>
-    <ROW File="websharper_mobile_offline_empty." Component_="websharper_mobile_offline_empty.zip" FileName="websha~1.zip|websharper-mobile-offline-empty.zip" Attributes="0" SourcePath="bin\Release\websharper-mobile-offline-empty.zip" SelfReg="false" NextFile="websharper_mobile_offline_sample"/>
-    <ROW File="websharper_mobile_offline_sample" Component_="websharper_mobile_offline_empty.zip" FileName="websha~2.zip|websharper-mobile-offline-sample.zip" Attributes="0" SourcePath="bin\Release\websharper-mobile-offline-sample.zip" SelfReg="false" NextFile="websharper_mobile_online_empty.z"/>
-    <ROW File="websharper_mobile_online_empty.z" Component_="websharper_mobile_offline_empty.zip" FileName="websha~3.zip|websharper-mobile-online-empty.zip" Attributes="0" SourcePath="bin\Release\websharper-mobile-online-empty.zip" SelfReg="false" NextFile="websharper_mobile_online_sample."/>
-    <ROW File="websharper_mobile_online_sample." Component_="websharper_mobile_offline_empty.zip" FileName="websha~4.zip|websharper-mobile-online-sample.zip" Attributes="0" SourcePath="bin\Release\websharper-mobile-online-sample.zip" SelfReg="false"/>
+    <ROW File="websharper_mobile_offline_empty." Component_="websharper_mobile_offline_empty.zip" FileName="websha~1.zip|websharper-mobile-offline-empty.zip" Attributes="0" SourcePath="..\if-ws-mobile-templates\bin\websharper-mobile-offline-empty.zip" SelfReg="false" NextFile="websharper_mobile_offline_sample"/>
+    <ROW File="websharper_mobile_offline_sample" Component_="websharper_mobile_offline_empty.zip" FileName="websha~2.zip|websharper-mobile-offline-sample.zip" Attributes="0" SourcePath="..\if-ws-mobile-templates\bin\websharper-mobile-offline-sample.zip" SelfReg="false" NextFile="websharper_mobile_online_empty.z"/>
+    <ROW File="websharper_mobile_online_empty.z" Component_="websharper_mobile_offline_empty.zip" FileName="websha~3.zip|websharper-mobile-online-empty.zip" Attributes="0" SourcePath="..\if-ws-mobile-templates\bin\websharper-mobile-online-empty.zip" SelfReg="false" NextFile="websharper_mobile_online_sample."/>
+    <ROW File="websharper_mobile_online_sample." Component_="websharper_mobile_offline_empty.zip" FileName="websha~4.zip|websharper-mobile-online-sample.zip" Attributes="0" SourcePath="..\if-ws-mobile-templates\bin\websharper-mobile-online-sample.zip" SelfReg="false"/>
     <ROW File="ws_mobile.exe" Component_="ws_mobile.exe" FileName="ws_mob~1.exe|ws_mobile.exe" Attributes="0" SourcePath="..\ws-mobile\bin\Release\ws_mobile.exe" SelfReg="false" NextFile="ws_mobile.exe.config"/>
     <ROW File="ws_mobile.exe.config" Component_="ws_mobile.exe.config" FileName="ws_mob~1.con|ws_mobile.exe.config" Attributes="0" SourcePath="..\ws-mobile\bin\Release\ws_mobile.exe.config" SelfReg="false" NextFile="Ionic.Zip.Reduced.dll"/>
   </COMPONENT>

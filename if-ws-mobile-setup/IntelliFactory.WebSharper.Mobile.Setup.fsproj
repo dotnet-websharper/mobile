@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,7 +11,7 @@
     <RootNamespace>$(Name)</RootNamespace>
     <AssemblyName>$(Name)</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TemplateDirectory>bin\Release\</TemplateDirectory>
+    <TemplateDirectory>..\if-ws-mobile-templates\bin</TemplateDirectory>
     <ProgramFiles32>$(MSBuildExtensionsPath32)\..</ProgramFiles32>
     <AdvInstLocation>"$(ProgramFiles32)\Caphyon\Advanced Installer 8.4\bin\x86\AdvancedInstaller.com"</AdvInstLocation>
   </PropertyGroup>
@@ -36,9 +36,50 @@
   </PropertyGroup>
   <Import Project="$(INTELLIFACTORY)\build\IntelliFactory.FSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks" />
+  <!-- Packages WebSharper templates into ZIP archives ready for distribution. -->
+  <Target Name="PackageTemplates">
+    <MakeDir Directories="$(TemplateDirectory)" />
+    <ItemGroup>
+      <Templates Include="..\if-ws-mobile-templates\*\*.vstemplate" />
+    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates" Properties="Template=%(Templates.Filename);DependentBuild=yes" />
+  </Target>
+  <Target Name="_PackTemplates">
+    <PropertyGroup>
+      <SourceDirectory>..\if-ws-mobile-templates\$(Template)</SourceDirectory>
+    </PropertyGroup>
+    <ItemGroup>
+      <GeneratedFiles Include="$(SourceDirectory)\**\bin\**\*.*" />
+      <GeneratedFiles Include="$(SourceDirectory)\**\obj\**\*.*" />
+      <GeneratedFiles Include="$(SourceDirectory)\**\Scripts\*.*" />
+      <GeneratedFiles Include="$(SourceDirectory)\**\*.suo" />
+      <GeneratedFiles Include="$(SourceDirectory)\**\*.user" />
+      <VersionControlFiles Include="$(SourceDirectory)\**\.svn\**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(GeneratedFiles)" />
+    <ItemGroup>
+      <InstalledFiles Include="$(SourceDirectory)\**\*.*" Exclude="bin;@(VersionControlFiles)" />
+    </ItemGroup>
+    <MakeDir Directories="$(TemplateDirectory)" />
+    <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(InstalledFiles)" RemoveRoot="$(SourceDirectory)" ZipFileName="$(TemplateDirectory)\$(Template).zip" />
+  </Target>
+  <Target Name="CreateInstallerModule">
+    <ReadLinesFromFile File="$(MSBuildProjectDirectory)/../.build/tag">
+      <Output TaskParameter="Lines" ItemName="TagLines" />
+    </ReadLinesFromFile>
+    <MakeDir Directories="..\.build" />
+    <Copy SourceFiles="if-ws-mobile-setup.aip" DestinationFolder="..\.build" />
+    <Exec Command="$(AdvInstLocation) /Edit if-ws-mobile-setup.aip /SetVersion @(TagLines)"
+          WorkingDirectory="..\.build" />
+    <Exec Command="$(AdvInstLocation) /Build if-ws-mobile-setup.aip" 
+          WorkingDirectory="..\.build" />
+    <Copy SourceFiles="..\.build\if-ws-mobile-setup-SetupFiles\if-ws-mobile-setup.msm"
+          DestinationFolder="$(OutputPath)" />
+  </Target>
+  <Target Name="AfterBuild" DependsOnTargets="PackageTemplates;CreateInstallerModule" />
   <ItemGroup>
     <Compile Include="Setup.fs" />
-    <None Include="setup.aip" />
+    <None Include="if-ws-mobile-setup.aip" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -72,50 +113,4 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-
-  <!-- Packages WebSharper templates into ZIP archives ready for distribution. -->
-  <Target Name="PackageTemplates">
-    <ItemGroup>
-      <Templates Include="..\if-ws-mobile-templates\*\*.vstemplate" />
-    </ItemGroup>
-    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates"
-             Properties="Template=%(Templates.Filename);DependentBuild=yes" />
-  </Target>
-
-  <Target Name="_PackTemplates">
-    <PropertyGroup>
-      <SourceDirectory>..\if-ws-mobile-templates\$(Template)</SourceDirectory>
-    </PropertyGroup>
-    <ItemGroup>
-      <GeneratedFiles Include="$(SourceDirectory)\**\bin\**\*.*" />
-      <GeneratedFiles Include="$(SourceDirectory)\**\obj\**\*.*" />
-      <GeneratedFiles Include="$(SourceDirectory)\**\Scripts\*.*" />
-      <GeneratedFiles Include="$(SourceDirectory)\**\*.suo" />
-      <GeneratedFiles Include="$(SourceDirectory)\**\*.user" />
-      <VersionControlFiles Include="$(SourceDirectory)\**\.svn\**\*.*" />
-    </ItemGroup>
-    <Delete Files="@(GeneratedFiles)" />
-    <ItemGroup>
-      <InstalledFiles Include="$(SourceDirectory)\**\*.*"
-                      Exclude="bin;@(VersionControlFiles)" />
-    </ItemGroup>
-    <MakeDir Directories="$(TemplateDirectory)" />
-    <MSBuild.ExtensionPack.Compression.DNZip
-        TaskAction="Create"
-        CompressFiles="@(InstalledFiles)"
-        RemoveRoot="$(SourceDirectory)"
-        ZipFileName="$(TemplateDirectory)\$(Template).zip" />
-  </Target>
-
-  <Target Name="CreateInstallerModule">
-    <ReadLinesFromFile File="$(MSBuildProjectDirectory)/../.build/tag" >
-      <Output TaskParameter="Lines" ItemName="TagLines"/>
-    </ReadLinesFromFile>
-    <Exec Command="$(AdvInstLocation) /Edit setup.aip /SetVersion @(TagLines)" />
-    <Exec Command="$(AdvInstLocation) /Build setup.aip" />
-  </Target>
-
-  <Target Name="AfterBuild" 
-          DependsOnTargets="PackageTemplates;CreateInstallerModule" />
-
 </Project>

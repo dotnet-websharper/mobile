@@ -2,7 +2,11 @@
 <ivy-module version="2.0">
   <info organisation="IntelliFactory" module="if-ws-mobile-templates" revision="2.3" />
   <publications>
-    <artifact name="ws_mobile" ext="exe" type="bin" />    
+    <artifact name="ws_mobile" ext="exe" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.Mobile.Default" ext="dll" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.Mobile.Android" ext="dll" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.Mobile.WP7" ext="dll" type="bin" />
+    <artifact name="if-ws-mobile-setup" ext="msm" type="bin" />
   </publications>
   <dependencies>
     <dependency name="if-ws" rev="latest.integration" />
