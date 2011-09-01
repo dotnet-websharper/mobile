@@ -101,7 +101,4 @@
   </Target>
   -->
   <ProjectExtensions />
-  <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)WebSharperApp.xap $(ProjectDir)\..\bin\mobileWP7.xap</PostBuildEvent>
-  </PropertyGroup>
 </Project>
