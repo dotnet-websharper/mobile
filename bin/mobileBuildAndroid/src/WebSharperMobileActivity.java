@@ -70,7 +70,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                 accSensor = sensors.get(0);
                 myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
             }
-        } catch (Exception e) { 
+        } catch (Exception e) {
         }
     }
 
@@ -91,7 +91,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
     @Override
     public void onResume()
     {
-        // reacquire resources 
+        // reacquire resources
         super.onResume();
         bridge.resume();
         if (accSensor != null) {
@@ -170,47 +170,46 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                 final SurfaceView sv = new SurfaceView(env);
                 sv.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
-                        public boolean onLongClick(View v)
-                        {
-                            Camera.PictureCallback jpegCallback=new Camera.PictureCallback() {                                     
+                        public boolean onLongClick(View v) {
+                            Camera.PictureCallback jpegCallback=new Camera.PictureCallback() {
                                     public void onPictureTaken(byte[] data, Camera camera) {
                                         StringBuffer sb = new StringBuffer(data.length * 2);
                                         for (int i = 0; i < data.length; i++) {
-                                                int v = data[i] & 0xff;
-                                                if (v < 16) {
-                                                    sb.append('0');
-                                                }
-                                                sb.append(Integer.toHexString(v));
+                                            int v = data[i] & 0xff;
+                                            if (v < 16) {
+                                                sb.append('0');
                                             }
-                                            wv.loadUrl("javascript:" + callback + ".call(null,\"" + sb.toString().toUpperCase() + "\")");
-                                            camera.release();
-                                            env.runOnUiThread(new Runnable() {
-                                                    public void run()
-                                                    {
-                                                        env.setContentView(wv);
-                                                    }});
-                                            cmr = null;
+                                            sb.append(Integer.toHexString(v));
                                         }
-                                    };
-                                cmr.takePicture(null, null, jpegCallback);
-                                return true;
-                            }
-                        });
-                    sv.setClickable(true);
-                    env.runOnUiThread(new Runnable() {
-                            public void run()
-                            {
-                                env.setContentView(sv);
-                            }});
-                    cmr.setPreviewDisplay(sv.getHolder());
-                    cmr.startPreview();
-                    Toast toast = Toast.makeText(env, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
-                    toast.show();
+                                        wv.loadUrl("javascript:" + callback + ".call(null,\"" + sb.toString().toUpperCase() + "\")");
+                                        camera.release();
+                                        env.runOnUiThread(new Runnable() {
+                                                public void run()
+                                                {
+                                                    env.setContentView(wv);
+                                                }});
+                                        cmr = null;
+                                    }
+                                };
+                            cmr.takePicture(null, null, jpegCallback);
+                            return true;
+                        }
+                    });
+                sv.setClickable(true);
+                env.runOnUiThread(new Runnable() {
+                        public void run()
+                        {
+                            env.setContentView(sv);
+                        }});
+                cmr.setPreviewDisplay(sv.getHolder());
+                cmr.startPreview();
+                Toast toast = Toast.makeText(env, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
+                toast.show();
             } catch (Exception e) {
                 wv.loadUrl("javascript:" + fail + ".call(null,\"" + e.getMessage() + "\")");
             }
         }
-        
+
         public void alert(final String msg)
         {
             env.runOnUiThread(new Runnable() {
