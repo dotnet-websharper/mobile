@@ -7,8 +7,8 @@ open IntelliFactory.WebSharper.Sitelets
 
 /// Defines a sample HTML site with nested pages
 module SampleSite =
-    open IntelliFactory.WebSharper
     open IntelliFactory.Html
+    open IntelliFactory.WebSharper
     
     // Action type
     type Action =
@@ -27,7 +27,7 @@ module SampleSite =
             Android.EnableAndroidSupport() // remove if you are not intending to build for Android (recommended)
 
         type IndexControl() =
-            inherit IntelliFactory.WebSharper.Web.Control ()
+            inherit Web.Control ()
 
             [<JavaScript>]
             override this.Body =
@@ -36,7 +36,7 @@ module SampleSite =
                 Div [] :> _
 
         type Page1Control() =
-            inherit IntelliFactory.WebSharper.Web.Control ()
+            inherit Web.Control ()
 
             [<JavaScript>]
             override this.Body =
@@ -48,7 +48,7 @@ module SampleSite =
                 P [ Text locT; Br [] :> _; Text accT; Br [] :> _; Text ("The message is: " + Mobile.StorageLoad "message") ] :> _
     
         type Page2Control() =
-            inherit IntelliFactory.WebSharper.Web.Control ()
+            inherit Web.Control ()
 
             [<JavaScript>]
             override this.Body =

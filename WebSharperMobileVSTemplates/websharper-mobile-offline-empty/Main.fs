@@ -7,8 +7,8 @@ open IntelliFactory.WebSharper.Sitelets
 
 /// Defines a sample HTML site with nested pages
 module SampleSite =
-    open IntelliFactory.WebSharper
     open IntelliFactory.Html
+    open IntelliFactory.WebSharper
     
     // Action type
     type Action = | Index
