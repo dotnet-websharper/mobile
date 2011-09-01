@@ -119,32 +119,32 @@ type private WP7MobileProvider [<JavaScript>] () =
     interface IMobileProvider with
 
         [<JavaScript>]
-        override __.Alert s = bAlert s
+        override this.Alert s = bAlert s
 
         [<JavaScript>]
-        override __.Log s = bLog s
+        override this.Log s = bLog s
 
         [<JavaScript>]
-        override __.GetLocation () : Location =
+        override this.GetLocation () : Location =
             bLocation()
             unbox result
 
         [<JavaScript>]
-        override __.GetAcceleration () : Acceleration =
+        override this.GetAcceleration () : Acceleration =
             bAcceleration()
             unbox result
 
         [<JavaScript>]
-        override __.GetPhotoFromCamera () = //(width, height)
+        override this.GetPhotoFromCamera () = //(width, height)
             Async.FromContinuations (photoFromCamera (0, 0))
 
         [<JavaScript>]
-        override __.StorageLoad k : string =
+        override this.StorageLoad k : string =
             storageLoad k
             unbox result
 
         [<JavaScript>]
-        override __.StorageStore k v = bStorageStore k v
+        override this.StorageStore k v = bStorageStore k v
 
         [<JavaScript>]
         override this.JsonStorageLoad k =

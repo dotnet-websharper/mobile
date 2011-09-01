@@ -35,7 +35,6 @@
     <PostBuildEvent>copy $(TargetPath) $(ProjectDir)\..\bin\</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="assemblyinfo.fs" />
     <Compile Include="WebSharper.fs" />
     <EmbeddedResource Include="windows.phone.7.notify.js" />
   </ItemGroup>
@@ -44,12 +43,12 @@
     <Reference Include="System" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
-	<Reference Include="IntelliFactory.WebSharper" />
-	<Reference Include="IntelliFactory.WebSharper.Core" />
-	<Reference Include="IntelliFactory.WebSharper.Collections" />
+    <Reference Include="IntelliFactory.WebSharper" />
+    <Reference Include="IntelliFactory.WebSharper.Core" />
+    <Reference Include="IntelliFactory.WebSharper.Collections" />
     <Reference Include="IntelliFactory.WebSharper.Control" />
-	<Reference Include="IntelliFactory.WebSharper.Remoting" />
-	<Reference Include="IntelliFactory.WebSharper.Html" />
+    <Reference Include="IntelliFactory.WebSharper.Remoting" />
+    <Reference Include="IntelliFactory.WebSharper.Html" />
     <Reference Include="IntelliFactory.WebSharper.Html5" />
     <Reference Include="IntelliFactory.WebSharper.Json" />
   </ItemGroup>

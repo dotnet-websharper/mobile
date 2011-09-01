@@ -61,23 +61,23 @@ type private AndroidMobileProvider [<JavaScript>] () =
     interface IMobileProvider with
 
         [<JavaScript>]
-        override __.Alert s = bAlert s
+        override this.Alert s = bAlert s
 
         [<JavaScript>]
-        override __.Log s = bLog s
+        override this.Log s = bLog s
 
         [<JavaScript>]
-        override __.GetLocation () = bLocation() |> eval
+        override this.GetLocation () = bLocation() |> eval
 
         [<JavaScript>]
-        override __.GetAcceleration () = bAcceleration() |> eval
+        override this.GetAcceleration () = bAcceleration() |> eval
         
         [<JavaScript>]
-        override __.GetPhotoFromCamera () = //(width, height)
+        override this.GetPhotoFromCamera () = //(width, height)
             Async.FromContinuations (photoFromCamera (0, 0))
 
         [<JavaScript>]
-        override __.StorageLoad k =
+        override this.StorageLoad k =
             try
                 Window.Self.LocalStorage.GetItem k
                 |> function
@@ -86,7 +86,7 @@ type private AndroidMobileProvider [<JavaScript>] () =
             with _ -> ""
 
         [<JavaScript>]
-        override __.StorageStore k v = Window.Self.LocalStorage.SetItem (k, v)
+        override this.StorageStore k v = Window.Self.LocalStorage.SetItem (k, v)
 
         [<JavaScript>]
         override this.JsonStorageLoad k =
