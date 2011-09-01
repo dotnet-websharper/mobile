@@ -58,7 +58,7 @@ type private AndroidMobileProvider [<JavaScript>] () =
         let success, fail = Ajax.setCallbacks (success << fun s -> "" + s) fail
         bPhotoFromCamera width height success fail
 
-    interface MobileProvider with
+    interface IMobileProvider with
 
         [<JavaScript>]
         override __.Alert s = bAlert s
@@ -90,7 +90,7 @@ type private AndroidMobileProvider [<JavaScript>] () =
 
         [<JavaScript>]
         override this.JsonStorageLoad k =
-            (this :> MobileProvider).StorageLoad k
+            (this :> IMobileProvider).StorageLoad k
             |> function
                 | "" -> "[]"
                 | x -> x
@@ -98,7 +98,7 @@ type private AndroidMobileProvider [<JavaScript>] () =
             |> unbox
 
         [<JavaScript>]
-        override this.JsonStorageStore k v = (this :> MobileProvider).StorageStore k (Json.Stringify v)
+        override this.JsonStorageStore k v = (this :> IMobileProvider).StorageStore k (Json.Stringify v)
 
 module private ProviderHolder =
     [<JavaScript>]
@@ -109,6 +109,6 @@ let private androidInit () = ()
 
 [<JavaScript>]
 let EnableAndroidSupport () =
-    ignore Mobile
+    ignore Provider
     ignore IntelliFactory.WebSharper.Remoting.Config.EndPoint
     androidInit()

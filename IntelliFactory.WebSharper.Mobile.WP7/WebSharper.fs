@@ -116,7 +116,7 @@ type private WP7MobileProvider [<JavaScript>] () =
     [<Inline "callNotify('localStorage.store.' + $k + '.' + $v)">]
     let bStorageStore (k : string) (v : string) = ()
 
-    interface MobileProvider with
+    interface IMobileProvider with
 
         [<JavaScript>]
         override __.Alert s = bAlert s
@@ -148,7 +148,7 @@ type private WP7MobileProvider [<JavaScript>] () =
 
         [<JavaScript>]
         override this.JsonStorageLoad k =
-            (this :> MobileProvider).StorageLoad k
+            (this :> IMobileProvider).StorageLoad k
             |> function
                 | "" -> "[]"
                 | x -> x
@@ -156,7 +156,7 @@ type private WP7MobileProvider [<JavaScript>] () =
             |> unbox
 
         [<JavaScript>]
-        override this.JsonStorageStore k v = (this :> MobileProvider).StorageStore k (Json.Stringify v)
+        override this.JsonStorageStore k v = (this :> IMobileProvider).StorageStore k (Json.Stringify v)
 
 module private ProviderHolder =
     [<JavaScript>]
@@ -167,7 +167,7 @@ let private wp7Init () = ()
 
 [<JavaScript>]
 let EnableWP7Support () =
-    ignore Mobile
+    ignore Provider
     ignore IntelliFactory.WebSharper.Remoting.Config.EndPoint
     ignore IntelliFactory.WebSharper.Remoting.Config.AjaxProvider
     wp7Init()
