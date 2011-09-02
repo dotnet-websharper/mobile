@@ -9,6 +9,28 @@ open Ionic.Zip
 
 #nowarn "25"
 
+let imageTypes =
+    [
+        ".bmp"
+        ".gif"
+        ".ico"
+        ".icns"
+        ".jng"
+        ".jfif"
+        ".jpeg"
+        ".jpg"
+        ".mng"
+        ".pgm"
+        ".png"
+        ".pnm"
+        ".tif"
+        ".tiff"
+    ]
+
+let isImage (file : string) =
+    imageTypes
+    |> List.exists (fun suffix -> file.EndsWith suffix)
+
 exception Handled
 
 let tfDelete file =
@@ -144,7 +166,12 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
 
     zip.AddDirectory(dir, "www") |> ignore
 
-    let fileListing = dir + @"\fileListing.txt"
+    do // add to images the .wsm.img.js suffix
+        zip.Entries
+        |> Seq.filter (fun e -> isImage e.FileName)
+        |> Seq.iter (fun e -> e.FileName <- e.FileName + ".wsm.img.js")
+
+    let fileListing = Path.Combine(dir, @"\fileListing.txt")
 
     let list = File.CreateText fileListing
     using list (fun list ->
@@ -157,7 +184,10 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
         list.WriteLine()
 
         for f in files do
-            if f <> "\\fileListing.txt" then
+            if f = "\\fileListing.txt" then ()
+            elif isImage f then
+                list.WriteLine (f + ".wsm.img.js")
+            else
                 list.WriteLine f
 
         list.WriteLine())
@@ -206,8 +236,7 @@ let createForAndroid (template : string) dir name =
 
     zip.Save()
 
-[<EntryPoint>]
-let main [| pdir; dir; asmpath |] =
+let wsMobile (pdir, dir, asmpath) =
     try
         let stripDot (this : string) =
             if this.[this.Length - 1] = '.' then
@@ -215,7 +244,7 @@ let main [| pdir; dir; asmpath |] =
             else this
         let [ pdir; dir; asmpath ] = [ pdir; dir; asmpath ] |> List.map stripDot
         let asm = Assembly.LoadFile asmpath
-        let doc = XDocument.Load (pdir + @"\mobile.config")
+        let doc = XDocument.Load (Path.Combine(pdir, @"\mobile.config"))
         let info =
             let title =
                 try
@@ -289,14 +318,11 @@ let main [| pdir; dir; asmpath |] =
                 |> List.ofSeq
             with _ -> []
 
-        let serverLocationDispose =
-            try
-                let elem = doc.Element(XName.Get "configuration").Element(XName.Get "serverLocation")
-                let serverLocation = dir + @"\serverLocation.txt"
-                File.WriteAllText(serverLocation, elem.Value)
-                fun _ -> tfDelete serverLocation
-            with _ ->
-                ignore
+        try
+            let elem = doc.Element(XName.Get "configuration").Element(XName.Get "serverLocation")
+            let serverLocation = Path.Combine(dir, @"\serverLocation.txt")
+            File.WriteAllText(serverLocation, elem.Value)
+        with :? NullReferenceException -> () // no serverLocation specified
 
         let wp7Elems = doc.Element(XName.Get "configuration").Elements(XName.Get "wp7")
         let wp7 = Seq.length wp7Elems = 1
@@ -441,17 +467,34 @@ let main [| pdir; dir; asmpath |] =
                             eprintfn "ws_mobile : error 0000 : Could not save \"%s\". Please make sure it isn't being used by any other process." n
                             raise Handled
 
-                do // delete building env from html
-                    Directory.Delete(Path.Combine(dir, "mobileBuildAndroid"), true)
-
-                serverLocationDispose()
                 0
-
         else
-            serverLocationDispose()
             0
     with
         | Handled -> -1
         | e ->
             eprintfn "ws_mobile : error 0000 : %s: %s @ %s" (e.GetType().FullName) e.Message e.StackTrace
             -1
+
+[<EntryPoint>]
+let main args =
+
+    if args.Length < 3 then
+        eprintfn "ws_mobile : error 0000 : Insufficient number arguments."
+        -1
+    else
+        if args.Length > 3 then
+            eprintfn "ws_mobile : warning 0000 : More arguments than expected were supplied."
+
+        try
+            wsMobile (args.[0], args.[1], args.[2])
+        finally
+            try
+                if Directory.Exists (Path.Combine(args.[1], "mobileBuildAndroid")) then
+                    Directory.Delete(Path.Combine(args.[1], "mobileBuildAndroid"), true)
+            with _ ->
+                eprintfn "ws_mobile : warning 0000 : Could not delete mobileBuildAndroid from the target folder."
+            try
+                tfDelete (Path.Combine(args.[1], @"\serverLocation.txt"))
+            with _ ->
+                eprintfn "ws_mobile : warning 0000 : Could not delete serverLocation.txt from the target folder."

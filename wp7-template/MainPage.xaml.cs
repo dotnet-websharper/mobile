@@ -315,10 +315,8 @@ namespace WebSharperMobileWP7EmptyApp
         {
             using (var storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                if (storage.DirectoryExists("www"))
-                    storage.DeleteDirectory("www");
-
-                storage.CreateDirectory("www");
+                if (!storage.DirectoryExists("www"))
+                    storage.CreateDirectory("www");
 
                 var dirs = new List<string>();
                 var files = new List<string>();
@@ -341,21 +339,22 @@ namespace WebSharperMobileWP7EmptyApp
                     }
 
                     foreach (var d in dirs)
-                        storage.CreateDirectory("www" + d);
+                        if (!storage.DirectoryExists("www" + d))
+                            storage.CreateDirectory("www" + d);
 
                     foreach (var f in files)
-                        try
-                        {
-                            LoadFile(storage, "www" + f);
-                        }
-                        catch { } // please check
+                        LoadFile(storage, "www" + f);
                 }
             }
         }
 
         private void LoadFile(IsolatedStorageFile storage, string file)
         {
-            using (var sw = new StreamWriter(storage.OpenFile(file, System.IO.FileMode.OpenOrCreate)))
+            var targetFile = file;
+            if (targetFile.EndsWith(".wsm.img.js"))
+                targetFile = targetFile.Substring(0, targetFile.Length - ".wsm.img.js".Length);
+
+            using (var sw = new StreamWriter(storage.OpenFile(targetFile, System.IO.FileMode.OpenOrCreate)))
             using (var sr = new StreamReader(Application.GetResourceStream(new Uri(file, UriKind.Relative)).Stream))
                 sw.Write(sr.ReadToEnd());
         }
