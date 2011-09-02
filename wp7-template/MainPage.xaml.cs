@@ -48,14 +48,24 @@ namespace WebSharperMobileWP7EmptyApp
         {
             InitializeComponent();
             geoWatcher = new GeoCoordinateWatcher();
-            geoWatcher.Start();
+            try
+            {
+                geoWatcher.Start();
+            }
+            catch (AccelerometerFailedException e)
+            {
+                Debug.WriteLine("Exception in native layer: Could not start geolocation tracking: " + e.ToString());
+            }
             accelerometer = new Accelerometer();
             accelerometer.ReadingChanged += new EventHandler<AccelerometerReadingEventArgs>(accelerometer_ReadingChanged);
             try
             {
                 accelerometer.Start();
             }
-            catch { }
+            catch (AccelerometerFailedException e)
+            {
+                Debug.WriteLine("Exception in native layer: Could not start accelerometer: " + e.ToString());
+            }
             ui = Deployment.Current.Dispatcher;
         }
 
@@ -66,56 +76,90 @@ namespace WebSharperMobileWP7EmptyApp
             aZ = e.Z;
         }
 
+        private void ReturnException(string callback, Exception e)
+        {
+            ui.BeginInvoke(delegate
+            {
+                WB.InvokeScript("eval",
+                    string.Format("{0}.call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"{1}\"))",
+                        callback.Replace('@', '.'), Uri.EscapeDataString(e.Message)));
+            });
+        }
+
         private HttpWebRequest CallAjax(string methodArg, Action<CookieCollection, string, string> callback)
         {
-            var args = methodArg.Split('.');
-            var uri = args[0].Replace('#', ',').Replace('@', '.');
-            var headers = ParsePairsArray(args[1]);
-            var cookies = ParsePairsArray(args[2]);
-            var content = args[3].Replace('#', ',').Replace('@', '.');
-            var callbackF = args[4];
-            HttpWebRequest wr = HttpWebRequest.CreateHttp(uri);
-            foreach (var p in headers)
-                try
-                {
-                    wr.Headers[p[0]] = p[1];
-                }
-                catch { }
-            var uriHost = new Uri(uri);
-            foreach (var c in cookies)
-                try
-                {
-                    var cookie = new Cookie(c[0], c[2]);
-                    cookie.Expires = DateTime.Parse(c[1]);
-                    cookieContainer.Add(uriHost, cookie);
-                }
-                catch { }
-            wr.CookieContainer = cookieContainer;
-            wr.ContentType = "application/x-www-form-urlencoded";
-            wr.Method = "POST";
-            wr.BeginGetRequestStream(ac1 =>
+            try
             {
-                using (var sw = new StreamWriter(wr.EndGetRequestStream(ac1)))
-                    sw.Write(content);
-                var wr2 = (HttpWebRequest)ac1.AsyncState;
-                wr2.BeginGetResponse(new AsyncCallback(ac2 =>
-                {
-                    var request = (HttpWebRequest)ac1.AsyncState;
-                    if (request.HaveResponse)
+                var args = methodArg.Split('.');
+                var uri = args[0].Replace('#', ',').Replace('@', '.');
+                var headers = ParsePairsArray(args[1]);
+                var cookies = ParsePairsArray(args[2]);
+                var content = args[3].Replace('#', ',').Replace('@', '.');
+                var callbackF = args[4];
+                HttpWebRequest wr = HttpWebRequest.CreateHttp(uri);
+                foreach (var p in headers)
+                    try
                     {
-                        var response = request.EndGetResponse(ac2);
-                        using (var sr = new StreamReader(response.GetResponseStream()))
-                        {
-                            var result = sr.ReadToEnd();
-                            var httpresponse = (HttpWebResponse)response;
-                            callback(cookieContainer.GetCookies(httpresponse.ResponseUri), callbackF, result);
-                        }
+                        wr.Headers[p[0]] = p[1];
                     }
-                    else
-                        throw new Exception("No response to AJAX call.");
-                }), wr2);
-            }, wr);
-            return wr;
+                    catch (System.ArgumentException) { }
+                var uriHost = new Uri(uri);
+                foreach (var c in cookies)
+                    try
+                    {
+                        var cookie = new Cookie(c[0], c[2]);
+                        cookie.Expires = DateTime.Parse(c[1]);
+                        cookieContainer.Add(uriHost, cookie);
+                    }
+                    catch (FormatException) { }
+                wr.CookieContainer = cookieContainer;
+                wr.ContentType = "application/x-www-form-urlencoded";
+                wr.Method = "POST";
+                wr.BeginGetRequestStream(ac1 =>
+                {
+                    try
+                    {
+                        using (var sw = new StreamWriter(wr.EndGetRequestStream(ac1)))
+                            sw.Write(content);
+                        var wr2 = (HttpWebRequest)ac1.AsyncState;
+                        wr2.BeginGetResponse(new AsyncCallback(ac2 =>
+                        {
+                            try
+                            {
+                                var request = (HttpWebRequest)ac1.AsyncState;
+                                if (request.HaveResponse)
+                                {
+                                    var response = request.EndGetResponse(ac2);
+                                    using (var sr = new StreamReader(response.GetResponseStream()))
+                                    {
+                                        var result = sr.ReadToEnd();
+                                        var httpresponse = (HttpWebResponse)response;
+                                        callback(cookieContainer.GetCookies(httpresponse.ResponseUri), callbackF, result);
+                                    }
+                                }
+                                else
+                                    throw new Exception("No response to AJAX call.");
+                            }
+                            catch (Exception err)
+                            {
+                                ReturnException(methodArg.Split('.')[4], err);
+                                throw err;
+                            }
+                        }), wr2);
+                    }
+                    catch (Exception err)
+                    {
+                        ReturnException(methodArg.Split('.')[4], err);
+                        throw err;
+                    }
+                }, wr);
+                return wr;
+            }
+            catch (Exception err)
+            {
+                ReturnException(methodArg.Split('.')[4], err);
+                throw err;
+            }
         }
 
         private void WebBrowser_ScriptNotify(object sender, NotifyEventArgs e)
@@ -138,7 +182,8 @@ namespace WebSharperMobileWP7EmptyApp
                     using (var storage = IsolatedStorageFile.GetUserStoreForApplication())
                         if (storage.FileExists("www\\serverLocation.txt"))
                             using (var sr = new StreamReader(storage.OpenFile("www\\serverLocation.txt", FileMode.Open)))
-                                WB.InvokeScript("eval", string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ $ : 1, $0 : \"{0}\" }});", sr.ReadLine()));
+                                WB.InvokeScript("eval",
+                                    string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ $ : 1, $0 : \"{0}\" }});", sr.ReadLine()));
                         else
                             WB.InvokeScript("eval", string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ $ : 0 }});"));
                 }
@@ -149,22 +194,16 @@ namespace WebSharperMobileWP7EmptyApp
                     {
                         CallAjax(arg, (cookies, callback, result) =>
                           {
-                              ui.BeginInvoke(() => {
+                              ui.BeginInvoke(() =>
+                              {
                                   if (cookies != null)
                                   {
-                                      /*foreach (var cookie in cookies.Split('\r', '\n').Where(x => x.Trim() != ""))
-                                      {
-                                          var name = cookie.Substring(0, cookie.IndexOf('='));
-                                          var value = cookie.Substring(name.Length + 2, cookie.IndexOf(';'));
-                                          var expiresIndex = cookie.IndexOf("expires");
-                                          var expires = cookie.Substring(expiresIndex + 8, cookie.IndexOf(';', expiresIndex));
-                                          var code = string.Format("document.cookie = \"{0}={1}; expires={2}\";", name, value, expires);
-                                          WB.InvokeScript("eval", code);
-                                      }*/
                                       foreach (var i in cookies)
                                       {
                                           var c = (Cookie)i;
-                                          var code = string.Format("document.cookie = \"{0}={1}; expires=\" + new Date({2}).toGMTString();", c.Name, c.Value, c.Expires.ToString("yyyy, MM, dd HH, mm, ss, 0"));
+                                          var code =
+                                              string.Format("document.cookie = \"{0}={1}; expires=\" + new Date({2}).toGMTString();", c.Name, c.Value,
+                                                c.Expires.ToString("yyyy, MM, dd HH, mm, ss, 0"));
                                           WB.InvokeScript("eval", code);
                                       }
                                   }
@@ -177,8 +216,7 @@ namespace WebSharperMobileWP7EmptyApp
                     }
                     catch (Exception err)
                     {
-                        var args = arg.Split('.');
-                        ui.BeginInvoke(() => WB.InvokeScript("eval", string.Format("{0}.call(null,\"{1}\")", args[4].Replace('@', '.'), err.ToString().Replace("\r", "").Replace("\n", ""))));
+                        ReturnException(arg.Split('.')[4], err);
                     }
                 }
                 else if (command == "alert")
@@ -186,9 +224,12 @@ namespace WebSharperMobileWP7EmptyApp
                 else if (command == "log")
                     Debug.WriteLine(arg);
                 else if (command == "location")
-                    WB.InvokeScript("eval", string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ Lat : {0}, Long : {1} }});", geoWatcher.Position.Location.Latitude, geoWatcher.Position.Location.Longitude));
+                    WB.InvokeScript("eval",
+                        string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ Lat : {0}, Long : {1} }});",
+                            geoWatcher.Position.Location.Latitude, geoWatcher.Position.Location.Longitude));
                 else if (command == "acceleration")
-                    WB.InvokeScript("eval", string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ X : {0}, Y : {1}, Z : {2} }});", aX * 9.81, aY * 9.81, aZ * 9.81));
+                    WB.InvokeScript("eval", string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ X : {0},   Y : {1},   Z : {2} }});",
+                                                                                                            aX * 9.81, aY * 9.81, aZ * 9.81));
                 else if (command == "camera")
                 {
                     try
@@ -207,30 +248,6 @@ namespace WebSharperMobileWP7EmptyApp
                                 {
                                     var bytes = new byte[(int)pr.ChosenPhoto.Length];
                                     pr.ChosenPhoto.Read(bytes, 0, (int)pr.ChosenPhoto.Length);
-                                    /*// to bitmap // WritableBitMapExWindowsPhone
-                                    BitmapImage imageSource;
-                                    using (MemoryStream stream = new MemoryStream(bytes))
-                                    {
-                                        stream.Seek(0, SeekOrigin.Begin);
-                                        BitmapImage b = new BitmapImage();
-                                        b.SetSource(stream);
-                                        imageSource = b;
-                                    }
-                                    // resize
-                                    WriteableBitmap bitmap = new WriteableBitmap(imageSource);
-                                    var maxRatio = (double)maxHeight / (double)maxWidth;
-                                    var imageRatio = (double)bitmap.PixelHeight / (double)bitmap.PixelWidth;
-                                    if (maxRatio > imageRatio)
-                                    {
-                                        if (maxWidth < bitmap.PixelWidth)
-                                            bitmap.Resize(maxWidth, (int)(maxWidth * imageRatio), WriteableBitmapExtensions.Interpolation.Bilinear);
-                                    }
-                                    else
-                                        if (maxHeight < bitmap.PixelHeight)
-                                            bitmap.Resize((int)(maxHeight / imageRatio), maxHeight, WriteableBitmapExtensions.Interpolation.Bilinear);
-                                    // to bytes
-                                    bytes = bitmap.ToByteArray();*/
-                                    // return
                                     var result = String.Join("", bytes.Select(x => x.ToString("X2")).ToArray());
                                     var evalArg = string.Format("{0}.call(null,\"{1}\")", callback.Replace('@', '.'), result);
                                     ui.BeginInvoke(() => WB.InvokeScript("eval", evalArg));
@@ -239,16 +256,14 @@ namespace WebSharperMobileWP7EmptyApp
                             }
                             catch (Exception err)
                             {
-                                var evalArg = string.Format("{0}.call(null,\"{1}\")", arg.Split('.')[1].Replace('@', '.'), err.Message);
-                                ui.BeginInvoke(() => WB.InvokeScript("eval", evalArg));
+                                ReturnException(arg.Split('.')[1], err);
                             }
                         });
                         photoTask.Show();
                     }
                     catch (Exception err)
                     {
-                        var evalArg = string.Format("{0}.call(null,\"{1}\")", arg.Split('.')[1].Replace('@', '.'), err.ToString().Replace("\r", "").Replace("\n", ""));
-                        ui.BeginInvoke(() => WB.InvokeScript("eval", evalArg));
+                        ReturnException(arg.Split('.')[1], err);
                     }
                 }
                 else if (command == "localStorage")
@@ -280,7 +295,7 @@ namespace WebSharperMobileWP7EmptyApp
             }
             catch (Exception err)
             {
-                MessageBox.Show(string.Format("Failed to parse command '{0}': {2}.", command, arg, err)); // ({1})
+                MessageBox.Show(string.Format("Failed to parse command '{0}': {1}.", command, err));
             }
         }
 
@@ -300,8 +315,9 @@ namespace WebSharperMobileWP7EmptyApp
         {
             using (var storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                try { storage.DeleteDirectory("www"); }
-                catch { }
+                if (storage.DirectoryExists("www"))
+                    storage.DeleteDirectory("www");
+
                 storage.CreateDirectory("www");
 
                 var dirs = new List<string>();
@@ -332,7 +348,7 @@ namespace WebSharperMobileWP7EmptyApp
                         {
                             LoadFile(storage, "www" + f);
                         }
-                        catch { if (!f.EndsWith(".png")) MessageBox.Show(f); }
+                        catch { } // please check
                 }
             }
         }

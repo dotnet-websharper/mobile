@@ -15,6 +15,7 @@
 package com.$(AUTHOR).$(SAFETITLE);
 
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.List;
 
 import android.app.Activity;
@@ -71,6 +72,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                 myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
             }
         } catch (Exception e) {
+            bridge.log("Exception in native layer: " + e.getMessage());
         }
     }
 
@@ -124,6 +126,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                 lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
                 lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
             } catch (Exception e) {
+                bridge.log("Exception in native layer: " + e.getMessage());
             }
         }
 
@@ -171,28 +174,33 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                 sv.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
-                            Camera.PictureCallback jpegCallback=new Camera.PictureCallback() {
-                                    public void onPictureTaken(byte[] data, Camera camera) {
-                                        StringBuffer sb = new StringBuffer(data.length * 2);
-                                        for (int i = 0; i < data.length; i++) {
-                                            int v = data[i] & 0xff;
-                                            if (v < 16) {
-                                                sb.append('0');
+                            try {
+                                Camera.PictureCallback jpegCallback=new Camera.PictureCallback() {
+                                        public void onPictureTaken(byte[] data, Camera camera) {
+                                            StringBuffer sb = new StringBuffer(data.length * 2);
+                                            for (int i = 0; i < data.length; i++) {
+                                                int v = data[i] & 0xff;
+                                                if (v < 16) {
+                                                    sb.append('0');
+                                                }
+                                                sb.append(Integer.toHexString(v));
                                             }
-                                            sb.append(Integer.toHexString(v));
+                                            wv.loadUrl("javascript:" + callback + ".call(null,\"" + sb.toString().toUpperCase() + "\")");
+                                            camera.release();
+                                            env.runOnUiThread(new Runnable() {
+                                                    public void run()
+                                                    {
+                                                        env.setContentView(wv);
+                                                    }});
+                                            cmr = null;
                                         }
-                                        wv.loadUrl("javascript:" + callback + ".call(null,\"" + sb.toString().toUpperCase() + "\")");
-                                        camera.release();
-                                        env.runOnUiThread(new Runnable() {
-                                                public void run()
-                                                {
-                                                    env.setContentView(wv);
-                                                }});
-                                        cmr = null;
-                                    }
-                                };
-                            cmr.takePicture(null, null, jpegCallback);
-                            return true;
+                                    };
+                                cmr.takePicture(null, null, jpegCallback);
+                                return true;
+                            } catch (Exception e) {
+                                wv.loadUrl("javascript:" + fail + ".call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"" +
+                                                                    URLEncoder.encode(e.getMessage(), "UTF-8") + "\"))");
+                            }
                         }
                     });
                 sv.setClickable(true);
@@ -206,7 +214,8 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                 Toast toast = Toast.makeText(env, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
                 toast.show();
             } catch (Exception e) {
-                wv.loadUrl("javascript:" + fail + ".call(null,\"" + e.getMessage() + "\")");
+                wv.loadUrl("javascript:" + fail + ".call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"" +
+                                                                                            URLEncoder.encode(e.getMessage(), "UTF-8") + "\"))");
             }
         }
 
