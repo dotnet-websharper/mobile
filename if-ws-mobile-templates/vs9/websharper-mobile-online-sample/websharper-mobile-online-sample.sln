@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebSharperMobileProject", "WebSharperMobileProject\WebSharperMobileProject.fsproj", "{BBA692B3-AB48-4F2E-8A33-260B0DD09A9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication", "WebApplication\WebApplication.csproj", "{2D0ECB41-55AC-4524-B3EF-434D5983DAE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BBA692B3-AB48-4F2E-8A33-260B0DD09A9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBA692B3-AB48-4F2E-8A33-260B0DD09A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBA692B3-AB48-4F2E-8A33-260B0DD09A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBA692B3-AB48-4F2E-8A33-260B0DD09A9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D0ECB41-55AC-4524-B3EF-434D5983DAE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D0ECB41-55AC-4524-B3EF-434D5983DAE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D0ECB41-55AC-4524-B3EF-434D5983DAE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D0ECB41-55AC-4524-B3EF-434D5983DAE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
