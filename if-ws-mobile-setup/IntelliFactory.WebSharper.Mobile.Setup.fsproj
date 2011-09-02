@@ -38,15 +38,20 @@
   <Import Project="$(MSBuildExtensionsPath32)\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks" />
   <!-- Packages WebSharper templates into ZIP archives ready for distribution. -->
   <Target Name="PackageTemplates">
-    <MakeDir Directories="$(TemplateDirectory)" />
+    <MakeDir Directories="$(TemplateDirectory)\vs9" />
+    <MakeDir Directories="$(TemplateDirectory)\vs10" />
     <ItemGroup>
-      <Templates Include="..\if-ws-mobile-templates\*\*.vstemplate" />
+      <Templates9 Include="..\if-ws-mobile-templates\vs9\*\*.vstemplate" />
+      <Templates10 Include="..\if-ws-mobile-templates\vs10\*\*.vstemplate" />
     </ItemGroup>
-    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates" Properties="Template=%(Templates.Filename);DependentBuild=yes" />
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates"
+             Properties="Ver=vs9;Template=%(Templates9.Filename);DependentBuild=yes" />
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates"
+             Properties="Ver=vs10;Template=%(Templates10.Filename);DependentBuild=yes" />
   </Target>
   <Target Name="_PackTemplates">
     <PropertyGroup>
-      <SourceDirectory>..\if-ws-mobile-templates\$(Template)</SourceDirectory>
+      <SourceDirectory>..\if-ws-mobile-templates\$(Ver)\$(Template)</SourceDirectory>
     </PropertyGroup>
     <ItemGroup>
       <GeneratedFiles Include="$(SourceDirectory)\**\bin\**\*.*" />
@@ -61,7 +66,11 @@
       <InstalledFiles Include="$(SourceDirectory)\**\*.*" Exclude="bin;@(VersionControlFiles)" />
     </ItemGroup>
     <MakeDir Directories="$(TemplateDirectory)" />
-    <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(InstalledFiles)" RemoveRoot="$(SourceDirectory)" ZipFileName="$(TemplateDirectory)\$(Template).zip" />
+    <MSBuild.ExtensionPack.Compression.DNZip
+      TaskAction="Create"
+      CompressFiles="@(InstalledFiles)"
+      RemoveRoot="$(SourceDirectory)"
+      ZipFileName="$(TemplateDirectory)\$(Ver)\$(Template).zip" />
   </Target>
   <Target Name="Archive">
     <RemoveDir Directories="..\.build\root" />
@@ -69,19 +78,22 @@
     <ItemGroup>
       <RootFiles Include="$(OutputPath)\IntelliFactory.WebSharper.Mobile*.dll" />
       <RootFiles Include="$(OutputPath)\IntelliFactory.WebSharper.Mobile*.targets" />
-      <RootFiles Include="$(OutputPath)\Ionic.Zip.Reduced.dll" />
+      <RootFiles Include="..\.build\lib\Ionic.Zip.Reduced.dll" />
       <RootFiles Include="$(OutputPath)\ws_mobile.exe" />
       <RootFiles Include="..\ws-mobile\bin\Release\ws_mobile.exe" />
       <RootFiles Include="..\ws-mobile\bin\Release\ws_mobile.exe.config" />
       <RootFiles Include="..\build\*.*" />
       <RootFiles Include="..\wp7-template\Bin\Release\*.xap" />
-      <TplFiles Include="..\if-ws-mobile-templates\bin\*.zip" />
+      <TplFiles Include="..\if-ws-mobile-templates\bin\**\*.zip" />
       <AndroidFiles Include="..\android-template\**\*.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(RootFiles)" DestinationFolder="..\.build\root" />
+    <Copy SourceFiles="@(RootFiles)"
+          DestinationFolder="..\.build\root" />
     <MakeDir Directories="..\.build\root\templates\vs10" />
-    <Copy SourceFiles="@(TplFiles)" DestinationFolder="..\.build\root\templates\vs10" />
-    <Copy SourceFiles="@(AndroidFiles)" DestinationFolder="..\.build\root\mobileBuildAndroid\%(RecursiveDir)" />
+    <Copy SourceFiles="@(TplFiles)"
+          DestinationFolder="..\.build\root\templates\%(RecursiveDir)" />
+    <Copy SourceFiles="@(AndroidFiles)"
+          DestinationFolder="..\.build\root\mobileBuildAndroid\%(RecursiveDir)" />
     <ItemGroup>
       <DeployedFiles Include="..\.build\root\**\*.*" />
     </ItemGroup>
