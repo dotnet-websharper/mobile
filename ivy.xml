@@ -6,7 +6,7 @@
     <artifact name="IntelliFactory.WebSharper.Mobile.Default" ext="dll" type="bin" />
     <artifact name="IntelliFactory.WebSharper.Mobile.Android" ext="dll" type="bin" />
     <artifact name="IntelliFactory.WebSharper.Mobile.WP7" ext="dll" type="bin" />
-    <artifact name="if-ws-mobile-setup" ext="msm" type="bin" />
+    <artifact name="if-ws-mobile-setup" ext="zip" type="bin" />
   </publications>
   <dependencies>
     <dependency name="if-ws" rev="latest.integration" />

@@ -13,7 +13,6 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TemplateDirectory>..\if-ws-mobile-templates\bin</TemplateDirectory>
     <ProgramFiles32>$(MSBuildExtensionsPath32)\..</ProgramFiles32>
-    <AdvInstLocation>"$(ProgramFiles32)\Caphyon\Advanced Installer 8.4\bin\x86\AdvancedInstaller.com"</AdvInstLocation>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -64,20 +63,33 @@
     <MakeDir Directories="$(TemplateDirectory)" />
     <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(InstalledFiles)" RemoveRoot="$(SourceDirectory)" ZipFileName="$(TemplateDirectory)\$(Template).zip" />
   </Target>
-  <Target Name="CreateInstallerModule">
-    <ReadLinesFromFile File="$(MSBuildProjectDirectory)/../.build/tag">
-      <Output TaskParameter="Lines" ItemName="TagLines" />
-    </ReadLinesFromFile>
-    <MakeDir Directories="..\.build" />
-    <Copy SourceFiles="if-ws-mobile-setup.aip" DestinationFolder="..\.build" />
-    <Exec Command="$(AdvInstLocation) /Edit if-ws-mobile-setup.aip /SetVersion @(TagLines)" WorkingDirectory="..\.build" />
-    <Exec Command="$(AdvInstLocation) /Build if-ws-mobile-setup.aip" WorkingDirectory="..\.build" />
-    <Copy SourceFiles="..\.build\if-ws-mobile-setup-SetupFiles\if-ws-mobile-setup.msm" DestinationFolder="$(OutputPath)" />
+  <Target Name="Archive">
+    <RemoveDir Directories="..\.build\root" />
+    <MakeDir Directories="..\.build\root" />
+    <ItemGroup>
+      <RootFiles Include="$(OutputPath)\IntelliFactory.WebSharper.Mobile*.dll" />
+      <RootFiles Include="$(OutputPath)\IntelliFactory.WebSharper.Mobile*.targets" />
+      <RootFiles Include="$(OutputPath)\Ionic.Zip.Reduced.dll" />
+      <RootFiles Include="$(OutputPath)\ws_mobile.exe" />
+      <RootFiles Include="..\ws-mobile\bin\Release\ws_mobile.exe" />
+      <RootFiles Include="..\ws-mobile\bin\Release\ws_mobile.exe.config" />
+      <RootFiles Include="..\build\*.*" />
+      <RootFiles Include="..\wp7-template\Bin\Release\*.xap" />
+      <TplFiles Include="..\if-ws-mobile-templates\bin\*.zip" />
+      <AndroidFiles Include="..\android-template\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RootFiles)" DestinationFolder="..\.build\root" />
+    <MakeDir Directories="..\.build\root\templates\vs10" />
+    <Copy SourceFiles="@(TplFiles)" DestinationFolder="..\.build\root\templates\vs10" />
+    <Copy SourceFiles="@(AndroidFiles)" DestinationFolder="..\.build\root\mobileBuildAndroid\%(RecursiveDir)" />
+    <ItemGroup>
+      <DeployedFiles Include="..\.build\root\**\*.*" />
+    </ItemGroup>
+    <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(DeployedFiles)" RemoveRoot="..\.build\root" ZipFileName="$(OutputPath)\if-ws-mobile-templates.zip" />
   </Target>
-  <Target Name="AfterBuild" DependsOnTargets="PackageTemplates;CreateInstallerModule" />
+  <Target Name="AfterBuild" DependsOnTargets="PackageTemplates;Archive" />
   <ItemGroup>
     <Compile Include="Setup.fs" />
-    <None Include="if-ws-mobile-setup.aip" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
