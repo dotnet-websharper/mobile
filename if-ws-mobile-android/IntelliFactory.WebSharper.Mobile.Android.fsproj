@@ -9,8 +9,9 @@
     <Name>IntelliFactory.WebSharper.Mobile.Android</Name>
     <RootNamespace>$(Name)</RootNamespace>
     <AssemblyName>$(Name)</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FullDeploy>true</FullDeploy>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,11 +34,11 @@
   <ItemGroup>
     <Compile Include="WebSharper.fs" />
     <EmbeddedResource Include="android.websharperBridge.serverLocation.js" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="IntelliFactory.WebSharper" />
     <Reference Include="IntelliFactory.WebSharper.Core" />
@@ -47,8 +48,6 @@
     <Reference Include="IntelliFactory.WebSharper.Html" />
     <Reference Include="IntelliFactory.WebSharper.Html5" />
     <Reference Include="IntelliFactory.WebSharper.Json" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\if-ws-mobile\IntelliFactory.WebSharper.Mobile.Default.fsproj">
       <Name>IntelliFactory.WebSharper.Mobile.Default</Name>
       <Project>{aab5b3c8-d106-4ed6-b1a2-9db4cfb30d19}</Project>

@@ -14,6 +14,7 @@
     <TemplateDirectory>..\if-ws-mobile-templates\bin</TemplateDirectory>
     <ProgramFiles32>$(MSBuildExtensionsPath32)\..</ProgramFiles32>
     <AdvInstLocation>"$(ProgramFiles32)\Caphyon\Advanced Installer 8.4\bin\x86\AdvancedInstaller.com"</AdvInstLocation>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -69,12 +70,9 @@
     </ReadLinesFromFile>
     <MakeDir Directories="..\.build" />
     <Copy SourceFiles="if-ws-mobile-setup.aip" DestinationFolder="..\.build" />
-    <Exec Command="$(AdvInstLocation) /Edit if-ws-mobile-setup.aip /SetVersion @(TagLines)"
-          WorkingDirectory="..\.build" />
-    <Exec Command="$(AdvInstLocation) /Build if-ws-mobile-setup.aip" 
-          WorkingDirectory="..\.build" />
-    <Copy SourceFiles="..\.build\if-ws-mobile-setup-SetupFiles\if-ws-mobile-setup.msm"
-          DestinationFolder="$(OutputPath)" />
+    <Exec Command="$(AdvInstLocation) /Edit if-ws-mobile-setup.aip /SetVersion @(TagLines)" WorkingDirectory="..\.build" />
+    <Exec Command="$(AdvInstLocation) /Build if-ws-mobile-setup.aip" WorkingDirectory="..\.build" />
+    <Copy SourceFiles="..\.build\if-ws-mobile-setup-SetupFiles\if-ws-mobile-setup.msm" DestinationFolder="$(OutputPath)" />
   </Target>
   <Target Name="AfterBuild" DependsOnTargets="PackageTemplates;CreateInstallerModule" />
   <ItemGroup>
