@@ -345,7 +345,7 @@ let wsMobile (pdir, dir, asmpath) =
                     | sdk -> sdk
 
             if sdk = null then
-                eprintfn "error 0000: Android SDK is not installed."
+                eprintfn "ws_mobile: error 0000: Android SDK is not installed."
                 -1
             else
 
