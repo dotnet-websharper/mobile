@@ -33,6 +33,9 @@ let isImage (file : string) =
 
 exception Handled
 
+let stripStartingBackSlashes (s : string) =
+    String(s.ToCharArray() |> Seq.skipWhile ((=) '\\') |> Array.ofSeq)
+
 let tfDelete file =
     if File.Exists file then File.Delete file
 
@@ -129,22 +132,30 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
         |> Seq.filter (fun e -> e.FileName.StartsWith "www")
         |> fun e -> zip.RemoveEntries (ResizeArray e)
 
+    let addFile (relPath : string) =
+        let path = Path.Combine(pdir, stripStartingBackSlashes relPath)
+        if File.Exists path then
+            zip.AddFile (path, "/") |> ignore
+        else
+            eprintfn "ws_mobile : error 0000 : Could not find file \"%s\"." path
+            raise Handled
+    
     match info.icon with
     | Some icon ->
         zip.RemoveEntry "ApplicationIcon.png"
-        zip.AddFile (Path.Combine (pdir, icon), "/") |> ignore
+        addFile icon
     | _ -> ()
 
     match info.background with
     | Some background ->
         zip.RemoveEntry "Background.png"
-        zip.AddFile (Path.Combine (pdir, background), "/") |> ignore
+        addFile background
     | _ -> ()
 
     match info.splashscreen with
     | Some splashscreen ->
         zip.RemoveEntry "SplashScreenImage.jpg"
-        zip.AddFile (Path.Combine (pdir, splashscreen), "/") |> ignore
+        addFile splashscreen
     | _ -> ()
 
     do
@@ -171,7 +182,7 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
         |> Seq.filter (fun e -> isImage e.FileName)
         |> Seq.iter (fun e -> e.FileName <- e.FileName + ".wsm.img.js")
 
-    let fileListing = Path.Combine(dir, @"\fileListing.txt")
+    let fileListing = Path.Combine(dir, @"fileListing.txt")
 
     let list = File.CreateText fileListing
     using list (fun list ->
@@ -216,10 +227,10 @@ let createForAndroid (template : string) dir name =
 
     zip.AddDirectory(dir, "assets/www") |> ignore
 
-    try
-        zip.RemoveEntry (sprintf @"assets\www\%s.xap" name)
+    try zip.RemoveEntry (sprintf @"assets\www\%s.xap" name)
     with _ -> ()
 
+    // removed mobileBuildAndroid folder and .apk files that were added by mistake
     for e in List.ofSeq zip.EntryFileNames do
         let startsWith' (this : string) (prefix : string) = this.Length >= prefix.Length && this.Replace('\\', '/').[ 0 .. prefix.Length - 1 ] = prefix
         let onlyTwo = lazy (
@@ -234,7 +245,10 @@ let createForAndroid (template : string) dir name =
         if startsWith' e "assets/www/mobileBuildAndroid" || (e.EndsWith ".apk" && startsWith' e "assets/www" && onlyTwo.Value) then
             zip.RemoveEntry e
 
-    zip.Save()
+    try zip.Save()
+    with _ ->
+        eprintfn "ws_mobile : error 0000 : Could not save \"%s\". Please make sure it isn't being used by any other process." template
+        raise Handled
 
 let wsMobile (pdir, dir, asmpath) =
     try
@@ -244,30 +258,29 @@ let wsMobile (pdir, dir, asmpath) =
             else this
         let [ pdir; dir; asmpath ] = [ pdir; dir; asmpath ] |> List.map stripDot
         let asm = Assembly.LoadFile asmpath
-        let doc = XDocument.Load (Path.Combine(pdir, @"\mobile.config"))
+        let doc =
+            try XDocument.Load (Path.Combine(pdir, @"mobile.config"))
+            with _ ->
+                eprintfn "ws_mobile : error 0000 : Could not find file \"%s\"." (Path.Combine(pdir, @"mobile.config"))
+                raise Handled
         let info =
             let title =
-                try
-                    (asm.GetCustomAttributes(typeof<AssemblyProductAttribute>, true).[0] :?> AssemblyProductAttribute).Product
+                try (asm.GetCustomAttributes(typeof<AssemblyProductAttribute>, true).[0] :?> AssemblyProductAttribute).Product
                 with _ -> Path.GetFileNameWithoutExtension asmpath
             let company =
-                try
-                    (asm.GetCustomAttributes(typeof<AssemblyCompanyAttribute>, true).[0] :?> AssemblyCompanyAttribute).Company
+                try (asm.GetCustomAttributes(typeof<AssemblyCompanyAttribute>, true).[0] :?> AssemblyCompanyAttribute).Company
                 with _ -> "Company"
             {
                 title = title
                 filename = title.Replace(" ", "")
                 guid =  
-                    try
-                        (asm.GetCustomAttributes(typeof<GuidAttribute>, true).[0] :?> GuidAttribute).Value
+                    try (asm.GetCustomAttributes(typeof<GuidAttribute>, true).[0] :?> GuidAttribute).Value
                     with _ -> System.Guid.NewGuid().ToString()
                 version =
-                    try
-                        (asm.GetCustomAttributes(typeof<AssemblyFileVersionAttribute>, true).[0] :?> AssemblyFileVersionAttribute).Version
+                    try (asm.GetCustomAttributes(typeof<AssemblyFileVersionAttribute>, true).[0] :?> AssemblyFileVersionAttribute).Version
                     with _ -> "0.0.0.0"
                 isGame =
-                    try
-                        Seq.isEmpty <| doc . Element(XName.Get "configuration")
+                    try Seq.isEmpty <| doc . Element(XName.Get "configuration")
                                             .Element(XName.Get "wp7")
                                             .Elements(XName.Get "isgame")
                         |> not
@@ -275,28 +288,24 @@ let wsMobile (pdir, dir, asmpath) =
                 author = company
                 publisher = company
                 description =
-                    try
-                        (asm.GetCustomAttributes(typeof<AssemblyDescriptionAttribute>, true).[0] :?> AssemblyDescriptionAttribute).Description
+                    try (asm.GetCustomAttributes(typeof<AssemblyDescriptionAttribute>, true).[0] :?> AssemblyDescriptionAttribute).Description
                     with _ -> ""
                 icon =
-                    try
-                        doc .Element(XName.Get "configuration")
+                    try doc .Element(XName.Get "configuration")
                             .Element(XName.Get "wp7")
                             .Element(XName.Get "icon")
                             .Value
                         |> Some
                     with _ -> None
                 background =
-                    try
-                        doc .Element(XName.Get "configuration")
+                    try doc .Element(XName.Get "configuration")
                             .Element(XName.Get "wp7")
                             .Element(XName.Get "background")
                             .Value
                         |> Some
                     with _ -> None
                 splashscreen =
-                    try
-                        doc .Element(XName.Get "configuration")
+                    try doc .Element(XName.Get "configuration")
                             .Element(XName.Get "wp7")
                             .Element(XName.Get "splashscreen")
                             .Value
@@ -305,14 +314,13 @@ let wsMobile (pdir, dir, asmpath) =
             }
         let name = info.filename
 
-        tfDelete (sprintf @"%s\%s.xap" dir name)
+        tfDelete (Path.Combine (dir, sprintf @"%s.xap" name))
 
         Directory.GetFiles(dir, "*.apk")
         |> Array.iter (fun name -> tfDelete name)
     
         let androidBuilds =
-            try
-                doc .Element(XName.Get "configuration")
+            try doc .Element(XName.Get "configuration")
                     .Element(XName.Get "androidBuilds")
                     .Elements(XName.Get "build")
                 |> List.ofSeq
@@ -438,7 +446,7 @@ let wsMobile (pdir, dir, asmpath) =
                             [ sprintf @"""%s\target\__%s"" -u -z ""%s\target\app.ap_"" -f ""%s\target\classes.dex"" -rf ""%s\src""" env n env env env ]
                         runProc "apkbuilder.bat" args []
                     do // copy from html\bin to html
-                        File.Copy (Path.Combine(dir, "mobileBuildAndroid\\target\\__" + n), Path.Combine(dir, "__" + n))
+                        File.Copy (Path.Combine(dir, @"mobileBuildAndroid\target\__" + n), Path.Combine(dir, "__" + n))
                     do // actually fill contents (those are the www things)
                         //System.Threading.Thread.Sleep 15000
                         createForAndroid (Path.Combine (dir, "__" + n)) dir name
@@ -451,7 +459,7 @@ let wsMobile (pdir, dir, asmpath) =
                                 [
                                 "-digestalg SHA1 -sigalg MD5withRSA"
                                 "-keystore"
-                                Path.Combine (pdir, key) |> quote
+                                Path.Combine (pdir, stripStartingBackSlashes key) |> quote
                                 Path.Combine (dir, "__" + n) |> quote
                                 alias
                                 ]
