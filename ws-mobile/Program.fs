@@ -28,8 +28,9 @@ let imageTypes =
     ]
 
 let isImage (file : string) =
-    imageTypes
-    |> List.exists (fun suffix -> file.EndsWith suffix)
+    file.StartsWith "www" &&
+        imageTypes
+        |> List.exists (fun suffix -> file.EndsWith suffix)
 
 exception Handled
 
@@ -123,13 +124,12 @@ let collectFiles dir =
 
 let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
 
-    let disposeList = System.Collections.Generic.List<string>()
-
     let zip = new ZipFile(template)
 
     do
         zip.Entries
         |> Seq.filter (fun e -> e.FileName.StartsWith "www")
+        |> List.ofSeq
         |> fun e -> zip.RemoveEntries (ResizeArray e)
 
     let addFile (relPath : string) =
@@ -139,7 +139,7 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
         else
             eprintfn "ws_mobile : error 0000 : Could not find file \"%s\"." path
             raise Handled
-    
+
     match info.icon with
     | Some icon ->
         zip.RemoveEntry "ApplicationIcon.png"
@@ -158,8 +158,8 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
         addFile splashscreen
     | _ -> ()
 
+    let man = Path.Combine (pdir, "WMAppManifest.xml")
     do
-        let man = Path.Combine (pdir, "WMAppManifest.xml")
         zip.RemoveEntry "WMAppManifest.xml"
         let wmam = File.ReadAllText "WMAppManifest.xml"
         let wmam =
@@ -173,14 +173,14 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
                 .Replace("$(DESCRIPTION)", info.description)
         File.WriteAllText (man, wmam)
         zip.AddFile (man, "/") |> ignore
-        disposeList.Add man
 
     zip.AddDirectory(dir, "www") |> ignore
 
     do // add to images the .wsm.img.js suffix
         zip.Entries
-        |> Seq.filter (fun e -> isImage e.FileName)
-        |> Seq.iter (fun e -> e.FileName <- e.FileName + ".wsm.img.js")
+        |> List.ofSeq
+        |> List.filter (fun e -> isImage e.FileName)
+        |> List.iter (fun e -> e.FileName <- e.FileName + ".wsm.img.js")
 
     let fileListing = Path.Combine(dir, @"fileListing.txt")
 
@@ -212,8 +212,7 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
         eprintfn "ws_mobile : error 0000 : Could not save \"%s.xap\". Please make sure it isn't being used by any other process." info.filename
         raise Handled
 
-    for f in disposeList do
-        tfDelete f
+    tfDelete man
     
     fileListing
 
@@ -481,7 +480,7 @@ let wsMobile (pdir, dir, asmpath) =
     with
         | Handled -> -1
         | e ->
-            eprintfn "ws_mobile : error 0000 : %s: %s @ %s" (e.GetType().FullName) e.Message e.StackTrace
+            eprintfn "ws_mobile : error 0000 : %s: %s %s" (e.GetType().FullName) e.Message (e.StackTrace.Replace("\r", "").Replace("\n", ""))
             -1
 
 [<EntryPoint>]
@@ -503,6 +502,6 @@ let main args =
             with _ ->
                 eprintfn "ws_mobile : warning 0000 : Could not delete mobileBuildAndroid from the target folder."
             try
-                tfDelete (Path.Combine(args.[1], @"\serverLocation.txt"))
+                tfDelete (Path.Combine(args.[1], "serverLocation.txt"))
             with _ ->
                 eprintfn "ws_mobile : warning 0000 : Could not delete serverLocation.txt from the target folder."

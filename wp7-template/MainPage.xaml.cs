@@ -307,8 +307,15 @@ namespace WebSharperMobileWP7EmptyApp
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadAllFiles();
-            WB.Navigate(new Uri("index.html", UriKind.Relative));
+            try
+            {
+                LoadAllFiles();
+                WB.Navigate(new Uri("index.html", UriKind.Relative));
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message + " " + err.StackTrace);
+            }
         }
 
         private void LoadAllFiles()
@@ -350,13 +357,26 @@ namespace WebSharperMobileWP7EmptyApp
 
         private void LoadFile(IsolatedStorageFile storage, string file)
         {
+            if (file == null)
+                MessageBox.Show("WTF?!");
             var targetFile = file;
             if (targetFile.EndsWith(".wsm.img.js"))
+            {
                 targetFile = targetFile.Substring(0, targetFile.Length - ".wsm.img.js".Length);
+                MessageBox.Show(targetFile);
+            }
 
             using (var sw = new StreamWriter(storage.OpenFile(targetFile, System.IO.FileMode.OpenOrCreate)))
-            using (var sr = new StreamReader(Application.GetResourceStream(new Uri(file, UriKind.Relative)).Stream))
-                sw.Write(sr.ReadToEnd());
+            {
+                var t = Application.GetResourceStream(new Uri(file, UriKind.Relative));
+                if (t == null)
+                    MessageBox.Show("Pope");
+                using (var sr = new StreamReader(t.Stream))
+                    if (sw == null)
+                        MessageBox.Show("Poop");
+                    else
+                        sw.Write(sr.ReadToEnd());
+            }
         }
     }
 }
