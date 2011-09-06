@@ -27,8 +27,8 @@ let imageTypes =
         ".tiff"
     ]
 
-let isImage (file : string) =
-    file.StartsWith "www" &&
+let isImage ``override`` (file : string) =
+    (``override`` || file.StartsWith "www") &&
         imageTypes
         |> List.exists (fun suffix -> file.EndsWith suffix)
 
@@ -179,7 +179,7 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
     do // add to images the .wsm.img.js suffix
         zip.Entries
         |> List.ofSeq
-        |> List.filter (fun e -> isImage e.FileName)
+        |> List.filter (fun e -> isImage false e.FileName)
         |> List.iter (fun e -> e.FileName <- e.FileName + ".wsm.img.js")
 
     let fileListing = Path.Combine(dir, @"fileListing.txt")
@@ -196,7 +196,7 @@ let createForWP7 (template : string) pdir dir (info : AssemblyInfo) =
 
         for f in files do
             if f = "\\fileListing.txt" then ()
-            elif isImage f then
+            elif isImage true f then
                 list.WriteLine (f + ".wsm.img.js")
             else
                 list.WriteLine f
