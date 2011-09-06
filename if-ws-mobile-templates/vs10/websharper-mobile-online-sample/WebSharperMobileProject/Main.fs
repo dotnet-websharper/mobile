@@ -1,4 +1,4 @@
-﻿namespace SampleWebsite
+namespace SampleWebsite
 
 open System
 open System.IO
@@ -64,8 +64,8 @@ module SampleSite =
 
         [<JavaScript>]
         let support =
-            WP7.EnableWP7Support() // remove if you are not intending to build for WP7 (recommended)
-            Android.EnableAndroidSupport() // remove if you are not intending to build for Android (recommended)
+            WP7.EnableWP7Support()
+            Android.EnableAndroidSupport()
 
         type IndexControl() =
             inherit Web.Control ()
