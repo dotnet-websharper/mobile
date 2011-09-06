@@ -167,7 +167,7 @@ let private wp7Init () = ()
 
 [<JavaScript>]
 let EnableWP7Support () =
-    ignore Provider
+    ignore Mobile
     ignore IntelliFactory.WebSharper.Remoting.Config.EndPoint
     ignore IntelliFactory.WebSharper.Remoting.Config.AjaxProvider
     wp7Init()

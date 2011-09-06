@@ -327,7 +327,7 @@ let wsMobile (pdir, dir, asmpath) =
 
         try
             let elem = doc.Element(XName.Get "configuration").Element(XName.Get "serverLocation")
-            let serverLocation = Path.Combine(dir, @"\serverLocation.txt")
+            let serverLocation = Path.Combine(dir, @"serverLocation.txt")
             File.WriteAllText(serverLocation, elem.Value)
         with :? NullReferenceException -> () // no serverLocation specified
 

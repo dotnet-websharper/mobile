@@ -114,5 +114,5 @@ type private DefaultMobileProvider [<JavaScript>] () =
             (this :> IMobileProvider).StorageStore k (Json.Stringify v)
 
 [<JavaScript>]
-let mutable Provider : IMobileProvider =
+let mutable Mobile : IMobileProvider =
     DefaultMobileProvider() :> _

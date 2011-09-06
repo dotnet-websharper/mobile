@@ -109,6 +109,6 @@ let private androidInit () = ()
 
 [<JavaScript>]
 let EnableAndroidSupport () =
-    ignore Provider
+    ignore Mobile
     ignore IntelliFactory.WebSharper.Remoting.Config.EndPoint
     androidInit()
