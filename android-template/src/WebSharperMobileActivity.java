@@ -15,8 +15,6 @@
 package com.$(AUTHOR).$(SAFETITLE);
 
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import android.app.Activity;
@@ -198,12 +196,8 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                                     };
                                 cmr.takePicture(null, null, jpegCallback);
                             } catch (Exception e) {
-                                try {
-                                    wv.loadUrl("javascript:" + fail + ".call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"" +
-                                                                        URLEncoder.encode(e.getMessage(), "UTF-8") + "\"))");
-                                } catch (UnsupportedEncodingException e2) {
-                                    wv.loadUrl("javascript:" + fail + ".call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"\"))");
-                                }
+                                wv.loadUrl("javascript:" + fail + ".call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"" +
+                                                                                    e.getMessage().replaceAll("\\", "\\\\").replaceAll("\"", "\\\"") + "\"))");
                             }
                             return true;
                         }
@@ -219,12 +213,8 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
                 Toast toast = Toast.makeText(env, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
                 toast.show();
             } catch (Exception e) {
-                try {
-                    wv.loadUrl("javascript:" + fail + ".call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"" +
-                                                                                                URLEncoder.encode(e.getMessage(), "UTF-8") + "\"))");
-                } catch (UnsupportedEncodingException e2) {
-                    wv.loadUrl("javascript:" + fail + ".call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"\"))");
-                }
+                wv.loadUrl("javascript:" + fail + ".call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"" +
+                                                                                    e.getMessage().replaceAll("\\", "\\\\").replaceAll("\"", "\\\"") + "\"))");
             }
         }
 

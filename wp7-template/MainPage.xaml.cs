@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Device.Location;
 using System.Diagnostics;
+using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Net;
 using System.Windows;
+using System.Windows.Threading;
 using Microsoft.Devices.Sensors;
 using Microsoft.Phone.Controls;
-using System.IO;
-using System.Net;
-using System.Windows.Threading;
-using System.Threading;
 using Microsoft.Phone.Tasks;
-using System.Windows.Media.Imaging;
 
 namespace WebSharperMobileWP7EmptyApp
 {
@@ -27,11 +25,16 @@ namespace WebSharperMobileWP7EmptyApp
                 else
                     return str.Substring(from);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MessageBox.Show(string.Format("Failed to substring: {0} from {1} to {2}", str, from, to));
-                throw e;
+                throw;
             }
+        }
+
+        public static string Escape(this string str)
+        {
+            return str.Replace("\\", "\\\\").Replace("\"", "\\\"");
         }
     }
 
@@ -76,14 +79,37 @@ namespace WebSharperMobileWP7EmptyApp
             aZ = e.Z;
         }
 
+        private void RunJavaScript(bool onUI, string code)
+        {
+            if (onUI)
+                try
+                {
+                    WB.InvokeScript("eval", code);
+                }
+                catch
+                {
+                    Debug.WriteLine("Failed to execute JavaScript code: " + code);
+                    // this sometimes happens, especially in failed AJAX calls, it means that there was an unhandled exception.
+                }
+            else
+                ui.BeginInvoke(delegate
+                {
+                    try
+                    {
+                        WB.InvokeScript("eval", code);
+                    }
+                    catch
+                    {
+                        Debug.WriteLine("Failed to execute JavaScript code: " + code);
+                        // this sometimes happens, especially in failed AJAX calls, it means that there was an unhandled exception.
+                    }
+                });
+        }
+
         private void ReturnException(string callback, Exception e)
         {
-            ui.BeginInvoke(delegate
-            {
-                WB.InvokeScript("eval",
-                    string.Format("{0}.call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"{1}\"))",
-                        callback.Replace('@', '.'), Uri.EscapeDataString(e.Message)));
-            });
+            RunJavaScript(false, string.Format("{0}.call(null,IntelliFactory.WebSharper.Runtime.NewError(\"Exception\",\"{1}\"))", callback.Replace('@', '.'),
+                                                                                                                                        e.Message.Escape()));
         }
 
         private HttpWebRequest CallAjax(string methodArg, Action<CookieCollection, string, string> callback)
@@ -95,7 +121,7 @@ namespace WebSharperMobileWP7EmptyApp
                 var headers = ParsePairsArray(args[1]);
                 var cookies = ParsePairsArray(args[2]);
                 var content = args[3].Replace('#', ',').Replace('@', '.');
-                var callbackF = args[4];
+                var callbackS = args[4];
                 HttpWebRequest wr = HttpWebRequest.CreateHttp(uri);
                 foreach (var p in headers)
                     try
@@ -134,7 +160,7 @@ namespace WebSharperMobileWP7EmptyApp
                                     {
                                         var result = sr.ReadToEnd();
                                         var httpresponse = (HttpWebResponse)response;
-                                        callback(cookieContainer.GetCookies(httpresponse.ResponseUri), callbackF, result);
+                                        callback(cookieContainer.GetCookies(httpresponse.ResponseUri), callbackS, result);
                                     }
                                 }
                                 else
@@ -142,14 +168,14 @@ namespace WebSharperMobileWP7EmptyApp
                             }
                             catch (Exception err)
                             {
-                                ReturnException(methodArg.Split('.')[4], err);
+                                ReturnException(methodArg.Split('.')[5], err);
                                 throw err;
                             }
                         }), wr2);
                     }
                     catch (Exception err)
                     {
-                        ReturnException(methodArg.Split('.')[4], err);
+                        ReturnException(methodArg.Split('.')[5], err);
                         throw err;
                     }
                 }, wr);
@@ -157,7 +183,7 @@ namespace WebSharperMobileWP7EmptyApp
             }
             catch (Exception err)
             {
-                ReturnException(methodArg.Split('.')[4], err);
+                ReturnException(methodArg.Split('.')[5], err);
                 throw err;
             }
         }
@@ -182,10 +208,9 @@ namespace WebSharperMobileWP7EmptyApp
                     using (var storage = IsolatedStorageFile.GetUserStoreForApplication())
                         if (storage.FileExists("www\\serverLocation.txt"))
                             using (var sr = new StreamReader(storage.OpenFile("www\\serverLocation.txt", FileMode.Open)))
-                                WB.InvokeScript("eval",
-                                    string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ $ : 1, $0 : \"{0}\" }});", sr.ReadLine()));
+                                RunJavaScript(true, string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ $ : 1, $0 : \"{0}\" }});", sr.ReadLine()));
                         else
-                            WB.InvokeScript("eval", string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ $ : 0 }});"));
+                            RunJavaScript(true, string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ $ : 0 }});"));
                 }
                 else if (command == "ajax")
                 {
@@ -194,24 +219,20 @@ namespace WebSharperMobileWP7EmptyApp
                     {
                         CallAjax(arg, (cookies, callback, result) =>
                           {
-                              ui.BeginInvoke(() =>
+                              if (cookies != null)
                               {
-                                  if (cookies != null)
+                                  foreach (var i in cookies)
                                   {
-                                      foreach (var i in cookies)
-                                      {
-                                          var c = (Cookie)i;
-                                          var code =
-                                              string.Format("document.cookie = \"{0}={1}; expires=\" + new Date({2}).toGMTString();", c.Name, c.Value,
-                                                c.Expires.ToString("yyyy, MM, dd HH, mm, ss, 0"));
-                                          WB.InvokeScript("eval", code);
-                                      }
+                                      var c = (Cookie)i;
+                                      var code =
+                                          string.Format("document.cookie = \"{0}={1}; expires=\" + new Date({2}).toGMTString();", c.Name, c.Value,
+                                            c.Expires.ToString("yyyy, MM, dd HH, mm, ss, 0"));
+                                      RunJavaScript(false, code);
                                   }
-                                  else
-                                      MessageBox.Show("No cookies.");
-                                  var evalArg = string.Format("{0}.call(null,JSON.stringify({1}))", callback.Replace('@', '.'), result);
-                                  WB.InvokeScript("eval", evalArg);
-                              });
+                              }
+                              else
+                                  MessageBox.Show("No cookies.");
+                              RunJavaScript(false, string.Format("{0}.call(null,JSON.stringify({1}))", callback.Replace('@', '.'), result));
                           });
                     }
                     catch (Exception err)
@@ -224,11 +245,10 @@ namespace WebSharperMobileWP7EmptyApp
                 else if (command == "log")
                     Debug.WriteLine(arg);
                 else if (command == "location")
-                    WB.InvokeScript("eval",
-                        string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ Lat : {0}, Long : {1} }});",
-                            geoWatcher.Position.Location.Latitude, geoWatcher.Position.Location.Longitude));
+                    RunJavaScript(true, string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ Lat : {0}, Long : {1} }});",
+                                                                            geoWatcher.Position.Location.Latitude, geoWatcher.Position.Location.Longitude));
                 else if (command == "acceleration")
-                    WB.InvokeScript("eval", string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ X : {0},   Y : {1},   Z : {2} }});",
+                    RunJavaScript(true, string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = ({{ X : {0},   Y : {1},   Z : {2} }});",
                                                                                                             aX * 9.81, aY * 9.81, aZ * 9.81));
                 else if (command == "camera")
                 {
@@ -249,8 +269,7 @@ namespace WebSharperMobileWP7EmptyApp
                                     var bytes = new byte[(int)pr.ChosenPhoto.Length];
                                     pr.ChosenPhoto.Read(bytes, 0, (int)pr.ChosenPhoto.Length);
                                     var result = String.Join("", bytes.Select(x => x.ToString("X2")).ToArray());
-                                    var evalArg = string.Format("{0}.call(null,\"{1}\")", callback.Replace('@', '.'), result);
-                                    ui.BeginInvoke(() => WB.InvokeScript("eval", evalArg));
+                                    RunJavaScript(false, string.Format("{0}.call(null,\"{1}\")", callback.Replace('@', '.'), result));
                                 }
                                 else throw new Exception("Could not access camera.");
                             }
@@ -278,7 +297,7 @@ namespace WebSharperMobileWP7EmptyApp
                             result = localStorage[methodArg];
                         else
                             result = "";
-                        WB.InvokeScript("eval", string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = \"{0}\";", result));
+                        RunJavaScript(true, string.Format("IntelliFactory.WebSharper.Mobile.WP7.result = \"{0}\";", result));
                     }
                     else if (method == "store")
                     {
@@ -301,8 +320,9 @@ namespace WebSharperMobileWP7EmptyApp
 
         private IEnumerable<string[]> ParsePairsArray(string input)
         {
-            foreach (var i in input.Split(','))
-                yield return i.Split(';').Select(s => s.Replace('#', ',').Replace('@', '.')).ToArray();
+            if (input.Trim() != "")
+                foreach (var i in input.Split(','))
+                    yield return i.Split(';').Select(s => s.Replace('#', ',').Replace('@', '.')).ToArray();
         }
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
