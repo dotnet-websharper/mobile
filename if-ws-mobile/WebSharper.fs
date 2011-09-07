@@ -63,10 +63,10 @@ type IMobileProvider =
 type private DefaultMobileProvider [<JavaScript>] () =
 
     [<Inline "alert($s)">]
-    let bAlert (s : string) = ()
+    let bAlert (s : string) : unit = X
 
     [<Inline "console.log($s)">]
-    let bLog (s : string) = ()
+    let bLog (s : string) : unit = X
 
     interface IMobileProvider with
 

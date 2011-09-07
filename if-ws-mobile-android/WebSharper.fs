@@ -1,4 +1,15 @@
-﻿module IntelliFactory.WebSharper.Mobile.Android
+﻿// $begin{copyright}
+//
+// This file is confidential and proprietary.
+//
+// Copyright (c) IntelliFactory, 2004-2011.
+//
+// All rights reserved.  Reproduction or use in whole or in part is
+// prohibited without the written consent of the copyright holder.
+//-----------------------------------------------------------------
+// $end{copyright}
+
+module IntelliFactory.WebSharper.Mobile.Android
 
 open IntelliFactory.WebSharper
 open IntelliFactory.WebSharper.Html
@@ -36,22 +47,22 @@ module private Ajax =
 type private AndroidMobileProvider [<JavaScript>] () =
     
     [<Inline "websharperBridge.alert($s)">]
-    let bAlert (s : string) = ()
+    let bAlert (s : string) : unit = X
 
     [<Inline "websharperBridge.log($s)">]
-    let bLog (s : string) = ()
+    let bLog (s : string) : unit = X
 
     [<Inline "eval('' + $s)">]
-    let eval (s : string) = unbox null
+    let eval (s : string) = X
     
     [<Inline "websharperBridge.location()">]
-    let bLocation () = ""
+    let bLocation () : string = X
 
     [<Inline "websharperBridge.acceleration()">]
-    let bAcceleration () = ""
+    let bAcceleration () : string = X
 
     [<Inline "websharperBridge.camera($width, $height, $success, $fail)">]
-    let bPhotoFromCamera (width : int) (height : int) (success : string) (fail : string) = ()
+    let bPhotoFromCamera (width : int) (height : int) (success : string) (fail : string) : unit = X
 
     [<JavaScript>]
     let photoFromCamera (width, height) (success, fail, _) =
@@ -105,7 +116,7 @@ module private ProviderHolder =
     let provider = AndroidMobileProvider()
 
 [<Inline "android_init()">]
-let private androidInit () = ()
+let private androidInit () : unit = X
 
 [<JavaScript>]
 let EnableAndroidSupport () =

@@ -1,4 +1,15 @@
-﻿module IntelliFactory.WebSharper.Mobile.WP7
+﻿// $begin{copyright}
+//
+// This file is confidential and proprietary.
+//
+// Copyright (c) IntelliFactory, 2004-2011.
+//
+// All rights reserved.  Reproduction or use in whole or in part is
+// prohibited without the written consent of the copyright holder.
+//-----------------------------------------------------------------
+// $end{copyright}
+
+module IntelliFactory.WebSharper.Mobile.WP7
 
 open IntelliFactory.WebSharper
 open IntelliFactory.WebSharper.Html
@@ -15,7 +26,7 @@ type private WP7NotifyResource() =
 module private Ajax =
 
     [<Inline("$0.split($1)")>]
-    let Split (str : string) (delim : char) : string[] = [||]
+    let Split (str : string) (delim : char) : string[] = X
     
     // AJAX area
 
@@ -26,7 +37,7 @@ module private Ajax =
     let private failureCallbacks = new System.Collections.Generic.Dictionary<int,obj>()
 
     [<JavaScript>]
-    let mutable private callbackCounter = 0
+    let mutable private callbackCounter = X
 
     [<JavaScript>]
     let setCallbacks success failure =
@@ -38,10 +49,10 @@ module private Ajax =
             "IntelliFactory.WebSharper.Mobile.WP7.Ajax.failureCallbacks.get_Item(" + cbc.ToString() + ")"
 
     [<Inline "callNotify('ajax.' + $url + '.' + $headers + '.' + $cookies + '.' + $content + '.' + $callback + '.' + $fail)">]
-    let private ajax (url : string) (headers : string) (cookies : string) (content : string) (callback : string) (fail : string) = ()
+    let private ajax (url : string) (headers : string) (cookies : string) (content : string) (callback : string) (fail : string) = X
 
     [<Inline "document.cookie">]
-    let private cookieString() = ""
+    let private cookieString() = X
 
     [<JavaScript>]
     let cookies () =
@@ -90,19 +101,19 @@ let mutable private result : obj = box ""
 type private WP7MobileProvider [<JavaScript>] () =
 
     [<Inline "callNotify('alert.' + $s)">]
-    let bAlert (s : string) = ()
+    let bAlert (s : string) : unit = X
 
     [<Inline "callNotify('log.' + $s)">]
-    let bLog (s : string) = ()
+    let bLog (s : string) : unit = X
 
     [<Inline "callNotify('location.')">]
-    let bLocation () = ()
+    let bLocation () : unit = X
 
     [<Inline "callNotify('acceleration.')">]
-    let bAcceleration () = ()
+    let bAcceleration () : unit = X
 
     [<Inline "callNotify('camera.' + $width + '.' + $height + '.' + $callback + '.' + $fail)">]
-    let bPhotoFromCamera (width : string) (height : string) (callback : string) (fail : string) = ()
+    let bPhotoFromCamera (width : string) (height : string) (callback : string) (fail : string) : unit = X
 
     [<JavaScript>]
     let photoFromCamera (width, height) (callback, fail, _) =
@@ -111,10 +122,10 @@ type private WP7MobileProvider [<JavaScript>] () =
         bPhotoFromCamera (string width) (string height) (escape callback) (escape fail)
 
     [<Inline "callNotify('localStorage.load.' + $k)">]
-    let storageLoad k = ()
+    let storageLoad (k : string) : string = X
 
     [<Inline "callNotify('localStorage.store.' + $k + '.' + $v)">]
-    let bStorageStore (k : string) (v : string) = ()
+    let bStorageStore (k : string) (v : string) : unit = X
 
     interface IMobileProvider with
 
@@ -139,7 +150,7 @@ type private WP7MobileProvider [<JavaScript>] () =
             Async.FromContinuations (photoFromCamera (0, 0))
 
         [<JavaScript>]
-        override this.StorageLoad k : string =
+        override this.StorageLoad k =
             storageLoad k
             unbox result
 
@@ -163,7 +174,7 @@ module private ProviderHolder =
     let provider = WP7MobileProvider()
 
 [<Inline "wp7_init()">]
-let private wp7Init () = ()
+let private wp7Init () : unit = X
 
 [<JavaScript>]
 let EnableWP7Support () =
