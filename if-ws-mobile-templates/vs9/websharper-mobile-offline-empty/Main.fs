@@ -9,7 +9,7 @@ open IntelliFactory.WebSharper.Sitelets
 module SampleSite =
     open IntelliFactory.Html
     open IntelliFactory.WebSharper
-    
+
     // Action type
     type Action = | Index
 
@@ -25,7 +25,8 @@ module SampleSite =
 
     let Template title body : Content<Action> =
         PageContent <| fun context ->
-            { Page.Default with 
+            { Page.Default with
+                Head = [ VerbatimContent "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />" ]
                 Title = Some title
                 Body = body context
             }
@@ -38,9 +39,9 @@ module SampleSite =
 
     let MySitelet =
         Sitelet.Content "/index" Action.Index Index
-    
+
     // Actions to generate pages from
-    let MyActions = 
+    let MyActions =
         [
             Action.Index
         ]

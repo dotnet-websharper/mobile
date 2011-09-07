@@ -9,7 +9,7 @@ open IntelliFactory.WebSharper.Sitelets
 module SampleSite =
     open IntelliFactory.Html
     open IntelliFactory.WebSharper
-    
+
     // Action type
     type Action =
         | Index
@@ -46,7 +46,7 @@ module SampleSite =
                 let acc = Mobile.GetAcceleration()
                 let accT = "X: " + acc.X.ToString() + "; Y: " + acc.Y.ToString() + "; Z: " + acc.Z.ToString()
                 P [ Text locT; Br [] :> _; Text accT; Br [] :> _; Text ("The message is: " + Mobile.StorageLoad "message") ] :> _
-    
+
         type Page2Control() =
             inherit Web.Control ()
 
@@ -57,8 +57,9 @@ module SampleSite =
 
     let Template title body : Content<Action> =
         PageContent <| fun context ->
-            { Page.Default with 
+            { Page.Default with
                 Doctype =   Some "<!DOCTYPE HTML PUBLIC \"- \/\/W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
+                Head = [ VerbatimContent "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />" ]
                 Title = Some title
                 Body = body context
             }
@@ -90,7 +91,7 @@ module SampleSite =
                 A [HRef <| ctx.Link Action.Page1] -< [Text "Page 1"]
                 Div [new Client.Page2Control ()]
             ]
-        
+
     let MySitelet =
         [
             Sitelet.Content "/index" Action.Index Index
@@ -100,9 +101,9 @@ module SampleSite =
             ]
         ]
         |> Sitelet.Sum
-    
+
     // Actions to generate pages from
-    let MyActions = 
+    let MyActions =
         [
             Action.Index
             Action.Page1
