@@ -381,9 +381,10 @@ namespace WebSharperMobileWP7EmptyApp
             if (targetFile.EndsWith(".wsm.img.js"))
                 targetFile = targetFile.Substring(0, targetFile.Length - ".wsm.img.js".Length);
 
-            using (var sw = new StreamWriter(storage.OpenFile(targetFile, System.IO.FileMode.OpenOrCreate)))
-            using (var sr = new StreamReader(Application.GetResourceStream(new Uri(file, UriKind.Relative)).Stream))
-                sw.Write(sr.ReadToEnd());
+            using (var sw = new BinaryWriter(storage.OpenFile(targetFile, System.IO.FileMode.OpenOrCreate)))
+            using (var sr = new BinaryReader(Application.GetResourceStream(new Uri(file, UriKind.Relative)).Stream))
+                while (sr.BaseStream.Position < sr.BaseStream.Length)
+                    sw.Write(sr.ReadByte());
         }
     }
 }
