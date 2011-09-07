@@ -37,7 +37,7 @@ module private Ajax =
     let private failureCallbacks = new System.Collections.Generic.Dictionary<int,obj>()
 
     [<JavaScript>]
-    let mutable private callbackCounter = X
+    let mutable private callbackCounter = 0
 
     [<JavaScript>]
     let setCallbacks success failure =
