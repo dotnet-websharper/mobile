@@ -17,10 +17,10 @@ open IntelliFactory.WebSharper.Html5
 open IntelliFactory.WebSharper.Json
 open IntelliFactory.WebSharper.Mobile
 
-[<assembly: System.Web.UI.WebResource("windows.phone.7.notify.js", "text/javascript", PerformSubstitution = true)>]
+[<assembly: System.Web.UI.WebResource("windows.phone.7.notify.min.js", "text/javascript", PerformSubstitution = true)>]
 do ()
 type private WP7NotifyResource() =
-    inherit Resources.BaseResource("windows.phone.7.notify.js")
+    inherit Resources.BaseResource("windows.phone.7.notify.min.js")
 
 [<Require(typeof<WP7NotifyResource>)>]
 module private Ajax =
@@ -122,7 +122,7 @@ type private WP7MobileProvider [<JavaScript>] () =
         bPhotoFromCamera (string width) (string height) (escape callback) (escape fail)
 
     [<Inline "callNotify('localStorage.load.' + $k)">]
-    let storageLoad (k : string) : string = X
+    let storageLoad (k : string) : unit = X
 
     [<Inline "callNotify('localStorage.store.' + $k + '.' + $v)">]
     let bStorageStore (k : string) (v : string) : unit = X

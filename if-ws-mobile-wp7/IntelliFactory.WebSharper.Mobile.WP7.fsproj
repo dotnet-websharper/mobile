@@ -31,9 +31,19 @@
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <Import Project="$(INTELLIFACTORY)\build\IntelliFactory.WebSharper-2.3.targets" />
+  <Import Project="..\.build\lib\AjaxMin.tasks" />
+  <Target Name="BeforeBuild">
+    <AjaxMin JsSourceFiles="windows.phone.7.notify.js" JsSourceExtensionPattern="\.js$" JsTargetExtension=".min.js" />
+    <ReadLinesFromFile File="windows.phone.7.notify.min.js">
+      <Output TaskParameter="Lines" ItemName="MinJS" />
+    </ReadLinesFromFile>
+    <WriteLinesToFile File="windows.phone.7.notify.min.js" Lines="// (c) IntelliFactory" Overwrite="true" />
+    <WriteLinesToFile File="windows.phone.7.notify.min.js" Lines="@(MinJS)" Overwrite="false" />
+  </Target>
   <ItemGroup>
     <Compile Include="WebSharper.fs" />
-    <EmbeddedResource Include="windows.phone.7.notify.js" />
+    <None Include="windows.phone.7.notify.js" />
+    <EmbeddedResource Include="windows.phone.7.notify.min.js" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>

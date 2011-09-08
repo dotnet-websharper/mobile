@@ -31,9 +31,19 @@
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
   <Import Project="$(INTELLIFACTORY)\build\IntelliFactory.WebSharper-2.3.targets" />
+  <Import Project="..\.build\lib\AjaxMin.tasks" />
+  <Target Name="BeforeBuild">
+    <AjaxMin JsSourceFiles="android.websharperBridge.serverLocation.js" JsSourceExtensionPattern="\.js$" JsTargetExtension=".min.js" />
+    <ReadLinesFromFile File="android.websharperBridge.serverLocation.min.js">
+      <Output TaskParameter="Lines" ItemName="MinJS" />
+    </ReadLinesFromFile>
+    <WriteLinesToFile File="android.websharperBridge.serverLocation.min.js" Lines="// (c) IntelliFactory" Overwrite="true" />
+    <WriteLinesToFile File="android.websharperBridge.serverLocation.min.js" Lines="@(MinJS)" Overwrite="false" />
+  </Target>
   <ItemGroup>
     <Compile Include="WebSharper.fs" />
-    <EmbeddedResource Include="android.websharperBridge.serverLocation.js" />
+    <None Include="android.websharperBridge.serverLocation.js" />
+    <EmbeddedResource Include="android.websharperBridge.serverLocation.min.js" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>

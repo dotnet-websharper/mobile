@@ -17,10 +17,10 @@ open IntelliFactory.WebSharper.Html5
 open IntelliFactory.WebSharper.Json
 open IntelliFactory.WebSharper.Mobile
 
-[<assembly: System.Web.UI.WebResource("android.websharperBridge.serverLocation.js", "text/javascript", PerformSubstitution = true)>]
+[<assembly: System.Web.UI.WebResource("android.websharperBridge.serverLocation.min.js", "text/javascript", PerformSubstitution = true)>]
 do ()
 type private AndroidServerLocationResource() =
-    inherit Resources.BaseResource("android.websharperBridge.serverLocation.js")
+    inherit Resources.BaseResource("android.websharperBridge.serverLocation.min.js")
 
 [<Require(typeof<AndroidServerLocationResource>)>]
 module private Ajax =

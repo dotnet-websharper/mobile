@@ -25,5 +25,6 @@
     <dependency name="if-ws-sitelets" rev="latest.integration" />
     <dependency name="if-build-sitelets" rev="latest.integration" />
     <dependency name="dotnetzip" org="codeplex.com" rev="latest.integration" />
+    <dependency name="ajaxmin" org="codeplex.com" rev="latest.integration" />
   </dependencies>
 </ivy-module>
