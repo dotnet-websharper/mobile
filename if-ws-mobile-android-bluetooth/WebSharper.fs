@@ -89,7 +89,7 @@ module Bluetooth =
         
         [<JavaScript>]
         static member Deserialize data =
-            let rec trySkipTake n acc = function
+            let rec trySkipTake n acc : int list -> (int list * int list) option = function
                 | t when n = 0 -> Some (List.rev acc, t)
                 | [] -> None
                 | h::t -> trySkipTake (n - 1) (h::acc) t
