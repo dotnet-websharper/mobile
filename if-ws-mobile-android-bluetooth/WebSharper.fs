@@ -316,6 +316,7 @@ type BTcomm(token) =
             async.Bind(f x, cont))
                 (List.ofSeq seq)
                 async.Zero
+                ()
     [<JavaScript>]
     member this.Return f = async.Return f
     [<JavaScript>]
