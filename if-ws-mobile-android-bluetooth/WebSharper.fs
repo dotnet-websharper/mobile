@@ -311,7 +311,11 @@ type BTcomm(token) =
     [<JavaScript>]
     member this.Delay f = async.Delay f
     [<JavaScript>]
-    member this.For(x, f) = async.For(x, f)
+    member this.For(seq, f) =
+        List.foldBack (fun x cont () ->
+            async.Bind(f x, cont))
+                (List.ofSeq seq)
+                async.Zero
     [<JavaScript>]
     member this.Return f = async.Return f
     [<JavaScript>]
@@ -321,9 +325,21 @@ type BTcomm(token) =
     [<JavaScript>]
     member this.TryWith(f, w) = async.TryWith(f, w)
     [<JavaScript>]
-    member this.Using(x, f) = async.Using (x, f)
+    member this.Using(x : System.IDisposable, f) =
+        async {
+            let! result = f x
+            x.Dispose()
+            return result
+        }
     [<JavaScript>]
-    member this.While(p, f) = async.While(p, f)
+    member this.While(p, f) =
+        let rec build () =
+            async {
+                if p() then
+                    do! f
+                    do! build()
+            }
+        build()
     [<JavaScript>]
     member this.Zero () = async.Zero ()
 
@@ -345,7 +361,7 @@ module Client =
 
     [<JavaScript>]
     let converseManyTwice inputs token =
-        async {
+        BTcomm token {
             for input in inputs do
                 do! converseOnce input token
                     |> Async.Ignore
@@ -407,7 +423,7 @@ module Server =
 
     [<JavaScript>]
     let converseMany (token : Bluetooth.Token) =
-        async {
+        BTcomm token {
             // will automatically stop if connection was closed by client
             while token.IsConnected do
                 do! converseOnce token
