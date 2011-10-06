@@ -288,7 +288,7 @@ type WriteRawData = WriteRawData of int []
 type Read = Read
 type ReadRawData = ReadRawData
 
-type BTcomm(token) =
+type BTcomm [<JavaScript>] (token) =
     [<JavaScript>]
     member this.Bind(WriteRawData data : WriteRawData, cont) =
         async {
