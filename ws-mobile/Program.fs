@@ -352,9 +352,23 @@ let wsMobile (pdir, dir, asmpath) =
             androidBuilds
             |> List.map (fun b ->
                         let output = b.Element(XName.Get "outputPackage").Value
-                        b, output, b.Element(XName.Get "sdkVersion").Value)
+                        let manifest =
+                            try
+                                Some (b.Element(XName.Get "manifest").Value)
+                            with :? NullReferenceException ->
+                                None
+                        b, output, b.Element(XName.Get "sdkVersion").Value, manifest)
 
         if List.length androids > 0 then
+
+            let appUuid =
+                try
+                    let elem = doc.Element(XName.Get "configuration").Element(XName.Get "uuid")
+                    elem.Value
+                with :? NullReferenceException -> // no UUID specified
+                    Guid.NewGuid().ToString() // this will cause in Bluetooth
+                                                // being unusable, but will
+                                                // solve the runtime error.
 
             let sdk =
                 System.Environment.GetEnvironmentVariable("ANDROID_HOME")
@@ -380,7 +394,7 @@ let wsMobile (pdir, dir, asmpath) =
                         ]
                     runProc "xcopy.exe" args []
 
-                for b, n, sdkV in androids do
+                for b, n, sdkV, manifest in androids do
                     let env = Path.Combine(dir, "mobileBuildAndroid")
                     let android =
                         let rec getFor sdkV =
@@ -400,6 +414,13 @@ let wsMobile (pdir, dir, asmpath) =
                             Directory.Delete(Path.Combine(env, "target"), true)
                     do // manifest
                         let man = Path.Combine(env, "AndroidManifest.xml")
+                        // gets the correct AndroidManifest.xml
+                        match manifest with
+                        | Some manifest ->
+                            File.Copy(Path.Combine(dir, manifest), man, true)
+                        | _ ->
+                            File.Copy("mobileBuildAndroid\\AndroidManifest.xml",
+                                        man, true)
                         let wmam =
                             File.ReadAllText(man)
                                 .Replace("$(TITLE)", info.title)
@@ -409,6 +430,7 @@ let wsMobile (pdir, dir, asmpath) =
                                 .Replace("$(PUBLISHER)", info.publisher)
                                 .Replace("$(DESCRIPTION)", info.description)
                                 .Replace("$(SDKVERSION)", sdkV)
+                                .Replace("$(UUID)", appUuid)
                         File.WriteAllText (man, wmam)
                     do // activity source, change package name
                         let file = Path.Combine(env, "src\WebSharperMobileActivity.java")
@@ -417,6 +439,7 @@ let wsMobile (pdir, dir, asmpath) =
                                 .Replace("$(SAFETITLE)", info.title.Replace(" ", ""))
                                 .Replace("$(AUTHOR)", info.author)
                                 .Replace("$(PUBLISHER)", info.publisher)
+                                .Replace("$(UUID)", appUuid)
                         File.WriteAllText (file, wfile)
                     do // aapt package -m -J src -M AndroidManifest.xml -S res -I android.jar
                         let args =
