@@ -417,7 +417,7 @@ let wsMobile (pdir, dir, asmpath) =
                         // gets the correct AndroidManifest.xml
                         match manifest with
                         | Some manifest ->
-                            File.Copy(Path.Combine(dir, manifest), man, true)
+                            File.Copy(Path.Combine(pdir, manifest), man, true)
                         | _ ->
                             File.Copy("mobileBuildAndroid\\AndroidManifest.xml",
                                         man, true)

@@ -37,6 +37,7 @@ module Bluetooth =
     [<RequireQualifiedAccess>]
     type Data =
         | Int of int
+        /// Unicode array
         | String of string
         | Array of Data list
         | RawData of int []
@@ -344,6 +345,7 @@ type BTcomm [<JavaScript>] (token) =
     [<JavaScript>]
     member this.Zero () = async.Zero ()
 
+#if DEBUG
 module Client =
     [<JavaScript>]
     let converseOnce input token =
@@ -441,3 +443,4 @@ module Server =
                     do! Bluetooth.StartServer converseMany
                         |> Async.Ignore
         }
+#endif
