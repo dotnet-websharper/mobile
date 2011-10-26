@@ -122,5 +122,5 @@ let private androidInit () : unit = X
 let EnableAndroidSupport () =
     ignore (AndroidMobileProvider())
     ignore Mobile
-    ignore IntelliFactory.WebSharper.Remoting.Config.EndPoint
+    ignore IntelliFactory.WebSharper.Remoting.EndPoint
     androidInit()

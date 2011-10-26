@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ivy-module version="2.0">
-  <info organisation="IntelliFactory" module="if-ws-mobile-templates" revision="2.3" />
+  <info organisation="IntelliFactory" module="if-ws-mobile-templates" revision="2.4" />
   <publications>
     <artifact name="ws_mobile" ext="exe" type="bin" />
     <artifact name="IntelliFactory.WebSharper.Mobile.Default" ext="dll" type="bin" />
@@ -11,20 +11,10 @@
   </publications>
   <dependencies>
     <dependency name="if-ws" rev="latest.integration" />
-    <dependency name="if-json" rev="latest.integration" />
-    <dependency name="if-ws-json"  rev="latest.integration" />
     <dependency name="if-ws-control" rev="latest.integration" />
-    <dependency name="if-ws-proxy-core" rev="latest.integration" />
-    <dependency name="if-ws-html" rev="latest.integration" />
     <dependency name="if-ws-html5" rev="latest.integration" />
-    <dependency name="if-ws-web" rev="latest.integration" />
-    <dependency name="if-html" rev="latest.integration" />
-    <dependency name="if-formlet" rev="latest.integration" />
     <dependency name="if-ws-formlets" rev="latest.integration" />
-    <dependency name="if-ws-jquery" rev="latest.integration" />
-    <dependency name="if-ws-remoting" rev="latest.integration" />
     <dependency name="if-ws-sitelets" rev="latest.integration" />
-    <dependency name="if-build-sitelets" rev="latest.integration" />
     <dependency name="dotnetzip" org="codeplex.com" rev="latest.integration" />
     <dependency name="ajaxmin" org="codeplex.com" rev="latest.integration" />
   </dependencies>

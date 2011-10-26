@@ -64,23 +64,23 @@ module private Ajax =
     type private AjaxProvider =
         | AjaxProvider
 
-        interface Remoting.Config.IAjaxProvider with
+        interface Remoting.IAjaxProvider with
+
             [<JavaScript>]
             member this.Async url headers data cb fail =
                 let escape (s : string) = s.Replace('.', '@').Replace(',', '#')
                 let headers =
-                    if headers = [] then ""
-                    else
-                        headers
-                        |> List.map (fun (k, v) -> escape k + ";" + escape v)
-                        |> List.reduce (fun a b -> a + "," + b)
+                    JavaScript.GetFields headers
+                    |> Array.map (fun (k, v) ->
+                        escape k + ";" + escape (As<string> v))
+                    |> String.concat ","
                 let cookies =
                     let cookies = cookies()
                     if cookies = [||] then ""
                     else
                         cookies
                         |> Array.map (fun (k, v) -> escape k + ";" + escape v)
-                        |> Array.reduce (fun a b -> a + "," + b)
+                        |> String.concat ","
                 let ok, no = setCallbacks cb fail
                 let data =
                     if data.IndexOf '.' > -1 then escape data
@@ -88,11 +88,12 @@ module private Ajax =
                 ajax (escape url) headers cookies (escape data) (escape ok) (escape no)
 
             [<JavaScript>]
-            member this.Call url headers data = raise (System.NotSupportedException "Support for synchronous RPC calls was dropped.")
+            member this.Sync url headers data =
+                failwith "Support for synchronous RPC calls was dropped."
 
     [<JavaScript>]
     let private updateAjaxProvider() =
-        Remoting.Config.AjaxProvider <- AjaxProvider :> Remoting.Config.IAjaxProvider
+        Remoting.AjaxProvider <- AjaxProvider :> Remoting.IAjaxProvider
 
 [<JavaScript>]
 let mutable private result : obj = box ""
@@ -179,6 +180,6 @@ let private wp7Init () : unit = X
 [<JavaScript>]
 let EnableWP7Support () =
     ignore Mobile
-    ignore IntelliFactory.WebSharper.Remoting.Config.EndPoint
-    ignore IntelliFactory.WebSharper.Remoting.Config.AjaxProvider
+    ignore IntelliFactory.WebSharper.Remoting.EndPoint
+    ignore IntelliFactory.WebSharper.Remoting.AjaxProvider
     wp7Init()

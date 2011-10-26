@@ -9,7 +9,7 @@
     <Name>IntelliFactory.WebSharper.Mobile.WP7</Name>
     <RootNamespace>$(Name)</RootNamespace>
     <AssemblyName>$(Name)</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FullDeploy>true</FullDeploy>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
-  <Import Project="$(INTELLIFACTORY)\build\IntelliFactory.WebSharper-2.3.targets" />
+  <Import Project="..\.build\lib\IntelliFactory.WebSharper.targets" />
   <Import Project="..\.build\lib\AjaxMin.tasks" />
   <Target Name="BeforeBuild">
     <AjaxMin JsSourceFiles="windows.phone.7.notify.js" JsSourceExtensionPattern="\.js$" JsTargetExtension=".min.js" />

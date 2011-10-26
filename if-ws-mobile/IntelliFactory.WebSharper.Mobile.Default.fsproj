@@ -9,7 +9,7 @@
     <Name>IntelliFactory.WebSharper.Mobile.Default</Name>
     <RootNamespace>$(Name)</RootNamespace>
     <AssemblyName>$(Name)</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FullDeploy>true</FullDeploy>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
-  <Import Project="$(INTELLIFACTORY)\build\IntelliFactory.WebSharper-2.3.targets" />
+  <Import Project="..\.build\lib\IntelliFactory.WebSharper.targets" />
   <ItemGroup>
     <Compile Include="WebSharper.fs" />
     <None Include="App.config" />
@@ -43,9 +43,7 @@
     <Reference Include="IntelliFactory.WebSharper.Core" />
     <Reference Include="IntelliFactory.WebSharper.Collections" />
     <Reference Include="IntelliFactory.WebSharper.Control" />
-    <Reference Include="IntelliFactory.WebSharper.Remoting" />
     <Reference Include="IntelliFactory.WebSharper.Html" />
     <Reference Include="IntelliFactory.WebSharper.Html5" />
-    <Reference Include="IntelliFactory.WebSharper.Json" />
   </ItemGroup>
 </Project>

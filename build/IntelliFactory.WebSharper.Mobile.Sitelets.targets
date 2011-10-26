@@ -23,7 +23,7 @@ prohibited without the written consent of the copyright holder.
     <Reference Include="IntelliFactory.WebSharper.Mobile.WP7" />
     <Reference Include="IntelliFactory.WebSharper.Mobile.Android" />
   </ItemGroup>
-  <Import Project="$(WEBSHARPER_HOME)/IntelliFactory.WebSharper.FSharp.targets" />
+  <Import Project="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.targets" />
   <UsingTask AssemblyFile="IntelliFactory.WebSharper.Sitelets.Build.dll"
              TaskName="IntelliFactory.WebSharper.Sitelets.Build.BuildPageTemplates" />
   <PropertyGroup>

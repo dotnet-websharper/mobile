@@ -14,6 +14,7 @@
     <TemplateDirectory>..\if-ws-mobile-templates\bin</TemplateDirectory>
     <ProgramFiles32>$(MSBuildExtensionsPath32)\..</ProgramFiles32>
     <TargetFrameworkProfile />
+    <FullDeploy>true</FullDeploy>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,10 +45,8 @@
       <Templates9 Include="..\if-ws-mobile-templates\vs9\*\*.vstemplate" />
       <Templates10 Include="..\if-ws-mobile-templates\vs10\*\*.vstemplate" />
     </ItemGroup>
-    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates"
-             Properties="Ver=vs9;Template=%(Templates9.Filename);DependentBuild=yes" />
-    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates"
-             Properties="Ver=vs10;Template=%(Templates10.Filename);DependentBuild=yes" />
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates" Properties="Ver=vs9;Template=%(Templates9.Filename);DependentBuild=yes" />
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="_PackTemplates" Properties="Ver=vs10;Template=%(Templates10.Filename);DependentBuild=yes" />
   </Target>
   <Target Name="_PackTemplates">
     <PropertyGroup>
@@ -66,11 +65,7 @@
       <InstalledFiles Include="$(SourceDirectory)\**\*.*" Exclude="bin;@(VersionControlFiles)" />
     </ItemGroup>
     <MakeDir Directories="$(TemplateDirectory)" />
-    <MSBuild.ExtensionPack.Compression.DNZip
-      TaskAction="Create"
-      CompressFiles="@(InstalledFiles)"
-      RemoveRoot="$(SourceDirectory)"
-      ZipFileName="$(TemplateDirectory)\$(Ver)\$(Template).zip" />
+    <MSBuild.ExtensionPack.Compression.DNZip TaskAction="Create" CompressFiles="@(InstalledFiles)" RemoveRoot="$(SourceDirectory)" ZipFileName="$(TemplateDirectory)\$(Ver)\$(Template).zip" />
   </Target>
   <Target Name="Archive">
     <RemoveDir Directories="..\.build\root" />
@@ -87,13 +82,10 @@
       <TplFiles Include="..\if-ws-mobile-templates\bin\**\*.zip" />
       <AndroidFiles Include="..\android-template\**\*.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(RootFiles)"
-          DestinationFolder="..\.build\root" />
+    <Copy SourceFiles="@(RootFiles)" DestinationFolder="..\.build\root" />
     <MakeDir Directories="..\.build\root\templates\vs10" />
-    <Copy SourceFiles="@(TplFiles)"
-          DestinationFolder="..\.build\root\templates\%(RecursiveDir)" />
-    <Copy SourceFiles="@(AndroidFiles)"
-          DestinationFolder="..\.build\root\mobileBuildAndroid\%(RecursiveDir)" />
+    <Copy SourceFiles="@(TplFiles)" DestinationFolder="..\.build\root\templates\%(RecursiveDir)" />
+    <Copy SourceFiles="@(AndroidFiles)" DestinationFolder="..\.build\root\mobileBuildAndroid\%(RecursiveDir)" />
     <ItemGroup>
       <DeployedFiles Include="..\.build\root\**\*.*" />
     </ItemGroup>
