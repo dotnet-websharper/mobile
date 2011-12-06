@@ -10,11 +10,7 @@
     <artifact name="if-ws-mobile-templates" ext="zip" type="bin" />
   </publications>
   <dependencies>
-    <dependency name="if-ws" rev="latest.integration" />
-    <dependency name="if-ws-control" rev="latest.integration" />
-    <dependency name="if-ws-html5" rev="latest.integration" />
-    <dependency name="if-ws-formlets" rev="latest.integration" />
-    <dependency name="if-ws-sitelets" rev="latest.integration" />
+    <dependency name="WebSharper" rev="latest.integration" />
     <dependency name="dotnetzip" org="codeplex.com" rev="latest.integration" />
     <dependency name="ajaxmin" org="codeplex.com" rev="latest.integration" />
   </dependencies>
