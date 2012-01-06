@@ -1,8 +1,8 @@
 <VSTemplate Type="Project" Version="3.0.0"
             xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
-    <Name>WebSharper 2.3 Mobile Sample Application (Offline)</Name>
-    <Description>WebSharper 2.3 Mobile Sample Application (Offline)</Description>
+    <Name>WebSharper 2.4 Mobile Sample Application (Offline)</Name>
+    <Description>WebSharper 2.4 Mobile Sample Application (Offline)</Description>
     <ProjectType>FSharp</ProjectType>
     <DefaultName>WebSharperMobileApp</DefaultName>
   </TemplateData>
