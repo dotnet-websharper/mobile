@@ -47,6 +47,7 @@ prohibited without the written consent of the copyright holder.
     <PropertyGroup>
       <Args>-source "."</Args>
       <Args>$(Args) -mode "$(Configuration)"</Args>
+      <Args>$(Args) -project "$(MSBuildProjectDirectory)\."</Args>
       <Args>$(Args) -source "$(WEBSHARPER_HOME)\."</Args>
       <Args>$(Args) -out "$(WebSharperSiteletsOfflineDirectory)\."</Args>
       <Args>$(Args) -site "$(TargetPath)"</Args>
