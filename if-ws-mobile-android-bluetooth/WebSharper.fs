@@ -20,29 +20,41 @@ open IntelliFactory.WebSharper.Mobile
 module private BluetoothCallbacksManager =
 
     [<JavaScript>]
-    let private callbacks = new System.Collections.Generic.Dictionary<int,obj>()
+    let private callbacks = new System.Collections.Generic.Dictionary<int,obj>()    
 
     [<JavaScript>]
     let mutable private callbackCounter = 0
 
     [<JavaScript>]
-    let registerFunction success =
+    let registerFunction success =               
         let cbc = callbackCounter
         callbackCounter <- callbackCounter + 1
         callbacks.[cbc] <- success
-        "IntelliFactory.WebSharper.Mobile.Android.Bluetooth.BluetoothCallbacksManager.callbacks.get_Item(" + string cbc + ")"
+        "IntelliFactory.WebSharper.Mobile.Android.Bluetooth.BluetoothCallbacksManager.callbacks().get_Item(" + string cbc + ")"
 
 module Bluetooth =
     
     [<RequireQualifiedAccess>]
     type Data =
         | Int of int
-        /// Unicode array
+        /// (2 byte) Unicode array
         | String of string
         | Array of Data list
         | RawData of int []
        
         [<JavaScript>]
+        static member ToString data = 
+            let rec ts = function
+                | Data.Int d -> d.ToString()
+                | Data.String d -> "\""+d+"\""
+                | Data.RawData d -> "{" + d.ToString() + "}"
+                | Data.Array d -> "["+ ((List.map (fun x -> ts x) d) |> String.concat " ; ") + "]"
+            ts data
+
+        [<JavaScript>]
+        /// It uses 2 bytes for chars, we assume it fits a unicode character
+        /// It uses 4 bytes for an integer
+        /// It treats rawData ints as they were bytes (will count the last byte of it)
         static member Serialize data =
             let intToByteArray i =
                 let b3 = i / (pown 256 3)
@@ -86,30 +98,37 @@ module Bluetooth =
                         |> intToByteArray
                         |> Seq.skip 2
                     yield! data
+                        |> Array.map (int >> intToByteArray >> Seq.skip 3)
+                        |> Seq.concat
                 |]
         
         [<JavaScript>]
         static member Deserialize data =
             let rec trySkipTake n acc : int list -> (int list * int list) option = function
                 | t when n = 0 -> Some (List.rev acc, t)
-                | [] -> None
-                | h::t -> trySkipTake (n - 1) (h::acc) t
+                | [] -> 
+                    None
+                | h::t -> trySkipTake (n - 1) (h::acc) t 
 
-            let rec partialDeserialization = function
-                | 0::b3::b2::b1::b0::leftovers ->
+            let rec partialDeserialization = function          
+                /// integer          
+                | 0::b3::b2::b1::b0::leftovers ->                                     
                     (Int (b3 * (pown 256 3) + b2 * (pown 256 2) + b1 * (pown 256 1) + b0),
                         leftovers)
                     |> Some
-                | 1::lh::ll::data ->
-                    let length = lh * 256 + ll
-                    trySkipTake (2 * length) [] data
+                /// string
+                | 1::lh::ll::data ->                                             
+                    let length = lh * 256 + ll                                                            
+                    // trySkipTake (2 * length) [] data // length refers to the length of the 2-byte representation array
+                    trySkipTake (length) [] data
                     |> Option.map (fun (stringBytes, leftovers) ->
                     let stringChars =
-                        String.init length (fun i ->
+                        String.init (length/2) (fun i ->
                             stringBytes.[i * 2] * 256 + stringBytes.[i * 2 + 1]
                             |> char |> string)
                     Data.String stringChars, leftovers)
-                | 2::lh::ll::data ->
+                /// data list array
+                | 2::lh::ll::data ->    
                     let length = lh * 256 + ll
                     let rec op n acc data =
                         if n = 0 then Some (Array (List.rev acc), data)
@@ -118,12 +137,15 @@ module Bluetooth =
                             |> Option.bind (fun (d, data) ->
                                 op (n - 1) (d::acc) data)
                     op length [] data
-                | 3::lh::ll::data ->
+                /// raw data (2 bytes int[])
+                | 3::lh::ll::data ->                    
                     let length = lh * 256 + ll
-                    trySkipTake (2 * length) [] data
+                     // trySkipTake (2 * length) [] data // length refers to the length of the 2-byte representation array
+                    trySkipTake (length) [] data
                     |> Option.map (fun (bytes, leftovers) ->
                         RawData (Array.ofList bytes), leftovers)
-                | _ -> None
+                | _ -> 
+                    None
             
             partialDeserialization (List.ofArray data)
             |> Option.bind (function
@@ -143,9 +165,17 @@ module Bluetooth =
 
     type Device =
         {
-            UniqueId : string
+            MacAddress : string
             Name : string
         }
+
+    [<Inline "websharperBridge.initBlueTooth($uuid)">]
+    /// Must be called in order to set UUID which is a strong requirement of establishing a BlueTooth connection.
+    /// UUID must be unique, and specific to your Application, but both the server and the client must use the same.
+    /// "Using the same UUID is simply a matter of hard-coding the UUID string into your application and then referencing it from both the server and client code."
+    /// (...) "you can use one of the many random UUID generators on the web"
+    /// source: http://developer.android.com/guide/topics/wireless/bluetooth.html    
+    let initBlueTooth (uuid : string) = X    
 
     [<JavaScript>]
     let private asyncForF f =
@@ -154,77 +184,85 @@ module Bluetooth =
             f cb)
     
     [<Inline "websharperBridge.activateBluetooth($f)">]
-    let private activate (f : string) = ()
+    let private activate (f : string) = ()    
+    /// This will check if Bluetooth is turned on. If yes, it does nothing.
+    /// If no, asks the user whether turn it on or not.
+    /// It returns "true" if BT was already switched on, or just have been switched on
+    /// It returns "flase" if device not supports BT or user has choosen not to turn it on   
     [<JavaScript>]
     let Activate () : Async<bool> = asyncForF activate
 
     [<Inline "websharperBridge.getPairedDevices($f)">]
     let private getPairedDevices (f : string) = ()
+    /// This will return the already paired devices as an array (MAC Adress as UniqueId, Name as name).
+    /// When a device is paired, the basic information about that device (such as the device name, class, and MAC address) is saved
+    /// To be paired means that two devices are aware of each other's existence, have a shared link-key that can be used for authentication,
+    /// and are capable of establishing an encrypted connection with each other.
+    /// (So, it doesnt mean the device is connected, or even in range!)
     [<JavaScript>]
-    let GetPairedDevices () : Async<Device list> = asyncForF getPairedDevices
+    let GetPairedDevices () : Async<Device array> = asyncForF getPairedDevices
     
     [<Inline "websharperBridge.startDeviceDiscovery($f, $action)">]
     let private startDeviceDiscovery (action : string) (f : string) = ()
+    /// This process is asynhronous, will immediately return with a boolean indicating whether
+    /// discovery has successfully started. The discovery process usually involves an inquiry scan of about 12 seconds,
+    /// followed by a page scan of each found device to retrieve its Bluetooth name.
+    /// You must define an action (callback), i.e. what to do when a device is discovered.
     [<JavaScript>]
-    let StartDeviceDiscovery (action : Device -> unit) : Async<unit> =
+    let StartDeviceDiscovery (action : Device -> unit) : Async<bool> =
         let action = BluetoothCallbacksManager.registerFunction action
         asyncForF (startDeviceDiscovery action)
 
     [<Inline "websharperBridge.stopDeviceDiscovery($f)">]
     let private stopDeviceDiscovery (f : string) = ()
+    /// Manually stop device discovery
     [<JavaScript>]
     let StopDeviceDiscovery () : Async<unit> = asyncForF stopDeviceDiscovery
             
-    [<Inline "websharperBridge.connectToDevice($f, $device, $uuid, false)">]
-    let private connectToDevice (device : string) (uuid : string) (f : string) = ()
+    [<Inline "websharperBridge.connectToDevice($f, $macAddress, false)">]    
+    let private connectToDevice (macAddress : string) (f : string) = ()    
+    /// Connect to a Device as client. To be connected means that the devices currently share an RFCOMM channel and are able to transmit
+    /// data with each other. If the two devices have not been previously paired, then the Android framework will automatically show a pairing request
+    /// notification or dialog to the user during the connection procedure    
     [<JavaScript>]
-    let ConnectToDevice { UniqueId = uid } uuid : Async<Token option> =
-        let uuid =
-            match uuid with
-            | Some uuid -> uuid
-            | _ -> null
-        asyncForF (connectToDevice uid uuid)
+    let ConnectToDevice (d: Device) : Async<Token option> =        
+        asyncForF (connectToDevice d.MacAddress)
 
-    [<Inline "websharperBridge.connectToDevice($f, $device, $uuid, true)">]
-    let private rawConnectToDevice (device : string) (uuid : string) (f : string) = ()
+    [<Inline "websharperBridge.connectToDevice($f, $macAddress, true)">]
+    let private rawConnectToDevice (macAddress : string) (f : string) = ()
+    /// Connect to a Device as client. (more about UUID: http://developer.android.com/guide/topics/wireless/bluetooth.html search for UUID)
+    /// To be connected means that the devices currently share an RFCOMM channel and are able to transmit data with each other.
+    /// If the two devices have not been previously paired, then the Android framework will automatically show a pairing request
+    /// notification or dialog to the user during the connection procedure
     [<JavaScript>]
-    let RawConnectToDevice { UniqueId = uid } uuid : Async<RawToken option> =
-        let uuid =
-            match uuid with
-            | Some uuid -> uuid
-            | _ -> null
-        asyncForF (rawConnectToDevice uid uuid)
+    let RawConnectToDevice (d: Device) : Async<RawToken option> =
+        asyncForF (rawConnectToDevice d.MacAddress)
 
     [<Inline "websharperBridge.makeDiscoverable($f, $d)">]
     let private makeDiscoverable (d : int) (f : string) = ()
+    /// By default, phones are not discoverable. This function sets up a dialog to the user,
+    /// to be able to allow the phone to be discoverable by default 120 sec or any other duration up to 3600 sec.
     [<JavaScript>]
     let MakeDiscoverable duration : Async<bool> = asyncForF (makeDiscoverable duration)
     
-    [<Inline "websharperBridge.startServer($f, $action, false)">]
+    [<Inline "websharperBridge.startServer($f, $action, false)">] 
     let private startServer (action : string) (f : string) = ()
+    /// Start Bluetooth server, and execute action    
     [<JavaScript>]
     let StartServer (action : Token -> unit) : Async<bool> =
-        let action = BluetoothCallbacksManager.registerFunction
-                        (action << fun token ->
-                            {
-                                Token = token
-                                IsConnected = true
-                            })
-        asyncForF (startServer action)
+        let actionString = BluetoothCallbacksManager.registerFunction (action)
+        asyncForF (startServer actionString)
 
     [<Inline "websharperBridge.startServer($f, $action, true)">]
     let private rawStartServer (action : string) (f : string) = ()
+    /// Start Bluetooth server, and execute action    
     [<JavaScript>]
     let RawStartServer (action : RawToken -> unit) : Async<bool> =
-        let action = BluetoothCallbacksManager.registerFunction
-                        (action << fun token ->
-                            {
-                                Token = token
-                                IsConnected = true
-                            })
-        asyncForF (rawStartServer action)
+        let actionString = BluetoothCallbacksManager.registerFunction (action)
+        asyncForF (rawStartServer actionString)
 
     [<Inline "websharperBridge.stopServer($f)">]
+    /// Stop Bluetooth server, and execute action  
     let private stopServer (f : string) = ()
     [<JavaScript>]
     let StopServer () : Async<unit> = asyncForF stopServer
@@ -282,6 +320,10 @@ module Bluetooth =
             token.IsConnected <- value
             return value
         }
+
+    [<Inline "websharperBridge.exitApplication()">]
+    let exitApplication() = X
+    
 
 // BTcomm actions
 type Write = Write of Bluetooth.Data
@@ -346,25 +388,34 @@ type BTcomm [<JavaScript>] (token) =
     member this.Zero () = async.Zero ()
 
 #if DEBUG
-module Client =
+
+[<JavaScript>]
+let uuid = "a1ce0569-c68f-4f6a-b0a0-f60747c6faaa"
+
+module Client =         
     [<JavaScript>]
     let converseOnce input token =
+        Mobile.Log("bt_test: (client) input: " + input)
         BTcomm token {
             let! success = Write (Bluetooth.Data.String input)
             if not success then
+                Mobile.Log("bt_test (client) input: write failure")
                 return None
             else
                 let! dataOpt = Read
                 match dataOpt with
                 | Some (Bluetooth.Data.String result) ->
-                    return Some result
+                    Mobile.Log("bt_test: (client) result: " + result)
+                    return Some result                
                 | _ ->  
+                    Mobile.Log("bt_test: (client) result: None")
                     return None
         }
 
     [<JavaScript>]
-    let converseManyTwice inputs token =
-        BTcomm token {
+    let converseManyTwice inputs (token : Bluetooth.Token)=
+        BTcomm token {     
+            let s = ""       
             for input in inputs do
                 do! converseOnce input token
                     |> Async.Ignore
@@ -374,9 +425,10 @@ module Client =
         }
         
     [<JavaScript>]
-    let withDevice device action =
+    let withDevice (device : Bluetooth.Device) action =
         async {
-            let! tokenOpt = Bluetooth.ConnectToDevice device None
+            // Mobile.Alert ("Connecting to " + device.Name)
+            let! tokenOpt = Bluetooth.ConnectToDevice device
             match tokenOpt with
             | Some token ->
                 do! action token
@@ -386,42 +438,97 @@ module Client =
         }
 
     [<JavaScript>]
-    let findBobsPhoneAndConverseManyTwice() =
+    let findPhoneAndConverseManyTwice (phoneName) =
+        Bluetooth.initBlueTooth uuid
         async {
             let! hasBluetooth = Bluetooth.Activate()
             if not hasBluetooth then
                 Mobile.Alert "This device does not support Bluetooth."
             else
                 let! pairedDevices = Bluetooth.GetPairedDevices()
-                let isBobsPhone { Bluetooth.Device.Name = name } = name = "Bob's Phone"
+                let isBobsPhone { Bluetooth.Device.Name = name } = name = phoneName
                 let inputs = ["Ramon"; "Maciej"; "Bob"]
-                match pairedDevices |> List.tryFind isBobsPhone with
+                let input = Bluetooth.Data.RawData [|1;2;3;4;5|];
+                match pairedDevices |> Array.tryFind isBobsPhone with
                 | Some device ->
                     do! withDevice device (converseManyTwice inputs)
                 | None ->
-                    do! Bluetooth.StartDeviceDiscovery (fun device ->
+                    let! started = Bluetooth.StartDeviceDiscovery (fun device ->
                         async {
                             if isBobsPhone device then
                                 do! Bluetooth.StopDeviceDiscovery()
                                 do! withDevice device (converseManyTwice inputs)
                         }
                         |> Async.Start)
+                    if not started then
+                        Mobile.Alert ("Something happened during starting device discovery")
         }
         |> Async.Start
 
+
+    [<JavaScript>]
+    let writeReadLogResult input token =          
+        Mobile.Log("bt_test: (client) input: " + Bluetooth.Data.ToString input )                            
+        BTcomm token {
+            let! success = Write input
+            if not success then
+                Mobile.Log("bt_test (client) write failure")                
+            else
+                let! dataOpt = Read
+                match dataOpt with
+                | Some d -> 
+                    Mobile.Log("bt_test: (client) result: " + Bluetooth.Data.ToString d)
+                | _ ->  
+                    Mobile.Log("bt_test: (client) result: None")                    
+        }
+
+    [<JavaScript>]
+    let getPairedPhoneAndWriteRead (phoneName) =
+        Mobile.Log "good morning"
+        Bluetooth.initBlueTooth uuid
+        Mobile.Log "sansine"
+        async {
+            let! hasBluetooth = Bluetooth.Activate()
+            if not hasBluetooth then
+                Mobile.Alert "bt_test: (client) This device does not support Bluetooth."
+            else
+                let! pairedDevices = Bluetooth.GetPairedDevices()
+                let isBobsPhone { Bluetooth.Device.Name = name } = name = phoneName
+                let s = Bluetooth.Data.String "StringMessage"
+                let i = Bluetooth.Data.Int 24
+                let ss = Bluetooth.Data.String "stringMessage2"
+                let a = Bluetooth.Data.Array [s;i;ss]
+                let r = Bluetooth.Data.RawData [|1;2;3;4;5|]
+                let sss = Bluetooth.Data.String "last test"
+                let input = Bluetooth.Data.Array [a;r;sss]
+                match pairedDevices |> Array.tryFind isBobsPhone with
+                | Some device ->
+                    do! withDevice device (writeReadLogResult input)
+                | None ->
+                    Mobile.Alert "bt_test: (client) The device we looking for was is paired."
+        }            
+        |> Async.Start
+
 module Server =
+
     [<JavaScript>]
     let converseOnce token =
         BTcomm token {
             let! dataOpt = Read
             match dataOpt with
             | Some (Bluetooth.Data.String input) ->
+                Mobile.Log("bt_test (server): String recieved: " + input)
                 let! _ = Write (Bluetooth.Data.String ("Hello, " + input + "!"))
                 if input = "John" then
                     // the order of these two lines is irrelevant
                     do! Bluetooth.StopServer()
                     do! Bluetooth.CloseConnection token
-            | _ -> ()
+            | Some d ->
+                Mobile.Log("bt_test (server): data recieved: " + Bluetooth.Data.ToString d)
+                let! _ = Write (Bluetooth.Data.String ("Thx for the data."))
+                ()
+            | _ -> 
+                Mobile.Log("bt_test (server): converseOnce: no recognizable message recieved")
         }
 
     [<JavaScript>]
@@ -434,12 +541,13 @@ module Server =
         |> Async.Start
 
     [<JavaScript>]
-    let bobsPhoneBluetoothConversationServer() =
+    let startBluetoothConversationServer() =
+        Bluetooth.initBlueTooth uuid
         async {
             let! hasBluetooth = Bluetooth.Activate()
             if hasBluetooth then
                 let! isDiscoverable = Bluetooth.MakeDiscoverable 0
-                if isDiscoverable then
+                if isDiscoverable then                    
                     do! Bluetooth.StartServer converseMany
                         |> Async.Ignore
         }

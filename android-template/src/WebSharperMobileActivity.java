@@ -57,7 +57,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 	boolean cameraNeeded = false;
 	Camera cmr;
 	WebSharperBridge bridge;
-	private static final UUID DEFAULT_UUID = UUID.fromString("$(UUID)");
+	
 	float[] acceleration = new float[] { 0, 0, (float) -9.8 };
 
 	@Override
@@ -78,12 +78,12 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			// request acceleration updates
 			myManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 			List<Sensor> sensors = myManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-			if(sensors.size() > 0) {
+			if(sensors.size() > 0) {				
 				accSensor = sensors.get(0);
 				myManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_UI);
 			}
-		} catch (Exception e) {
-			bridge.log("Exception in native layer: " + e.getMessage());
+		} catch (Exception e) {		
+			bridge.log("Exception in native layer (no accelerometer?): " + e.getMessage());
 		}
 	}
 
@@ -114,6 +114,13 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			cmr = Camera.open();
 		}
 	}
+	
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		// env.unregisterReceiver(bridge.receiver);
+	}
 
 	class WebSharperBridge implements LocationListener
 	{
@@ -133,11 +140,11 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 				Criteria locationCriteria = new Criteria();
 				locationCriteria.setAccuracy(Criteria.ACCURACY_FINE);
 				locationManager.requestLocationUpdates(locationManager.getBestProvider(locationCriteria, true), 100, 0, this);
-
+				
 				lat = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
 				lng = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
 			} catch (Exception e) {
-				bridge.log("Exception in native layer: " + e.getMessage());
+				bridge.log("Exception in native layer (no location provider?): " + e.getMessage());
 			}
 		}
 
@@ -244,13 +251,19 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 				}
 			});
 		}
+		
+		public void exitApplication(){
+			log("exiting the application..");
+			env.finish();
+		}
 
 		// this function prints to logcat
 		public void log(String msg)
 		{
 			Log.d("DebugJS", msg);
-		}
-
+		}		
+		
+		
 		// -----------------------
 		// Bluetooth section start
 		// -----------------------
@@ -258,37 +271,58 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		BluetoothAdapter adapter;
 		Hashtable<String,BluetoothDevice> knownDevices = new Hashtable<String,BluetoothDevice>();
 		String discoveringAction;
-		Hashtable<String,BluetoothSocket> dataSockets = new Hashtable<String,BluetoothSocket>();
-		Hashtable<String,BluetoothSocket> rawSockets = new Hashtable<String,BluetoothSocket>();
+		Hashtable<String,BluetoothSocket> dataSockets = new Hashtable<String,BluetoothSocket>(); // keys are tokens
+		Hashtable<String,BluetoothSocket> rawSockets = new Hashtable<String,BluetoothSocket>();  // keys are tokens
 		Boolean serverOnline = false;
-		BluetoothServerSocket server;
+		BluetoothServerSocket serverSocket;
 		Boolean serverRaw;
 		String serverAction;
 		String serverConnectionToken;
+		Hashtable<Integer,String> callbacks = new Hashtable<Integer,String> ();
+		static final int REQUEST_ENABLE_BT = 3;
+		static final int REQUEST_MAKE_DISCOVERABLE = 4;
 
+		// private static final String DEFAULT_UUID_STRING = "$(UUID)";	
+		// private static final String DEFAULT_UUID_STRING = "a1ce0569-c68f-4f6a-b0a0-f60747c6faaa";
+		// private static final UUID DEFAULT_UUID = UUID.fromString(DEFAULT_UUID_STRING);
+		
+		private String uuidString = null;  
+		private UUID uuid = null;         // Required to make a living BlueTooth connection. Will be set after calling initBluetooth.
+		
+		public void initBlueTooth(final String uuidString)
+		{			
+			log("bt: bluetooth initialized. UUID: " + uuidString);
+			this.uuidString = uuidString;
+			uuid = UUID.fromString(uuidString);
+		}
+		
 		private void callJsCallback(String callback, String value)
 		{
-			wv.loadUrl("javascript:" + callback + "(" + value + ")");
+			// log("javascript:" + callback+ "(" + value + ")");
+			wv.loadUrl("javascript:" + callback+ "(" + value + ")");			
 		}
-
+		
 		public void activateBluetooth(final String callback)
-		{
+		{		
+			log("bt: intent for turning on bluetooth");
 			adapter = BluetoothAdapter.getDefaultAdapter();
 			if (adapter == null)
 			{
+				log("bt: Bluetooth is not supported");
 				callJsCallback(callback, "false");
 				return;
 			}
-			if (adapter.isEnabled())
+			if (adapter.isEnabled()){
+				log("bt: Bluetooth is already swithed on");
 				callJsCallback(callback, "true");
-			else
-			{
+			} else {
 				Runnable runner = new Runnable() {
 					public void run()
 					{
 						Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-						enableBtIntent.putExtra("callback", callback);
-						startActivityForResult(enableBtIntent, 3); // REQUEST_ENABLE_BT
+						// enableBtIntent.putExtra("callback", callback);
+						callbacks.put(REQUEST_ENABLE_BT, callback); 
+					    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 					}
 				};
 				new Thread(runner).start();
@@ -297,6 +331,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		
 		public void getPairedDevices(final String callback)
 		{
+			log ("bt: get paired devices");
 			if (adapter == null || !adapter.isEnabled())
 			{
 				callJsCallback(callback, "{$:0}");
@@ -307,18 +342,15 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 				{
 					Set<BluetoothDevice> pairedDevices = adapter.getBondedDevices();
 					if (pairedDevices.size() > 0) {
-						String result = "";
+						String result = "[";
 						for (BluetoothDevice device : pairedDevices) {
 							if (knownDevices.containsKey(device.getAddress()))
 								knownDevices.remove(device.getAddress());
 							knownDevices.put(device.getAddress(), device);
-							result += "{$: 1, $1 : { UniqueId: \"" + device.getAddress() +
-									"\", Name: \"" + device.getName() +
-									"\" }, $2: ";
+							result += "{MacAddress: \"" + device.getAddress() + "\",  Name: \"" + device.getName() + "\"},";							
 						}
-						result += "{$:0}";
-						for (int i = 0; i < pairedDevices.size(); i++)
-							result += "}";
+						result += "]";						
+						log ("bt: paired devices:" + result);
 						callJsCallback(callback, result);
 					}
 					else
@@ -328,6 +360,9 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 			new Thread(runner).start();
 		}
 
+		/**
+		 * To respond if a device is found by startDeviceDiscovery
+		 */
 		final BroadcastReceiver receiver = new BroadcastReceiver() {
 			public void onReceive(Context context, Intent intent) {
 				String action = intent.getAction();
@@ -336,80 +371,99 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 					if (knownDevices.containsKey(device.getAddress()))
 						knownDevices.remove(device.getAddress());
 					knownDevices.put(device.getAddress(), device);
-					callJsCallback(discoveringAction, "{ UniqueId: \"" + device.getAddress() +
-							"\", Name: \"" + device.getName() +
-							"\" }");
+					String objString = "{MacAddress: \"" + device.getAddress() + "\", Name: \"" + device.getName() + "\" }";
+					log ("bt: a device is discovered: " + objString);
+					callJsCallback(discoveringAction, objString);
 				}
 			}
 		};
 
 		public void startDeviceDiscovery(final String callback, final String action)
 		{
-			if (adapter == null || !adapter.isEnabled())
-			{
+			log ("bt: start device discovery");
+			if (adapter == null || !adapter.isEnabled()){
 				callJsCallback(callback, "");
 				return;
 			}
-			Runnable runner = new Runnable() {
-				public void run()
-				{
-					IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-					discoveringAction = action;
-					registerReceiver(receiver, filter);
-					callJsCallback(callback, "");
-				}
-			};
-			new Thread(runner).start();
+			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+			discoveringAction = action;
+			env.registerReceiver(receiver, filter);
+			boolean b = adapter.startDiscovery(); // The process is asynchronous and the method will immediately return with
+										          // a boolean indicating whether discovery has successfully started
+			callJsCallback(callback, b + "");					
+
 		}
 
 		public void stopDeviceDiscovery(final String callback)
 		{
-			if (adapter == null || !adapter.isEnabled())
-			{
+			log ("bt: stop device discovery");
+			if (adapter == null || !adapter.isEnabled()){
 				callJsCallback(callback, "");
 				return;
 			}
-			Runnable runner = new Runnable() {
-				public void run()
-				{
-					adapter.cancelDiscovery();
-					callJsCallback(callback, "");
-				}
-			};
-			new Thread(runner).start();
+			adapter.cancelDiscovery();
+			callJsCallback(callback, "");
 		}
 
-		public void connectToDevice(final String callback, final String address, final String uuid, final Boolean isRaw)
+		public void connectToDevice(final String callback, final String address, final boolean isRaw)
 		{
-			if (adapter == null || !adapter.isEnabled() || !knownDevices.containsKey(address))
-			{
+			// log ("bt: connect to device: " + address + " token: " + token + "  isRaw: " + isRaw + "  UUID = $(UUID)");			
+			log ("bt: connect to device: " + address + "  isRaw: " + isRaw + "  UUID: " + uuidString);
+			
+			if (adapter == null || !adapter.isEnabled() || !knownDevices.containsKey(address) || uuid == null){
+				if (!knownDevices.containsKey(address))
+					log ("bt: the device we trying to connect to is not known");
+				if (uuid == null)
+					log ("bt: uuid must be set to be able to establish a connection. call initBluetooth first!");
 				callJsCallback(callback, "{$:0}");
 				return;
-			}
+			}			
+	        
+			log ("bt: (connect) stop any device discovery process");
+			adapter.cancelDiscovery();	
+
 			Runnable runner = new Runnable() {
 				public void run()
 				{
-					BluetoothDevice device = knownDevices.get(address);
+					// retrieve socket
 					BluetoothSocket socket;
+					BluetoothDevice device = knownDevices.get(address);		
 					try {
-						socket = device.createRfcommSocketToServiceRecord(UUID.fromString(uuid));
-					}
-					catch (IOException ioe)
-					{
+						socket = device.createRfcommSocketToServiceRecord(uuid);
+					} catch (IOException e) {
+						log ("bt: (connect) cannot retrieve socket");
 						callJsCallback(callback, "{$:0}");
 						return;
 					}
-					if (socket == null)
-					{
+					if (socket == null) {
+						log ("bt: (connect) socket is null");
 						callJsCallback(callback, "{$:0}");
 						return;
 					}
-					String uuid = UUID.randomUUID().toString();
+					log ("bt: (connect) socket retrieved");
+					
+					// connect to socket
+					try {
+						socket.connect();
+					} catch (IOException connectException) {						
+			            try { 
+			            	log ("bt: (connect) connection failure. closing socket. (server not listening? wrong UUID?)");
+			                socket.close();
+			            } catch (IOException closeException) {			            	
+			            }			            
+						callJsCallback(callback, "{$:0}");
+						return;
+					}
+								
+					String token = UUID.randomUUID().toString();
+					
 					if (isRaw)
-						rawSockets.put(uuid, socket);
+						rawSockets.put(token, socket);
 					else
-						dataSockets.put(uuid, socket);
-					callJsCallback(callback, "{$:1, $0: \"" + uuid + "\"}");
+						dataSockets.put(token, socket);
+					
+					log ("bt: (connect) ready. token: " + token);
+					callJsCallback(callback, "{$:1, $0:{Token: \"" + token + "\", IsConnected: true}}"); 
 				}
 			};
 			new Thread(runner).start();
@@ -417,6 +471,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 
 		public void makeDiscoverable(final String callback, final int duration)
 		{
+			log (("bt: intent for make device discoverable for " + duration + " seconds").replaceFirst(" 0 ", " 120 "));
 			if (adapter == null || !adapter.isEnabled())
 			{
 				callJsCallback(callback, "false");
@@ -427,8 +482,9 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 				{
 					Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
 					discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, duration);
-					discoverableIntent.putExtra("callback", callback);
-					startActivityForResult(discoverableIntent, 4); // REQUEST_MAKE_DISCOVERABLE
+					// discoverableIntent.putExtra("callback", callback);
+					callbacks.put(REQUEST_MAKE_DISCOVERABLE, callback); 
+					startActivityForResult(discoverableIntent, REQUEST_MAKE_DISCOVERABLE);
 				}
 			};
 			new Thread(runner).start();
@@ -438,42 +494,51 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		{
 			public void run()
 			{
+				log ("bt: (serverrunner) blocked, wait for the client to connect");
 				while (serverOnline)
-					try {
-						BluetoothSocket socket = server.accept(250);
-						String uuid = UUID.randomUUID().toString();
+					try {						
+						BluetoothSocket socket = serverSocket.accept(/*timeout:*/360);
+						log ("bt: (serverrunner) client connected");
+						String token = UUID.randomUUID().toString();
 						if (serverRaw)
-							rawSockets.put(uuid, socket);
+							rawSockets.put(token, socket);
 						else
-							dataSockets.put(uuid, socket);
-						serverConnectionToken = uuid;
-						callJsCallback(serverAction, "\"" + uuid + "\"");
-						server.close();
-						return; // Server must be restarted in order to accept new connections.
-					} catch (IOException ioe) {
-						// Timeout, just re-loop
+							dataSockets.put(token, socket);
+						serverConnectionToken = token;
+						log ("bt: (serverrunner) go for the action. token: " + token);
+						callJsCallback(serverAction, "{Token: \"" + token + "\", IsConnected: true}");
+						serverSocket.close();
+						return; // Server must be restarted in order to accept new connections
+					} catch (IOException ioe) {			
+						// log ("bt: (server) timeout, just re-loop");
 					}
 			}
 		};
 
-		public void startServer(final String callback, final String action, final Boolean isRaw)
-		{
-			if (adapter == null || !adapter.isEnabled() || serverOnline)
+		public void startServer(final String callback, final String action, final boolean isRaw)		
+		{ 
+			log ("bt: (startserver) start server. isRaw = " + isRaw + "  UUID = " + uuidString);	
+			if (adapter == null || !adapter.isEnabled() || serverOnline || uuid == null)
 			{
+				if (uuid == null)
+					log ("bt: uuid must be set to be able to establish a connection. call initBluetooth first!");
 				callJsCallback(callback, "false");
 				return;
 			}
 			Runnable runner = new Runnable() {
 				public void run()
 				{
-					try {
-						server = adapter.listenUsingRfcommWithServiceRecord("$(UUID)", DEFAULT_UUID);
+					try {						
+						// serverSocket = adapter.listenUsingRfcommWithServiceRecord("$(UUID)", DEFAULT_UUID);
+						serverSocket = adapter.listenUsingRfcommWithServiceRecord(uuidString, uuid);
 						serverOnline = true;
 						serverRaw = isRaw;
-						serverAction = action;
+						serverAction = action;						
 						new Thread(serverRunner).start();
+						log ("bt: (startserver) server socket created");
 						callJsCallback(callback, "true");
 					} catch (IOException e) {
+						log ("bt: (startserver) cannot retrieve server socket");
 						callJsCallback(callback, "false");
 					}
 				}
@@ -483,12 +548,14 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 
 		public void stopServer(String callback)
 		{
+			log ("bt: (server) stop");
 			serverOnline = false;
 			callJsCallback(callback, "");
 		}
 
-		public void closeConnection(final String callback, final String token, final Boolean isRaw)
+		public void closeConnection(final String callback, final String token, final boolean isRaw)		
 		{
+			log ("bt: close connection");
 			if (adapter == null || !adapter.isEnabled())
 			{
 				callJsCallback(callback, "[false,{$:0}]");
@@ -502,29 +569,37 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 						socket = rawSockets.get(token);
 					else
 						socket = dataSockets.get(token);
-					try {
-						socket.close();
-					} catch (IOException ioe) {
-						// ignore, nothing we can do about it
-					}
-					if (serverOnline && serverConnectionToken == token)
-					{
-						try {
-							server = adapter.listenUsingRfcommWithServiceRecord("$(UUID)", DEFAULT_UUID);
-							serverRunner.run();
+					if (socket == null){
+						log ("bt: (close) cannot find socket");
+						callJsCallback(callback, "false");
+					} else {						
+						try {						
+							socket.close();
 						} catch (IOException ioe) {
 							// ignore, nothing we can do about it
 						}
+						if (serverOnline && serverConnectionToken == token)
+						{
+							// IF WE ARE A SERVER, AND ALIVE: restart ourselves to be able to accept new connections
+							try {
+								// serverSocket = adapter.listenUsingRfcommWithServiceRecord("$(UUID)", DEFAULT_UUID);
+								serverSocket = adapter.listenUsingRfcommWithServiceRecord(uuidString, uuid); // name, uuid
+								serverRunner.run();
+							} catch (IOException ioe) {
+								// ignore, nothing we can do about it
+							}
+						}
+						callJsCallback(callback, "");
 					}
-					callJsCallback(callback, "");
 				}
 			};
 			new Thread(runner).start();
 		}
 
 
-		public void readFromConnection(final String callback, final String token, final Boolean isRaw, final int length)
+		public void readFromConnection(final String callback, final String token, final boolean isRaw, final int length)
 		{
+			log ("bt: read from connection. token = " + token + "  isRaw = " + isRaw);
 			if (adapter == null || !adapter.isEnabled())
 			{
 				callJsCallback(callback, "{$:0}");
@@ -578,57 +653,71 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 					}
 					else
 						array = "[]";
-					callJsCallback(callback, "{$:1,$0:" + array + "}");
+					
+					// log ("bt: (read) bytes from socket: " + array);
+					callJsCallback(callback, "{$:1,$0:" + array + "}");					
 				}
 			};
 			new Thread(runner).start();
 		}
 
-		public void writeToConnection(final String callback, final String token, final int[] data, final Boolean isRaw)
+		public void writeToConnection(final String callback, final String token, final int[] data, final boolean isRaw)
 		{
+			log ("bt: write to connection. token = " + token + "  isRaw = " + isRaw);
+			// log ("bt: (write) bytes to socket: " + data);
+			
 			if (adapter == null || !adapter.isEnabled())
 			{
 				callJsCallback(callback, "false");
 				return;
 			}
 			Runnable runner = new Runnable() {
-				public void run()
-				{
+				public void run() {
 					BluetoothSocket socket;
-					if (isRaw)
-					{
+					if (isRaw) {
 						socket = rawSockets.get(token);
-						byte[] buffer = new byte[data.length];
-						for (int i = 0; i < data.length; i++)
-							buffer[i] = (byte)data[i];
-						try {
-							socket.getOutputStream().write(buffer);
-							callJsCallback(callback, "true");
-						} catch (IOException e) {
-							callJsCallback(callback, "false");
-							closeConnection("void", token, isRaw);
+						if (socket == null) {
+							log ("bt: (write) cannot find socket: " + data);
+							callJsCallback(callback, "false");														
+						} else {
+							byte[] buffer = new byte[data.length];
+							for (int i = 0; i < data.length; i++)
+								buffer[i] = (byte)data[i];						
+							try {
+								socket.getOutputStream().write(buffer);							
+								callJsCallback(callback, "true");
+							} catch (IOException e) {
+								callJsCallback(callback, "false");
+								closeConnection("void", token, isRaw);
+							}
 						}
 					}
 					else
 					{
 						socket = dataSockets.get(token);
-						byte[] buffer = new byte[2 + data.length];
-						buffer[0] = (byte)(data.length / 256);
-						buffer[1] = (byte)(data.length - buffer[0] * 256);
-						for (int i = 0; i < data.length; i++)
-							buffer[i + 2] = (byte)data[i];
-						try {
-							socket.getOutputStream().write(buffer);
-							callJsCallback(callback, "true");
-						} catch (IOException e) {
-							callJsCallback(callback, "false");
-							closeConnection("void", token, isRaw);
+						if (socket == null) {
+							log ("bt: (write) cannot find socket: " + data);
+							callJsCallback(callback, "false");														
+						} else {
+							byte[] buffer = new byte[2 + data.length];
+							buffer[0] = (byte)(data.length / 256);
+							buffer[1] = (byte)(data.length - buffer[0] * 256);
+							for (int i = 0; i < data.length; i++)
+								buffer[i + 2] = (byte)data[i];
+							try {
+								socket.getOutputStream().write(buffer);
+								log ("bt: (write) bytes to socket: " + new String(buffer));
+								callJsCallback(callback, "true");
+							} catch (IOException e) {
+								callJsCallback(callback, "false");
+								closeConnection("void", token, isRaw);
+							}
 						}
 					}
 				}
 			};
 			new Thread(runner).start();
-		}
+		}		
 		
 		// ---------------------
 		// Bluetooth section end
@@ -641,26 +730,42 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 		}
 
 		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-		}
+		}		
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		String callback;
 		switch (requestCode) {
-		case 3: // REQUEST_ENABLE_BT = 3
-			callback = data.getStringExtra("callback");
-			bridge.callJsCallback(callback, resultCode == Activity.RESULT_OK ? "true" : "false");
+		case WebSharperBridge.REQUEST_ENABLE_BT:
+			// callback = data.getStringExtra("callback");		
+			callback = bridge.callbacks.get(WebSharperBridge.REQUEST_ENABLE_BT);
+			switch (resultCode) {
+				case Activity.RESULT_CANCELED: 
+					bridge.log("User has choosen not to switch on Bluetooth.");
+					bridge.callJsCallback(callback, "false"); 
+					break;
+				case Activity.RESULT_OK:
+					bridge.log("Bluetooth has been switched on.");					
+					bridge.callJsCallback(callback, "true");
+					break;
+			}			
 			break;
-		case 4: // REQUEST_MAKE_DISCOVERABLE
-			callback = data.getStringExtra("callback");
-			bridge.callJsCallback(callback, resultCode != Activity.RESULT_CANCELED ? "true" : "false");
+		case WebSharperBridge.REQUEST_MAKE_DISCOVERABLE: 					
+			// callback = data.getStringExtra("callback");
+			callback = bridge.callbacks.get(WebSharperBridge.REQUEST_MAKE_DISCOVERABLE);
+			if (resultCode == Activity.RESULT_CANCELED) { 
+				bridge.log("bt: User refused to make device discoverable.");
+				bridge.callJsCallback(callback, "false");
+			} else {
+				bridge.log("bt: Device is discoverable for " + resultCode + " seconds");					
+				bridge.callJsCallback(callback, "true");
+			}				
 			break;
 		}
 	}
 
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
-
 	}
 
 	public void onSensorChanged(SensorEvent args) {

@@ -49,6 +49,8 @@ type private AndroidMobileProvider [<JavaScript>] () =
     [<Inline "websharperBridge.alert($s)">]
     let bAlert (s : string) : unit = X
 
+    /// this function prints to logcat, the Android logging system with the tag "DebugJS".
+    /// use dalvik debug monitor [ANDROID_HOME]/tools/ddms to read it. use filter: "tag:DebugJS"    
     [<Inline "websharperBridge.log($s)">]
     let bLog (s : string) : unit = X
 
