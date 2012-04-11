@@ -750,6 +750,7 @@ public class WebSharperMobileActivity extends Activity implements SensorEventLis
 					bridge.callJsCallback(callback, "true");
 					break;
 			}			
+			
 			break;
 		case WebSharperBridge.REQUEST_MAKE_DISCOVERABLE: 					
 			// callback = data.getStringExtra("callback");
