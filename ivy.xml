@@ -2,15 +2,24 @@
 <ivy-module version="2.0">
   <info organisation="IntelliFactory" module="if-ws-mobile-templates" revision="2.4" />
   <publications>
-    <artifact name="IntelliFactory.WebSharper.Mobile" ext="dll" type="bin" />
-    <artifact name="IntelliFactory.WebSharper.Mobile" ext="xml" type="bin" />
-    <artifact name="IntelliFactory.WebSharper.Mobile" ext="pdb" type="debug" />
+    <artifact name="IntelliFactory.WebSharper.Android" ext="targets" type="bin" />    
+    <artifact name="IntelliFactory.WebSharper.WinPhone" ext="targets" type="bin" />
+    <artifact name="websharper-android-tools" ext="jar" type="bin" />
     <artifact name="IntelliFactory.WebSharper.Android" ext="dll" type="bin" />
-    <artifact name="IntelliFactory.WebSharper.Android" ext="xml" type="bin" />
     <artifact name="IntelliFactory.WebSharper.Android" ext="pdb" type="debug" />
+    <artifact name="IntelliFactory.WebSharper.Android" ext="xml" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.Mobile" ext="dll" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.Mobile" ext="pdb" type="debug" />
+    <artifact name="IntelliFactory.WebSharper.Mobile" ext="xml" type="bin" />
     <artifact name="IntelliFactory.WebSharper.WinPhone" ext="dll" type="bin" />
-    <artifact name="IntelliFactory.WebSharper.WinPhone" ext="xml" type="bin" />
     <artifact name="IntelliFactory.WebSharper.WinPhone" ext="pdb" type="debug" />
+    <artifact name="IntelliFactory.WebSharper.WinPhone" ext="xml" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.WinPhone.Runtime" ext="dll" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.WinPhone.Runtime" ext="pdb" type="debug" />
+    <artifact name="IntelliFactory.WebSharper.WinPhone.Runtime" ext="xml" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.WinPhone.Tasks" ext="dll" type="bin" />
+    <artifact name="IntelliFactory.WebSharper.WinPhone.Tasks" ext="pdb" type="debug" />
+    <artifact name="IntelliFactory.WebSharper.WinPhone.Tasks" ext="xml" type="bin" />
   </publications>
   <dependencies>
     <dependency name="WebSharper" rev="latest.integration" />
