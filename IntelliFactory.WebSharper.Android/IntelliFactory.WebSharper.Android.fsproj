@@ -50,7 +50,7 @@
     <Reference Include="IntelliFactory.WebSharper.Html5" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\if-ws-mobile\IntelliFactory.WebSharper.Mobile.fsproj">
+    <ProjectReference Include="..\IntelliFactory.WebSharper.Mobile\IntelliFactory.WebSharper.Mobile.fsproj">
       <Name>IntelliFactory.WebSharper.Mobile</Name>
       <Project>{aab5b3c8-d106-4ed6-b1a2-9db4cfb30d19}</Project>
       <Private>True</Private>

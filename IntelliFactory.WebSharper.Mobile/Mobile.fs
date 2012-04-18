@@ -24,6 +24,15 @@ type Acceleration =
         Z : float
     }
 
+type Priority =
+    | Debug
+    | Info
+    | Warn
+    | Error
+
+type ILog =
+    abstract Trace : priority: Priority * category: string * text: string -> unit
+
 type IAccelerometer =
     abstract AccelerationChange : IEvent<Acceleration>
     abstract IsMeasuringAcceleration : bool with get, set

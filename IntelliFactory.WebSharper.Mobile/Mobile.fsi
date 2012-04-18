@@ -27,6 +27,19 @@ type Acceleration =
         Z : float
     }
 
+/// Represents log message priority.
+type Priority =
+    | Debug
+    | Info
+    | Warn
+    | Error
+
+/// Represents a trace facility.
+type ILog =
+
+    /// Traces a message with a given priority and category.
+    abstract Trace : priority: Priority * category: string * text: string -> unit
+
 /// An interface for subscribing to acceleration updates.
 type IAccelerometer =
 

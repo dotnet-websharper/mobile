@@ -1,19 +1,11 @@
 package com.intellifactory.android;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
 import android.view.SurfaceView;
 import android.view.View;
 import android.webkit.WebView;
@@ -42,41 +34,30 @@ final class WebSharperBridge {
 	}
 	
 	/**
-	 * Shows an alert with a message.
+	 * Finishes the current activity.
 	 */
-	final public void alert(final String text) {
-		new AlertDialog.Builder(activity)
-			.setMessage(text)
-			.setNeutralButton("OK", new OnClickListener() {
-				final public void onClick(final DialogInterface dialog, final int which) {
-					dialog.dismiss();
-				}
-			})
-		.show();		
+	final public void finish() {
+		activity.finish();
 	}
-
-	/**
-	 * Logs a message to the system log.
-	 */
-	final public void log(final String text) {
-		Log.i(TAG, text);
-	}
-
+	
 	/**
 	 * Tests if a camera can be acquired.
 	 */
 	final public boolean hasCamera() {
-		return Camera.open() != null;
+		try {
+			return Camera.open() != null;
+		} catch (Exception e) {
+			Log.e(TAG, "Failed opening the camera", e);
+			return false;
+		}
 	}
 	
 	/**
 	 * Uses the camera to take a photo and send to JavaScript asynchronously.
 	 */
 	final public void takePicture(final int uid, final int width, final int height) {
-		final Camera cmr = Camera.open();
-		if (cmr == null) {
-			asyncError(uid, "Could not open the camera");
-		} else {
+		if (hasCamera()) {
+			final Camera cmr = Camera.open();
 			final Camera.Parameters params = cmr.getParameters();
 			params.setPictureSize(width, height);
 			final SurfaceView sv = new SurfaceView(activity);
@@ -103,6 +84,8 @@ final class WebSharperBridge {
 				Log.e(TAG, "Failure in takePicture", e);
 				asyncError(uid, e.getMessage());
 			}
+		} else {
+			asyncError(uid, "No camera found");
 		}
 	}
 	
@@ -152,45 +135,6 @@ final class WebSharperBridge {
 	}
 
 	/**
-	 * Tests if location manager is present.
-	 */
-	final public boolean canLocate() {
-		final LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);		
-		return (locationManager != null);
-	}
-	
-	/**
-	 * Gets current location asynchronously.
-	 */
-	final public void getLocation(final int uid) {
-		final LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);		
-		if (locationManager == null) {
-			asyncError(uid, "No geographical location service");
-		} else {
-			final Criteria criteria = new Criteria();
-			criteria.setAccuracy(Criteria.ACCURACY_FINE);
-			final String provider = locationManager.getBestProvider(criteria, true);
-			if (provider == null) {
-				asyncError(uid, "No geographical location service provider");
-			} else {
-				locationManager.requestLocationUpdates(provider, 0, 0, new LocationListener() {					
-					final public void onStatusChanged(final String provider, final int status, final Bundle extras) {}					
-					final public void onProviderEnabled(final String provider) {}					
-					final public void onProviderDisabled(final String provider) {}					
-					final public void onLocationChanged(final Location location) {
-						locationManager.removeUpdates(this);	
-						if (location == null) {
-							asyncError(uid, "Failed to determine location");
-						} else {
-							receiver.onGeoLocation(uid, location.getLatitude(), location.getLongitude());
-						}
-					}
-				});
-			}		
-		}
-	}
-
-	/**
 	 * Notifies WebSharper of an asynchronous failure. 
 	 */
 	final private void asyncError(final int uid, final String message) {		
@@ -199,7 +143,7 @@ final class WebSharperBridge {
 	}
 
 	/**
-	 * Implements various callback interfaces.
+	 * Implements sensor callback interfaces.
 	 */
 	final private class Responder implements SensorEventListener {		
 		final public void onSensorChanged(final SensorEvent event) {
@@ -208,4 +152,3 @@ final class WebSharperBridge {
 		final public void onAccuracyChanged(final Sensor sensor, final int arg) {}
 	}
 }
-

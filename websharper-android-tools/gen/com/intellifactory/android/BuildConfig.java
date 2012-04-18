@@ -2,5 +2,5 @@
 package com.intellifactory.android;
 
 public final class BuildConfig {
-    public final static boolean DEBUG = false;
+    public final static boolean DEBUG = true;
 }
