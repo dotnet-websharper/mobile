@@ -18,18 +18,28 @@ prohibited without the written consent of the copyright holder.
 ***********************************************************************************************
 -->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="IntelliFactory.WebSharper.CSharp.targets" />
+
   <PropertyGroup>
     <BuildDependsOn>CreateWebSharperMobilePackage;$(BuildDependsOn)</BuildDependsOn>
     <MobilePackage>$(MSBuildProjectDirectory)\bin\Mobile.pkg</MobilePackage>
     <MobilePackageSources Condition="'$(MobilePackageSources)' == ''">$(MSBuildProjectDirectory)\..\Website\bin\html</MobilePackageSources>
   </PropertyGroup>
+
   <UsingTask AssemblyFile="$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.WinPhone.Tasks.dll"
              TaskName="IntelliFactory.WebSharper.WinPhone.Tasks.PackageForWinPhone" />
+
   <Target Name="CreateWebSharperMobilePackage">
     <PackageForWinPhone SourceDirectory="$(MobilePackageSources)"
                         PackageFile="$(MobilePackage)" />
   </Target>
+
   <ItemGroup>
     <EmbeddedResource Include="$(MobilePackage)" />
+    <Reference Include="IntelliFactory.WebSharper.WinPhone.Runtime">
+      <HintPath>$(WEBSHARPER_HOME)\IntelliFactory.WebSharper.WinPhone.Runtime.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
+
 </Project>

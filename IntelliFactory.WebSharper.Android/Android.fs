@@ -21,26 +21,10 @@ type Bridge =
     [<Stub>] abstract member accelerometerStarted : unit -> bool
     [<Stub>] abstract member accelerometerStart : unit -> unit
     [<Stub>] abstract member accelerometerStop : unit -> unit
-    [<Stub>] abstract member alert : string -> unit
     [<Stub>] abstract member canLocate : unit -> bool
     [<Stub>] abstract member getLocation : uid: int -> unit
-    [<Stub>] abstract member hasCamera : unit -> bool
-    [<Stub>] abstract member log : string -> unit
-    [<Stub>] abstract member takePicture : uid: int * width: int * height: int -> unit
-
-[<Sealed>]
-type Camera [<JavaScript>] (bridge: Bridge) =
-    interface ICamera with
-        [<JavaScript>]
-        member this.TakePicture(width, height) : Async<Jpeg> =
-            if bridge.hasCamera() then
-                Receiver.MakeAsync
-                    (fun uid -> bridge.takePicture(uid, width, height))
-                    (fun msg -> msg?jpeg)
-            else
-                async {
-                    return raise (exn "No camera found on the device.")
-                }
+    [<Stub>] abstract member takePicture : uid: int -> unit
+    [<Stub>] abstract member trace : priority: string * category: string * text: string -> unit
 
 [<Sealed>]
 type Geolocator [<JavaScript>] (bridge: Bridge) =
@@ -55,13 +39,10 @@ type Geolocator [<JavaScript>] (bridge: Bridge) =
                         Longitude = msg?lng
                     })
 
-[<Sealed>]
-type Context
+module Util =
 
     [<JavaScript>]
-    (bridge: Bridge) =
-
-    let accelerationChange : IEvent<Acceleration> =
+    let AccelerationChange : IEvent<Acceleration> =
         Receiver.GetEvent "onAccelerationChange" <| fun msg ->
             {
                 X = msg?x
@@ -69,8 +50,34 @@ type Context
                 Z = msg?z
             }
 
+[<Sealed>]
+type Context [<JavaScript>] (bridge: Bridge) =
+
     [<JavaScript>]
-    member this.AccelerationChange = accelerationChange
+    member this.TakePicture() : Async<Jpeg> =
+        Receiver.MakeAsync
+            (fun uid -> bridge.takePicture(uid))
+            (fun msg -> msg?jpeg)
+
+    interface ICamera with
+        member this.TakePicture() = this.TakePicture()
+
+    [<JavaScript>]
+    member this.Trace(priority: Priority, category: string, message: string) =
+         let pr =
+            match priority with
+            | Debug -> "debug"
+            | Info -> "info"
+            | Warn -> "warn"
+            | Error -> "error"
+         bridge.trace(pr, category, message)
+
+    interface ILog with
+        member this.Trace(p, c, m) = this.Trace(p, c, m)
+
+    [<JavaScript>]
+    member this.AccelerationChange =
+        Util.AccelerationChange
 
     member this.IsMeasuringAcceleration
         with [<JavaScript>] get () =
@@ -87,43 +94,11 @@ type Context
             and set x = this.IsMeasuringAcceleration <- x
 
     [<JavaScript>]
-    member this.Alert(message) = bridge.alert(message)
-
-    [<JavaScript>]
-    member this.Log(message) = bridge.log(message)
-
-    [<JavaScript>]
-    member this.Camera =
-        if bridge.hasCamera() then
-            Some (Camera bridge :> ICamera)
-        else
-            None
-
-    [<JavaScript>]
     member this.Geolocator =
         if bridge.canLocate() then
             Some (Geolocator bridge :> IGeolocator)
         else
             None
-
-    interface IContext with
-        member this.Alert(message) = this.Alert(message)
-        member this.Log(message) = this.Log(message)
-
-    [<JavaScript>]
-    member this.Load(key: string) : option<string> =
-        let value = Html5.Window.Self.LocalStorage.GetItem(key)
-        if JavaScript.TypeOf(value) ==. JavaScript.Kind.Undefined
-        then None
-        else Some value
-
-    [<JavaScript>]
-    member this.Save(key: string, value: string) =
-        Html5.Window.Self.LocalStorage.SetItem(key, value)
-
-    interface IStorage with
-        member this.Load(key) = this.Load(key)
-        member this.Save(key, value) = this.Save(key, value)
 
     [<JavaScript>]
     static member Get() =

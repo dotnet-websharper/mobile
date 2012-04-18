@@ -18,34 +18,24 @@ open IntelliFactory.WebSharper.Mobile
 /// on Android-powered devices.
 [<Sealed>]
 type Context =
+    interface IAccelerometer
+    interface ICamera
+    interface ILog
+
+    /// Uses the device camera, if available.
+    member TakePicture : unit -> Async<Jpeg>
+
+    /// Traces a message to the system log.
+    member Trace : priority: Priority * category: string * message: string -> unit
 
     /// Allows subscribing to acceleration updates.
     member AccelerationChange : IEvent<Acceleration>
-
-    /// Displays an alert on the phone.
-    member Alert : string -> unit
-
-    /// The device camera, if available.
-    member Camera : option<ICamera>
 
     /// The geolocator service, if available.
     member Geolocator : option<IGeolocator>
 
     /// Gets or sets the state of acceleration subscription.
     member IsMeasuringAcceleration : bool with get, set
-
-    /// Loads data by a given key.
-    member Load : string -> option<string>
-
-    /// Logs a message to the system log on the phone.
-    member Log : string -> unit
-
-    /// Saves data.
-    member Save : key: string * value: string -> unit
-
-    interface IAccelerometer
-    interface IContext
-    interface IStorage
 
     /// Attempts to get the Android Context object.
     /// Returns None in non-Android environments.

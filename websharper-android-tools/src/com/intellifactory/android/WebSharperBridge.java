@@ -43,7 +43,7 @@ final class WebSharperBridge {
 	/**
 	 * Tests if a camera can be acquired.
 	 */
-	final public boolean hasCamera() {
+	final private boolean hasCamera() {
 		try {
 			return Camera.open() != null;
 		} catch (Exception e) {
@@ -55,11 +55,9 @@ final class WebSharperBridge {
 	/**
 	 * Uses the camera to take a photo and send to JavaScript asynchronously.
 	 */
-	final public void takePicture(final int uid, final int width, final int height) {
+	final public void takePicture(final int uid) {
 		if (hasCamera()) {
 			final Camera cmr = Camera.open();
-			final Camera.Parameters params = cmr.getParameters();
-			params.setPictureSize(width, height);
 			final SurfaceView sv = new SurfaceView(activity);
 			sv.setOnLongClickListener(new View.OnLongClickListener() {
 				public boolean onLongClick(final View v) {
@@ -131,6 +129,22 @@ final class WebSharperBridge {
 		if (accelerationEnabled) {				
 			final SensorManager sm = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
 			sm.unregisterListener(responder);
+		}
+	}
+	
+	/**
+	 * Traces to the system log.
+	 */
+	final public void trace(final String priority, final String category, final String message)
+	{
+		if (priority == "debug") {
+			Log.d(category, message);
+		} else if (priority == "info") {
+			Log.i(category, message);
+		} else if (priority == "warn") {
+			Log.w(category, message);
+		} else {
+			Log.e(category, message);
 		}
 	}
 

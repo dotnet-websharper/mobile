@@ -55,15 +55,6 @@ type IGeolocator =
     /// Returns the current location of the device.
     abstract member GetLocation : unit -> Async<Location>
 
-/// An interface for persistent storage functionality.
-type IStorage =
-
-    /// Loads data by a given key.
-    abstract member Load : string -> option<string>
-
-    /// Saves data.
-    abstract member Save : key: string * value: string -> unit
-
 /// Represents JPEG image data encoded as a string, each character
 /// representing a single unsigned byte of the dat.
 type Jpeg = string
@@ -72,13 +63,4 @@ type Jpeg = string
 type ICamera =
 
     /// Takes a picture with the specified dimensions.
-    abstract member TakePicture : width: int * height: int -> Async<Jpeg>
-
-/// An interface for basic common mobile platform functionality.
-type IContext =
-
-    /// Displays an alert on the phone.
-    abstract member Alert : string -> unit
-
-    /// Logs a message to the system log on the phone.
-    abstract member Log : string -> unit
+    abstract member TakePicture : unit -> Async<Jpeg>

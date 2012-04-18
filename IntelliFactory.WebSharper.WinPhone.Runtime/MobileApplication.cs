@@ -218,9 +218,6 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
                             case "Trace":
                                 Trace(notification);
                                 break;
-                            case "IsMeasuringAcceleration":
-                                IsMeasuringAcceleration(notification.UniqueId);
-                                break;
                             case "StartAccelerometer":
                                 StartAccelerometer();
                                 break;
@@ -270,17 +267,6 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
 
             [DataMember]
             public double Z { get; set; }
-        }
-
-        /// <summary>
-        /// Tests if accelerometer is available and started.
-        /// </summary>
-        private void IsMeasuringAcceleration(int uid)
-        {
-            var ok =
-                accelerometer != null
-                && accelerometer.State == SensorState.Ready;
-            SendJson(new BooleanMessage { UniqueId = uid, Ok = ok });
         }
 
         /// <summary>

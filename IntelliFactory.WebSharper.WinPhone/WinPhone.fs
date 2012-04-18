@@ -44,13 +44,6 @@ module Bridge =
         m
 
     [<JavaScript>]
-    let IsMeasuringAcceleration () =
-        Receiver.MakeAsync (fun uid ->
-            message "IsMeasuringAcceleration" uid
-            |> notifySilverlight)
-            (fun resp -> resp?Ok : bool)
-
-    [<JavaScript>]
     let StartAccelerometer () =
         ping "StartAccelerometer"
         |> notifySilverlight
@@ -127,16 +120,6 @@ module Bridge =
         |> notifySilverlight
 
     [<Sealed>]
-    type Logger [<JavaScript>] () =
-        interface ILog with
-            [<JavaScript>]
-            member this.Trace(priority, category, message) =
-                Trace priority category message
-
-    [<JavaScript>]
-    let Log = Logger ()
-
-    [<Sealed>]
     type Geolocator [<JavaScript>] () =
         interface IGeolocator with
             [<JavaScript>]
@@ -147,29 +130,7 @@ module Bridge =
 
 [<Sealed>]
 type Context [<JavaScript>] () =
-
-    [<JavaScript>]
-    member this.Log = Bridge.Log :> ILog
-
-    [<JavaScript>]
-    member this.AccelerationChange =
-        Bridge.OnWinPhoneAccelerationChange
-
-    [<JavaScript>]
-    member this.IsMeasuringAcceleration() =
-        Bridge.IsMeasuringAcceleration ()
-
-    [<JavaScript>]
-    member this.StartAccelerometer() =
-        Bridge.StartAccelerometer()
-
-    [<JavaScript>]
-    member this.StopAccelerometer() =
-        Bridge.StopAccelerometer()
-
-    [<JavaScript>]
-    member this.TakePicture() =
-        Bridge.TakePicture()
+    let mutable accelerometer = false
 
     [<JavaScript>]
     member this.GetGeolocator() =
@@ -180,6 +141,38 @@ type Context [<JavaScript>] () =
             else
                 return None
         }
+
+    [<JavaScript>]
+    member this.TakePicture() =
+        Bridge.TakePicture()
+
+    interface ICamera with
+        member this.TakePicture() = this.TakePicture()
+
+    [<JavaScript>]
+    member this.Trace(priority, category, message) =
+        Bridge.Trace priority category message
+
+    interface ILog with
+        member this.Trace(p, c, m) = this.Trace(p, c, m)
+
+    [<JavaScript>]
+    member this.AccelerationChange =
+        Bridge.OnWinPhoneAccelerationChange
+
+    member this.IsMeasuringAcceleration
+        with [<JavaScript>] get () = accelerometer
+        and set x =
+            accelerometer <- x
+            if x
+            then Bridge.StartAccelerometer()
+            else Bridge.StopAccelerometer()
+
+    interface IAccelerometer with
+        member this.AccelerationChange = this.AccelerationChange
+        member this.IsMeasuringAcceleration
+            with get () = this.IsMeasuringAcceleration
+            and set x = this.IsMeasuringAcceleration <- x
 
     [<JavaScript>]
     static member Get() =

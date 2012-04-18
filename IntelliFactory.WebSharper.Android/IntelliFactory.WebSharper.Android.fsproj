@@ -47,7 +47,6 @@
     <Reference Include="IntelliFactory.WebSharper.Core" />
     <Reference Include="IntelliFactory.WebSharper.Collections" />
     <Reference Include="IntelliFactory.WebSharper.Control" />
-    <Reference Include="IntelliFactory.WebSharper.Html5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IntelliFactory.WebSharper.Mobile\IntelliFactory.WebSharper.Mobile.fsproj">

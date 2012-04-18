@@ -18,28 +18,25 @@ open IntelliFactory.WebSharper.Mobile
 /// on Windows Phone devices.
 [<Sealed>]
 type Context =
+    interface IAccelerometer
+    interface ICamera
+    interface ILog
+
+    /// Retrieves the geolocator service, if available.
+    member GetGeolocator : unit -> Async<option<IGeolocator>>
+
+    /// Uses the device camera, if available.
+    member TakePicture : unit -> Async<Jpeg>
+
+    /// Traces a message to the system log.
+    member Trace : priority: Priority * category: string * message: string -> unit
 
     /// Allows subscribing to acceleration updates.
     member AccelerationChange : IEvent<Acceleration>
 
-    /// Retrievs the geolocator service, if available.
-    member GetGeolocator : unit -> Async<option<IGeolocator>>
-
     /// Gets or sets the state of acceleration subscription.
-    member IsMeasuringAcceleration : unit -> Async<bool>
-
-    /// The logging facility.
-    member Log : ILog
-
-    /// Starts measuring acceleration.
-    member StartAccelerometer : unit -> unit
-
-    /// Stops measuring acceleration.
-    member StopAccelerometer : unit -> unit
-
-    /// Takes a picture using the camera or image store.
-    member TakePicture : unit -> Async<Jpeg>
+    member IsMeasuringAcceleration : bool with get, set
 
     /// Attempts to get the Context object.
-    /// Returns None in environments other than Windows Phone.
+    /// Returns None in non-Windows-Phone environments.
     static member Get : unit -> option<Context>

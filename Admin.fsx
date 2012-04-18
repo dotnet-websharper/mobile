@@ -21,10 +21,12 @@ let deploy () =
     let wsHome = Environment.GetEnvironmentVariable("WEBSHARPER_HOME")
     let deploy file =
         let tgt = wsHome ++ Path.GetFileName(file)
-        File.Copy(file, tgt, true)
         printfn "cp %s %s" file tgt
+        File.Copy(file, tgt, true)
     for p in projects do
-        deploy p
+        deploy (dll p)
+    deploy (dir ++ "build" ++ "IntelliFactory.WebSharper.Android.targets")
+    deploy (dir ++ "build" ++ "IntelliFactory.WebSharper.WinPhone.targets")
 
 let check () =
     for p in projects do

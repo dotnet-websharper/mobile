@@ -40,15 +40,7 @@ type IAccelerometer =
 type IGeolocator =
     abstract member GetLocation : unit -> Async<Location>
 
-type IStorage =
-    abstract member Load : key: string -> option<string>
-    abstract member Save : key: string * value: string -> unit
-
 type Jpeg = string
 
 type ICamera =
-    abstract member TakePicture : width: int * height: int -> Async<Jpeg>
-
-type IContext =
-    abstract member Alert : string -> unit
-    abstract member Log : string -> unit
+    abstract member TakePicture : unit -> Async<Jpeg>
