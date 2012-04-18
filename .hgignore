@@ -1,4 +1,4 @@
-(bin|obj)/(Debug|Release)
+(Bin|Obj|bin|obj)/(Debug|Release)
 \.(user|suo)$
 ^\.build
 ^websharper-android-tools/(bin|gen)
