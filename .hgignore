@@ -1,15 +1,4 @@
-syntax: regexp
-
-.+bin
-^bin.+dll$
-^bin.+exe$
-^bin.+xap$
-^bin.+targets$
-(obj|Bin|Obj)
-^.build
-.suo$
-#
-\~
-user$
-if-ws-mobile-setup-cache
-if-ws-mobile-setup-SetupFiles
+(Bin|Obj|bin|obj)/(Debug|Release)
+\.(user|suo)$
+^\.build
+^websharper-android-tools/(bin|gen)
