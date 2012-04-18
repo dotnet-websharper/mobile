@@ -21,6 +21,9 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
             this.files = files;
         }
 
+        /// <summary>
+        /// Formats the package to readable representation.
+        /// </summary>
         override public string ToString()
         {
             using (var w = new StringWriter())

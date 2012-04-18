@@ -99,18 +99,33 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
         [DataContractAttribute]
         public class Notification
         {
+            /// <summary>
+            /// The category of a trace message (only applies to trace messages).
+            /// </summary>
             [DataMember]
             public string Category { get; set; }
 
+            /// <summary>
+            /// The message type corresponding to a method call.
+            /// </summary>
             [DataMember]
             public string MessageType { get; set; }
 
+            /// <summary>
+            /// The message type corresponding to a method call.
+            /// </summary>
             [DataMember]
             public string Priority { get; set; }
 
+            /// <summary>
+            /// The text of the message.
+            /// </summary>
             [DataMember]
             public string Text { get; set; }
 
+            /// <summary>
+            /// Unique identifier.
+            /// </summary>
             [DataMember]
             public int UniqueId { get; set; }
         }
@@ -121,9 +136,15 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
         [DataContractAttribute]
         public class BooleanMessage
         {
+            /// <summary>
+            /// The boolean status.
+            /// </summary>
             [DataMember]
             public bool Ok { get; set; }
 
+            /// <summary>
+            /// The unique identifier.
+            /// </summary>
             [DataMember]
             public int UniqueId { get; set; }
         }
@@ -134,9 +155,15 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
         [DataContractAttribute]
         public class ErrorMessage
         {
+            /// <summary>
+            /// Unique identifier.
+            /// </summary>
             [DataMember]
             public int UniqueId { get; set; }
 
+            /// <summary>
+            /// Error message.
+            /// </summary>
             [DataMember]
             public string Error { get; set; }
         }
@@ -259,12 +286,22 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
         [DataContractAttribute]
         public class AccelerationChangedMessage
         {
+
+            /// <summary>
+            /// The X coordinate.
+            /// </summary>
             [DataMember]
             public double X { get; set; }
 
+            /// <summary>
+            /// The Y coordinate.
+            /// </summary>
             [DataMember]
             public double Y { get; set; }
 
+            /// <summary>
+            /// The Z coordinate.
+            /// </summary>
             [DataMember]
             public double Z { get; set; }
         }
@@ -376,15 +413,27 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
         [DataContractAttribute]
         public class GeoLocationMessage
         {
+            /// <summary>
+            /// Unique identifier.
+            /// </summary>
             [DataMember]
             public int UniqueId { get; set; }
 
+            /// <summary>
+            /// Indicates whether the location is known. Otherwise coordinates are 0.0.
+            /// </summary>
             [DataMember]
             public bool IsKnown { get; set; }
 
+            /// <summary>
+            /// Geographical latitude, or 0.0.
+            /// </summary>
             [DataMember]
             public double Latitude { get; set; }
 
+            /// <summary>
+            /// Geographical longitude, or 0.0.
+            /// </summary>
             [DataMember]
             public double Longitude { get; set; }
         }
@@ -400,9 +449,15 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
         [DataContractAttribute]
         public class PhotoMessage
         {
+            /// <summary>
+            /// Unique identifier.
+            /// </summary>
             [DataMember]
             public int UniqueId { get; set; }
 
+            /// <summary>
+            /// Encoded JPEG data.
+            /// </summary>
             [DataMember]
             public string Jpeg { get; set; }
         }

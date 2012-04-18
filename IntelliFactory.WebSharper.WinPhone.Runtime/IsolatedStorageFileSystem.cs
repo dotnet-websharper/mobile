@@ -12,6 +12,9 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
     {
         private IsolatedStorageFile root;
 
+        /// <summary>
+        /// Constructs with a given IsolatedStorage root.
+        /// </summary>
         public IsolatedStorageFileSystem(IsolatedStorageFile root)
         {
             this.root = root;

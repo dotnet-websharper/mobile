@@ -17,6 +17,9 @@ namespace IntelliFactory.WebSharper.WinPhone.Tasks
         private string packageFile;
         private string sourceDirectory;
 
+        /// <summary>
+        /// The path of the input directory.
+        /// </summary>
         [Required]
         public string SourceDirectory
         {
@@ -24,6 +27,9 @@ namespace IntelliFactory.WebSharper.WinPhone.Tasks
             set { sourceDirectory = value; }
         }
 
+        /// <summary>
+        /// The path of the output (package) file.
+        /// </summary>
         [Required]
         public string PackageFile
         {
@@ -31,6 +37,9 @@ namespace IntelliFactory.WebSharper.WinPhone.Tasks
             set { packageFile = value; }
         }
 
+        /// <summary>
+        /// Runs the task.
+        /// </summary>
         public override bool Execute()
         {
             try

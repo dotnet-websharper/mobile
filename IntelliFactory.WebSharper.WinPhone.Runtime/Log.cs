@@ -74,7 +74,27 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
         /// <summary>
         /// Represents message prioirty.
         /// </summary>
-        public enum Priority { Debug, Info, Warn, Error }
+        public enum Priority {
+            /// <summary>
+            /// Debug-level message, gets compiled out unless in Debug mode.
+            /// </summary>
+            Debug,
+            
+            /// <summary>
+            /// Info-level message, the default for tracing.
+            /// </summary>
+            Info,
+
+            /// <summary>
+            /// A warning.
+            /// </summary>
+            Warn,
+
+            /// <summary>
+            /// An error, typically an exception thrown.
+            /// </summary>
+            Error
+        }
 
         private static void LogToIsolatedStorage(string text)
         {
@@ -153,6 +173,9 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
             /// </summary>
             public string Text { get; internal set; }
 
+            /// <summary>
+            /// Converts to a readable representation.
+            /// </summary>
             public override string ToString()
             {
                 using (var w = new StringWriter())
