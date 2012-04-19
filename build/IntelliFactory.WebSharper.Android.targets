@@ -20,10 +20,21 @@ prohibited without the written consent of the copyright holder.
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <WebSharperSiteletsOfflineDirectory>$(MSBuildProjectDirectory)\android\assets</WebSharperSiteletsOfflineDirectory>
+    <BuildDependsOn>DeployDependencyJars;$(BuildDependsOn)</BuildDependsOn>
   </PropertyGroup>
   <Import Project="IntelliFactory.WebSharper.Sitelets.targets" />
   <ItemGroup>
     <Reference Include="IntelliFactory.WebSharper.Android" />
     <Reference Include="IntelliFactory.WebSharper.Mobile" />
   </ItemGroup>
+  <Target Name="DeployDependencyJars">
+    <ItemGroup>
+      <DependencyJars Include="$(WEBSHARPER_HOME)\*.jar" />
+    </ItemGroup>
+    <PropertyGroup>
+      <JarLibDir>$(MSBuildProjectDirectory)\android\libs</JarLibDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(JarLibDir)" />
+    <Copy SourceFiles="@(DependencyJars)" DestinationFolder="$(JarLibDir)" SkipUnchangedFiles="true"/>
+  </Target>
 </Project>
