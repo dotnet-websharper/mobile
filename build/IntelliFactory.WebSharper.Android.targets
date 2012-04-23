@@ -20,9 +20,12 @@ prohibited without the written consent of the copyright holder.
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <WebSharperSiteletsOfflineDirectory>$(MSBuildProjectDirectory)\android\assets</WebSharperSiteletsOfflineDirectory>
-    <BuildDependsOn>DeployDependencyJars;$(BuildDependsOn)</BuildDependsOn>
   </PropertyGroup>
   <Import Project="IntelliFactory.WebSharper.Sitelets.targets" />
+  <PropertyGroup>
+    <BuildDependsOn>DeployDependencyJars;$(BuildDependsOn);BuildApkWithAnt;WarnIfNoAnt</BuildDependsOn>
+    <CleanDependsOn>$(CleanDependsOn);CleanWithAnt</CleanDependsOn>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="IntelliFactory.WebSharper.Android" />
     <Reference Include="IntelliFactory.WebSharper.Mobile" />
@@ -36,5 +39,22 @@ prohibited without the written consent of the copyright holder.
     </PropertyGroup>
     <MakeDir Directories="$(JarLibDir)" />
     <Copy SourceFiles="@(DependencyJars)" DestinationFolder="$(JarLibDir)" SkipUnchangedFiles="true"/>
+  </Target>
+  <Target Name="BuildApkWithAnt" Condition=" '$(ANT_HOME)' != '' ">
+    <PropertyGroup>
+      <AntConfiguration>debug</AntConfiguration>
+      <AntConfiguration Condition="'$(Configuration)' == 'Release'">release</AntConfiguration>
+    </PropertyGroup>
+    <Exec Command='"$(ANT_HOME)\bin\ant" $(AntConfiguration)'
+          WorkingDirectory='$(MSBuildProjectDirectory)\android'
+          ContinueOnError='false' />
+  </Target>
+  <Target Name="WarnIfNoAnt" Condition=" '$(ANT_HOME)' == '' ">
+    <Warning Text="Consider setting ANT_HOME variable to automatically build Android APK packages." />
+  </Target>
+  <Target Name="CleanWithAnt" Condition=" '$(ANT_HOME)' != '' ">
+    <Exec Command='"$(ANT_HOME)\bin\ant" clean'
+          WorkingDirectory='$(MSBuildProjectDirectory)\android'
+          ContinueOnError='false' />
   </Target>
 </Project>
