@@ -137,11 +137,11 @@ final class WebSharperBridge {
 	 */
 	final public void trace(final String priority, final String category, final String message)
 	{
-		if (priority == "debug") {
+		if (priority.equalsIgnoreCase("debug")) {
 			Log.d(category, message);
-		} else if (priority == "info") {
+		} else if (priority.equalsIgnoreCase("info")) {
 			Log.i(category, message);
-		} else if (priority == "warn") {
+		} else if (priority.equalsIgnoreCase("warn")) {
 			Log.w(category, message);
 		} else {
 			Log.e(category, message);
