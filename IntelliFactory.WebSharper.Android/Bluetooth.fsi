@@ -105,12 +105,13 @@ type Context =
     /// Tests if the Bluetooth device discovery process is active.
     member IsDiscovering : bool
 
-    /// Starts the Bluetooth device discovery process.
-    /// This process is asynchronousd and usually involves an inquiry scan of about 12 seconds,
-    /// followed by a page scan of each found device to retrieve its Bluetooth name.
-    /// You can subscribe to the Discovery event to obtain the discovered devices.
-    /// Discovery is expensive; it is recommended to CancelDiscovery as soon as possible,
-    /// especially before communicating to a device.
+    /// Starts the Bluetooth device discovery process.  This process
+    /// is asynchronous and usually involves an inquiry scan of about
+    /// 12 seconds, followed by a page scan of each found device to
+    /// retrieve its Bluetooth name.  You can subscribe to the
+    /// Discovery event to obtain the discovered devices.  Discovery
+    /// is expensive; it is recommended to CancelDiscovery as soon as
+    /// possible, especially before communicating to a device.
     member StartDiscovery : unit -> unit
 
     (* Discoverable status *)
