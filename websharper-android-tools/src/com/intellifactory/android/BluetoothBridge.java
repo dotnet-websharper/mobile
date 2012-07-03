@@ -107,17 +107,32 @@ final class BluetoothBridge {
 	/**
 	 * Returns devices bonded/paired to the local adapter.
 	 */
-	final public int[] getBondedDevices() {
-		final Set<BluetoothDevice> deviceSet = adapter.getBondedDevices();	
-		final int[] result = new int[deviceSet.size()];
-		final Iterator<BluetoothDevice> it = deviceSet.iterator();
-		int i = 0;
-		while (it.hasNext()) {
-			final BluetoothDevice d = it.next();
-			result[i] = devices.add(d);
-			i++;			
-		}
-		return result;
+	final public int getBondedDeviceCount() {
+		Log.e("BluetoothBridge", "Running getBondedDeviceCount");
+		return adapter.getBondedDevices().size();
+	}
+
+	/**
+	 * Returns devices bonded/paired to the local adapter.
+	 */
+	final public void getBondedDevices(final int uid) {
+		activity.runOnUiThread(new Runnable() {
+			final public void run() {
+				Log.e("BluetoothBridge", "Running getBondedDevices");				
+				final Set<BluetoothDevice> deviceSet = adapter.getBondedDevices();	
+				final int[] result = new int[deviceSet.size()];
+				final Iterator<BluetoothDevice> it = deviceSet.iterator();
+				int i = 0;
+				while (it.hasNext()) {
+					final BluetoothDevice d = it.next();
+					result[i] = devices.add(d);
+					i++;
+				}
+				Log.e("BluetoothBridge", "Bonded device count: " + deviceSet.size());
+				Log.e("BluetoothBridge", "Bonded device IDs: " + result);
+				receiver.onGotBoundedDevices(uid, result);
+			}
+		});		
 	}
 	
 	/**

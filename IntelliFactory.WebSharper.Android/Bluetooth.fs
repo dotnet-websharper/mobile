@@ -14,7 +14,8 @@ module IntelliFactory.WebSharper.Android.Bluetooth
 open System
 open System.Collections.Generic
 open IntelliFactory.WebSharper
-
+type C = IntelliFactory.WebSharper.Android.Context
+type Pr = Mobile.Priority
 type Binary = string
 
 /// Represents a stub for the Java-implemented backend.
@@ -27,7 +28,8 @@ type Bridge =
     [<Stub>] abstract member startServer : serverId: int -> unit
     [<Stub>] abstract member disposeServer : serverId: int -> unit
 
-    [<Stub>] abstract member getBondedDevices : unit -> int []
+    [<Stub>] abstract member getBondedDeviceCount : unit -> int
+    [<Stub>] abstract member getBondedDevices : uid: int -> unit
 
     [<Stub>] abstract member isDiscovering : unit -> bool
     [<Stub>] abstract member cancelDiscovery : unit -> unit
@@ -105,7 +107,7 @@ type Server
         member this.Dispose() = this.Dispose()
 
 [<Sealed>]
-type Context [<JavaScript>] (bridge: Bridge)=
+type Context [<JavaScript>] (bridge: Bridge, android: C) =
 
     let servers = Dictionary<int,Server>()
 
@@ -127,10 +129,24 @@ type Context [<JavaScript>] (bridge: Bridge)=
                 |> Async.Start)
 
     [<JavaScript>]
+    member this.Android = android
+
+    [<JavaScript>]
+    member this.GetBondedDeviceCount() =
+        android.Trace(Pr.Info, "Bluetooth", "GetBondedDeviceCount")
+        let devices = bridge.getBondedDeviceCount()
+        android.Trace(Pr.Info, "Bluetooth", "GetBondedDeviceCount --> " + string devices)
+        devices
+
+    [<JavaScript>]
     member this.GetBondedDevices() =
-        let devices = bridge.getBondedDevices()
-        let r = Array.init devices.Length (fun i -> new Device(devices.[i], bridge))
-        r :> seq<_>
+        Receiver.MakeAsync
+            (fun uid -> bridge.getBondedDevices(uid))
+            (fun msg ->
+                let devices = As<int[]> msg?devices
+                android.Trace(Pr.Info, "Bluetooth", "GetBondedDevices --> " + string devices)
+                let r = Array.init devices.Length (fun i -> new Device(devices.[i], bridge))
+                r :> seq<_>)
 
     [<JavaScript>]
     member this.ConnectToDevice(device: Device, uuid: string) =
@@ -166,7 +182,9 @@ type Context [<JavaScript>] (bridge: Bridge)=
     [<JavaScript>]
     static member Get() =
         let b = JavaScript.Global?AndroidWebSharperBluetoothBridge
+        let c = IntelliFactory.WebSharper.Android.Context.Get()
         if As b then
-            Some (Context b)
-        else
-            None
+            match c with
+            | Some android -> Some (Context(b, android))
+            | _ -> None
+        else None

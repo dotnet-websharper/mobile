@@ -1,6 +1,7 @@
 package com.intellifactory.android;
 
 import android.util.Log;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -52,6 +53,20 @@ final class JsonMessage {
 		return this;
 	}
 	
+	final public JsonMessage with(final String name, final int[] value) {		
+		try {
+			final JSONArray arr = new JSONArray();
+			for (int i = 0; i < value.length; i++) {			
+				arr.put(i, value[i]);
+			}		
+			packet.put(name, arr);
+			packet.put(name, value);
+		} catch (JSONException e) {
+			Log.e(TAG, "JSON error", e);
+		}
+		return this;
+	}
+
 	@Override
 	final public String toString() {
 		return packet.toString();

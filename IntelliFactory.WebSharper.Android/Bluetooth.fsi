@@ -76,6 +76,9 @@ type Connection =
 [<Sealed>]
 type Context =
 
+    /// The general Android context.
+    member Android : IntelliFactory.WebSharper.Android.Context
+
     (* Clients, servers, bonded devices *)
 
     /// Connects to a given Bluetooth device asynchronously using a given UUID.
@@ -85,11 +88,13 @@ type Context =
     /// during the connection procedure.
     member ConnectToDevice : device: Device * uuid: string -> Async<Socket>
 
+    member GetBondedDeviceCount : unit -> int
+
     /// Gets all bonded (paired) Bluetooth devices.
     /// Bonded devices are aware of each other's existence, have a shared link-key that can be used for authentication,
     /// and are capable of establishing an encrypted connection with each other.
     /// NOTE: bonded devices do are not necessarily connected, or even in range.
-    member GetBondedDevices : unit -> seq<Device>
+    member GetBondedDevices : unit -> Async<seq<Device>>
 
     /// Starts a Bluetooth server with a given name and UUID.
     member Serve : name: string * uuid: string * handler: (Connection -> Async<unit>) -> Server

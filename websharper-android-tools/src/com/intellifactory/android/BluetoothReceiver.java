@@ -72,6 +72,13 @@ final class BluetoothReceiver {
 	final public void onAsyncError(final int uid, final String error) {
 		onAsync(new JsonMessage().with("uid", uid).with("error", error));
 	}
+
+	/**
+	 * Notifes about found bounded devices.
+	 */
+	final public void onGotBoundedDevices(final int uid, final int[] devices) {
+		onAsync(new JsonMessage().with("uid", uid).with("devices", devices));
+	}
 	
 	final private void call(final String methodName, final JsonMessage body) {
 		final String msg = "javascript:AndroidWebSharperReceiver." + methodName + "(" + body + ");";
