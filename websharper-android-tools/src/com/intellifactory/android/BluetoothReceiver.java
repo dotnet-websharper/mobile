@@ -74,7 +74,7 @@ final class BluetoothReceiver {
 	}
 
 	/**
-	 * Notifes about found bounded devices.
+	 * Notifies about found bounded devices.
 	 */
 	final public void onGotBoundedDevices(final int uid, final int[] devices) {
 		onAsync(new JsonMessage().with("uid", uid).with("devices", devices));
