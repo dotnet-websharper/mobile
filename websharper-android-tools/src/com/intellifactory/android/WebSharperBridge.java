@@ -1,6 +1,7 @@
 package com.intellifactory.android;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -24,13 +25,12 @@ final class WebSharperBridge {
 	final private WebView web;	
 	final private static String TAG = "WebSharperBridge";	
 	final private Responder responder = new Responder();
-	private boolean accelerationEnabled;
+	private boolean accelerationEnabled = false;
 		
 	public WebSharperBridge(final AsyncActivity asyncActivity, final WebView webView) {
 		activity = asyncActivity;
 		web = webView;
-		accelerationEnabled = subscribeToAccelerationUpdates();
-		receiver = new WebSharperReceiver(web);
+		receiver = new WebSharperReceiver(activity, web);
 	}
 	
 	/**
@@ -44,47 +44,50 @@ final class WebSharperBridge {
 	 * Tests if a camera can be acquired.
 	 */
 	final private boolean hasCamera() {
-		try {
-			return Camera.open() != null;
-		} catch (Exception e) {
-			Log.e(TAG, "Failed opening the camera", e);
-			return false;
-		}
+		return activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
 	}
 	
 	/**
 	 * Uses the camera to take a photo and send to JavaScript asynchronously.
 	 */
-	final public void takePicture(final int uid) {
-		if (hasCamera()) {
-			final Camera cmr = Camera.open();
-			final SurfaceView sv = new SurfaceView(activity);
-			sv.setOnLongClickListener(new View.OnLongClickListener() {
-				public boolean onLongClick(final View v) {
-					cmr.takePicture(null, null, new Camera.PictureCallback() {
-						public void onPictureTaken(final byte[] data, final Camera camera) {
-							receiver.onPictureTaken(uid, ExtendedAsciiEncoding.getString(data));
-							camera.release();
-							activity.setContentView(web);
+	final public void takePicture(final int uid) throws IOException {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {			
+				if (hasCamera()) {
+					final Camera cmr = Camera.open();
+					if (cmr == null) {
+						asyncError(uid, "No camera found");			
+					} else {							
+						final SurfaceView sv = new SurfaceView(activity);
+						sv.setOnLongClickListener(new View.OnLongClickListener() {
+							public boolean onLongClick(final View v) {
+								cmr.takePicture(null, null, new Camera.PictureCallback() {
+									public void onPictureTaken(final byte[] data, final Camera camera) {
+										receiver.onPictureTaken(uid, ExtendedAsciiEncoding.getString(data));
+										camera.release();
+										activity.setContentView(web);
+									}					
+								});
+								return false;
+							}
+						});			
+						sv.setClickable(true);
+						try {
+							cmr.setPreviewDisplay(sv.getHolder());
+							activity.setContentView(sv);
+							cmr.startPreview();
+							final Toast toast = Toast.makeText(activity, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
+							toast.show();
+						} catch (IOException e) {
+							Log.e(TAG, "Failure in takePicture", e);
+							asyncError(uid, e.getMessage());
 						}					
-					});
-					return false;
-				}
-			});			
-			sv.setClickable(true);
-			try {
-				cmr.setPreviewDisplay(sv.getHolder());
-				activity.setContentView(sv);
-				cmr.startPreview();
-				final Toast toast = Toast.makeText(activity, "Long-click the screen to take photo.", Toast.LENGTH_SHORT);
-				toast.show();
-			} catch (IOException e) {
-				Log.e(TAG, "Failure in takePicture", e);
-				asyncError(uid, e.getMessage());
+					}
+				} else {
+					asyncError(uid, "No camera found");
+				}			
 			}
-		} else {
-			asyncError(uid, "No camera found");
-		}
+		});		
 	}
 	
 	/**
@@ -161,7 +164,9 @@ final class WebSharperBridge {
 	 */
 	final private class Responder implements SensorEventListener {		
 		final public void onSensorChanged(final SensorEvent event) {
-			receiver.onAccelerationChange(event.values[0], event.values[1], event.values[2]);	
+			if (accelerationEnabled) {
+				receiver.onAccelerationChange(event.values[0], event.values[1], event.values[2]);
+			}
 		}
 		final public void onAccuracyChanged(final Sensor sensor, final int arg) {}
 	}

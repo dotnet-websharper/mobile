@@ -1,5 +1,7 @@
 package com.intellifactory.android;
 
+// import android.util.Log;
+import android.app.Activity;
 import android.webkit.WebView;
 
 /**
@@ -8,9 +10,11 @@ import android.webkit.WebView;
  */
 final class WebSharperReceiver {
 	
+	final private Activity act;
 	final private WebView browser;
 	
-	public WebSharperReceiver(final WebView web) {
+	public WebSharperReceiver(final Activity activity, final WebView web) {
+		act = activity;
 		browser = web;
 	}
 
@@ -43,10 +47,16 @@ final class WebSharperReceiver {
 	}
 
 	final private void call(final String methodName, final JsonMessage body) {
-		browser.loadUrl("javascript:AndroidWebSharperReceiver." + methodName + "(" + body + ");");
+		final String message = "javascript:AndroidWebSharperReceiver." + methodName + "(" + body + ");";
+		// Log.d("WebSharperReceiver", message);
+		act.runOnUiThread(new Runnable() {
+			public void run() {
+				browser.loadUrl(message);
+			}
+		});
 	}
 
 	final private void onAsync(final JsonMessage body) {
-		call("onAsync", body);
+		call("onAsync", body);				
 	}
 }

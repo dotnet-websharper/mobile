@@ -1,5 +1,6 @@
 package com.intellifactory.android;
 
+import android.app.Activity;
 import android.webkit.WebView;
 
 /**
@@ -8,9 +9,11 @@ import android.webkit.WebView;
  */
 final class BluetoothReceiver {
 	
+	final private Activity act;
 	final private WebView browser;
 	
-	public BluetoothReceiver(final WebView web) {
+	public BluetoothReceiver(final Activity activity, final WebView web) {
+		act = activity;
 		browser = web;
 	}
 
@@ -71,7 +74,12 @@ final class BluetoothReceiver {
 	}
 	
 	final private void call(final String methodName, final JsonMessage body) {
-		browser.loadUrl("javascript:AndroidWebSharperReceiver." + methodName + "(" + body + ");");
+		final String msg = "javascript:AndroidWebSharperReceiver." + methodName + "(" + body + ");";
+		act.runOnUiThread(new Runnable() {
+			public void run() {
+				browser.loadUrl(msg);				
+			}
+		});
 	}
 
 	final private void onAsync(final JsonMessage body) {

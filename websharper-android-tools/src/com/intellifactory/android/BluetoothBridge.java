@@ -34,7 +34,7 @@ final class BluetoothBridge {
 	public BluetoothBridge(	final BluetoothAdapter btAdapter,
 							final AsyncActivity asyncActivity,
 							final WebView webkit) {		
-		receiver = new BluetoothReceiver(webkit);
+		receiver = new BluetoothReceiver(asyncActivity, webkit);
 		activity = asyncActivity;
 		adapter = btAdapter;
 		bsm = new BluetoothSocketManager(btAdapter, new BluetoothSocketManager.Synchronizer() {
