@@ -22,8 +22,8 @@ module U = Common
 /// android.bluetooth.BluetoothDevice
 [<AbstractClass>]
 type JDevice =
-    [<Stub>] abstract member getAddress : unit -> string
-    [<Stub>] abstract member getName : unit -> string
+    [<Stub>] abstract member getAddress : unit -> U.JString
+    [<Stub>] abstract member getName : unit -> U.JString
 
 /// com.intellifactory.android.BluetoothAsyncSocket
 [<AbstractClass>]
@@ -51,14 +51,14 @@ type Bridge =
     [<Stub>] abstract member isDiscovering : unit -> bool
     [<Stub>] abstract member isEnabled : unit -> bool
     [<Stub>] abstract member makeDiscoverable : seconds: int -> U.JStatus<unit>
-    [<Stub>] abstract member socketRead : socket: JSocket -> U.JStatus<string>
+    [<Stub>] abstract member socketRead : socket: JSocket -> U.JStatus<U.JString>
     [<Stub>] abstract member socketWrite : socket: JSocket * data: string -> U.JStatus<unit>
     [<Stub>] abstract member startDiscovery : unit -> bool
 
 [<Sealed>]
 type Device [<JavaScript>] (dev: JDevice) =
-    let name = dev.getName()
-    let address = dev.getAddress()
+    let name = dev.getName() |> U.toString
+    let address = dev.getAddress() |> U.toString
     [<JavaScript>] member this.Dispose() = ()
     [<JavaScript>] member this.Address = address
     [<JavaScript>] member this.Device = dev
@@ -76,7 +76,10 @@ type Socket [<JavaScript>] (bridge: Bridge, sock: JSocket) =
 
     [<JavaScript>]
     member this.Read() =
-        U.toAsync (fun () -> bridge.socketRead(sock))
+        async {
+            let! x = U.toAsync (fun () -> bridge.socketRead(sock))
+            return U.toString x
+        }
 
     [<JavaScript>]
     member this.Write(data: Binary) =

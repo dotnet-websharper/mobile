@@ -41,7 +41,7 @@ type Bridge =
     [<Stub>] abstract member getLocation : unit -> C.JStatus<JLocation>
     [<Stub>] abstract member finish : unit -> unit
     [<Stub>] abstract member hasCamera: unit -> bool
-    [<Stub>] abstract member takePicture : unit -> C.JStatus<Jpeg>
+    [<Stub>] abstract member takePicture : unit -> C.JStatus<C.JString>
     [<Stub>] abstract member trace : priority: string * category: string * text: string -> unit
 
 [<Sealed>]
@@ -92,7 +92,10 @@ type Context [<JavaScript>] (bridge: Bridge) =
 
     [<JavaScript>]
     member this.TakePicture() : Async<Jpeg> =
-        C.toAsync (fun () -> bridge.takePicture())
+        async {
+            let! s = C.toAsync (fun () -> bridge.takePicture())
+            return C.toString s
+        }
 
     interface ICamera with
         member this.TakePicture() = this.TakePicture()

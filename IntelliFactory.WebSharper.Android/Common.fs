@@ -13,6 +13,12 @@ module IntelliFactory.WebSharper.Android.Common
 
 open IntelliFactory.WebSharper
 
+/// java.lang.String
+type JString = JString
+
+[<Inline "String($x)">]
+let toString (x: JString) = X<string>
+
 /// java.util.List<T>
 [<AbstractClass>]
 type JList<'T> =
@@ -22,7 +28,7 @@ type JList<'T> =
 /// com.intellifactory.android.Task.Status<T>
 [<AbstractClass>]
 type JStatus<'T> =
-    [<Stub>] abstract member getErrorMessage : unit -> string
+    [<Stub>] abstract member getErrorMessage : unit -> JString
     [<Stub>] abstract member getValue : unit -> 'T
     [<Stub>] abstract member isDone : unit -> bool
     [<Stub>] abstract member isError : unit -> bool
@@ -37,16 +43,18 @@ let toArray (list: JList<'T>) : 'T [] =
 
 [<JavaScript>]
 let toAsync (start: unit -> JStatus<'T>) : Async<'T> =
-    let rec loop () =
+    let rec loop (x: JStatus<'T>) =
         async {
-            let x = start ()
             if x.isDone() then
                 if x.isError() then
-                    return! asyncThrow (exn (x.getErrorMessage()))
+                    return! asyncThrow (exn (toString (x.getErrorMessage())))
                 else
                     return x.getValue()
             else
                 do! Async.Sleep(500)
-                return! loop ()
+                return! loop x
         }
-    loop ()
+    async {
+        let status = start ()
+        return! loop status
+    }
