@@ -15,15 +15,33 @@ open System
 open System.Collections.Generic
 open IntelliFactory.WebSharper
 open IntelliFactory.WebSharper.Mobile
+module C = Common
 
+/// com.intellifactory.android.WebSharperBridge.Acceleration
+[<AbstractClass>]
+type JAcceleration =
+    [<Stub>] abstract member x : unit -> double
+    [<Stub>] abstract member y : unit -> double
+    [<Stub>] abstract member z : unit -> double
+
+/// android.location.Location
+[<AbstractClass>]
+type JLocation =
+    [<Stub>] abstract member getLatitude : unit -> double
+    [<Stub>] abstract member getLongitude : unit -> double
+
+/// com.intellifactory.android.WebSharperBridge
 [<AbstractClass>]
 type Bridge =
-    [<Stub>] abstract member accelerometerStarted : unit -> bool
     [<Stub>] abstract member accelerometerStart : unit -> unit
+    [<Stub>] abstract member accelerometerStarted : unit -> bool
     [<Stub>] abstract member accelerometerStop : unit -> unit
     [<Stub>] abstract member canLocate : unit -> bool
-    [<Stub>] abstract member getLocation : uid: int -> unit
-    [<Stub>] abstract member takePicture : uid: int -> unit
+    [<Stub>] abstract member getAcceleration : unit -> JAcceleration
+    [<Stub>] abstract member getLocation : unit -> C.JStatus<JLocation>
+    [<Stub>] abstract member finish : unit -> unit
+    [<Stub>] abstract member hasCamera: unit -> bool
+    [<Stub>] abstract member takePicture : unit -> C.JStatus<Jpeg>
     [<Stub>] abstract member trace : priority: string * category: string * text: string -> unit
 
 [<Sealed>]
@@ -31,33 +49,50 @@ type Geolocator [<JavaScript>] (bridge: Bridge) =
     interface IGeolocator with
         [<JavaScript>]
         member this.GetLocation() =
-            Receiver.MakeAsync
-                (fun uid -> bridge.getLocation(uid))
-                (fun msg ->
-                    {
-                        Latitude = msg?lat
-                        Longitude = msg?lng
-                    })
-
-module Util =
-
-    [<JavaScript>]
-    let AccelerationChange : IEvent<Acceleration> =
-        Receiver.GetEvent "onAccelerationChange" <| fun msg ->
-            {
-                X = msg?x
-                Y = msg?y
-                Z = msg?z
+            async {
+                let! loc = C.toAsync (fun () -> bridge.getLocation())
+                return {
+                    Latitude = loc.getLatitude()
+                    Longitude = loc.getLongitude()
+                }
             }
 
 [<Sealed>]
 type Context [<JavaScript>] (bridge: Bridge) =
+    let accelEvent = new Event<Acceleration>()
+    let onAccel = accelEvent.Publish
+    let mutable isLooping = false
+
+    [<JavaScript>]
+    let getAcceleration () =
+        let a = bridge.getAcceleration()
+        { X = a.x(); Y = a.y(); Z = a.z() }
+
+    [<JavaScript>]
+    let rec loop (accel: Acceleration) =
+        async {
+            if bridge.accelerometerStarted() then
+                let a = getAcceleration()
+                if a = accel then
+                    do! Async.Sleep(250)
+                    return! loop accel
+                else
+                    do accelEvent.Trigger(a)
+                    return! loop a
+            else
+                return isLooping <- false
+        }
+
+    [<JavaScript>]
+    let startLooping () =
+        if not isLooping then
+            isLooping <- true
+            loop (getAcceleration())
+            |> Async.Start
 
     [<JavaScript>]
     member this.TakePicture() : Async<Jpeg> =
-        Receiver.MakeAsync
-            (fun uid -> bridge.takePicture(uid))
-            (fun msg -> msg?jpeg)
+        C.toAsync (fun () -> bridge.takePicture())
 
     interface ICamera with
         member this.TakePicture() = this.TakePicture()
@@ -76,16 +111,17 @@ type Context [<JavaScript>] (bridge: Bridge) =
         member this.Trace(p, c, m) = this.Trace(p, c, m)
 
     [<JavaScript>]
-    member this.AccelerationChange =
-        Util.AccelerationChange
+    member this.AccelerationChange = onAccel
 
     member this.IsMeasuringAcceleration
         with [<JavaScript>] get () =
             bridge.accelerometerStarted()
         and [<JavaScript>] set on =
-            if on
-            then bridge.accelerometerStart()
-            else bridge.accelerometerStop()
+            if on then
+                bridge.accelerometerStart()
+                startLooping ()
+            else
+                bridge.accelerometerStop()
 
     interface IAccelerometer with
         member this.AccelerationChange = this.AccelerationChange
@@ -95,15 +131,11 @@ type Context [<JavaScript>] (bridge: Bridge) =
 
     [<JavaScript>]
     member this.Geolocator =
-        if bridge.canLocate() then
-            Some (Geolocator bridge :> IGeolocator)
-        else
-            None
+        if bridge.canLocate()
+            then Some (Geolocator bridge :> IGeolocator)
+            else None
 
     [<JavaScript>]
     static member Get() =
         let b = JavaScript.Global?AndroidWebSharperBridge
-        if As b then
-            Some (Context b)
-        else
-            None
+        if As b then Some (Context b) else None

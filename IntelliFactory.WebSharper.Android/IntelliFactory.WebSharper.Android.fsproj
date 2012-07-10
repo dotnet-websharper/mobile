@@ -34,8 +34,8 @@
   </PropertyGroup>
   <Import Project="..\.build\lib\IntelliFactory.WebSharper.targets" />
   <ItemGroup>
-    <Compile Include="Receiver.fsi" />
-    <Compile Include="Receiver.fs" />
+    <Compile Include="Common.fsi" />
+    <Compile Include="Common.fs" />
     <Compile Include="Android.fsi" />
     <Compile Include="Android.fs" />
     <Compile Include="Bluetooth.fsi" />

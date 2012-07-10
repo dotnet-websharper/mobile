@@ -23,7 +23,7 @@ type Binary = string
 type Device =
     interface IDisposable
 
-    /// Drops the reference to the proxied object on the Android side. Called in IDisposable.
+    /// A no-op (deprecated).
     member Dispose : unit -> unit
 
     /// The device address.
@@ -47,7 +47,6 @@ type Socket =
     interface IDisposable
 
     /// Closes the socket and frees resources.
-    /// Drops the reference to the proxied object on the Android side. Called in IDisposable.
     member Dispose : unit -> unit
 
     /// Reads data from the socket. Returns `null` if no more data is to be read.
@@ -88,13 +87,11 @@ type Context =
     /// during the connection procedure.
     member ConnectToDevice : device: Device * uuid: string -> Async<Socket>
 
-    member GetBondedDeviceCount : unit -> int
-
     /// Gets all bonded (paired) Bluetooth devices.
     /// Bonded devices are aware of each other's existence, have a shared link-key that can be used for authentication,
     /// and are capable of establishing an encrypted connection with each other.
     /// NOTE: bonded devices do are not necessarily connected, or even in range.
-    member GetBondedDevices : unit -> Async<seq<Device>>
+    member GetBondedDevices : unit -> seq<Device>
 
     /// Starts a Bluetooth server with a given name and UUID.
     member Serve : name: string * uuid: string * handler: (Connection -> Async<unit>) -> Server

@@ -17,167 +17,187 @@ open IntelliFactory.WebSharper
 type C = IntelliFactory.WebSharper.Android.Context
 type Pr = Mobile.Priority
 type Binary = string
+module U = Common
 
-/// Represents a stub for the Java-implemented backend.
+/// android.bluetooth.BluetoothDevice
+[<AbstractClass>]
+type JDevice =
+    [<Stub>] abstract member getAddress : unit -> string
+    [<Stub>] abstract member getName : unit -> string
+
+/// com.intellifactory.android.BluetoothAsyncSocket
+[<AbstractClass>]
+type JSocket =
+    [<Stub>] abstract member close : unit -> unit
+    [<Stub>] abstract member getRemoteDevice : unit -> JDevice
+
+/// com.intellifactory.android.BluetoothBridge.Server
+[<AbstractClass>]
+type JServer =
+    [<Stub>] abstract member getClients : unit -> U.JList<JSocket>
+    [<Stub>] abstract member isRunning : unit -> bool
+    [<Stub>] abstract member stop : unit -> unit
+
+/// com.intellifactory.android.BluetoothBridge
 [<AbstractClass>]
 type Bridge =
-
-    [<Stub>] abstract member connectToDevice : deviceId: int * uuid: string * uid: int -> unit
-
-    [<Stub>] abstract member makeServer : name: string * uuid: string -> int
-    [<Stub>] abstract member startServer : serverId: int -> unit
-    [<Stub>] abstract member disposeServer : serverId: int -> unit
-
-    [<Stub>] abstract member getBondedDeviceCount : unit -> int
-    [<Stub>] abstract member getBondedDevices : uid: int -> unit
-
-    [<Stub>] abstract member isDiscovering : unit -> bool
     [<Stub>] abstract member cancelDiscovery : unit -> unit
-    [<Stub>] abstract member startDiscovery : unit -> unit
-
+    [<Stub>] abstract member connectToDevice : dev: JDevice * uuid: string -> U.JStatus<JSocket>
+    [<Stub>] abstract member createServer : name: string * uuid: string -> JServer
+    [<Stub>] abstract member enable : unit -> U.JStatus<unit>
+    [<Stub>] abstract member getBondedDevices : unit -> U.JList<JDevice>
+    [<Stub>] abstract member getDiscoveredDevices : unit -> U.JList<JDevice>
     [<Stub>] abstract member isDiscoverable : unit -> bool
-    [<Stub>] abstract member makeDiscoverable : seconds: int * uid: int -> unit
-
-    [<Stub>] abstract member enable : uid: int -> unit
+    [<Stub>] abstract member isDiscovering : unit -> bool
     [<Stub>] abstract member isEnabled : unit -> bool
-
-    [<Stub>] abstract member deviceAddress : deviceId: int -> string
-    [<Stub>] abstract member deviceName : deviceId: int -> string
-    [<Stub>] abstract member disposeDevice : deviceId: int -> unit
-
-    [<Stub>] abstract member socketRead : socketId: int * uid: int -> unit
-    [<Stub>] abstract member socketWrite : socketId: int * uid: int * data: Binary -> unit
-    [<Stub>] abstract member disposeSocket : socketId: int -> unit
+    [<Stub>] abstract member makeDiscoverable : seconds: int -> U.JStatus<unit>
+    [<Stub>] abstract member socketRead : socket: JSocket -> U.JStatus<string>
+    [<Stub>] abstract member socketWrite : socket: JSocket * data: string -> U.JStatus<unit>
+    [<Stub>] abstract member startDiscovery : unit -> bool
 
 [<Sealed>]
-type Device [<JavaScript>] (id: int, bridge: Bridge) =
-    let name = bridge.deviceName(id)
-    let address = bridge.deviceAddress(id)
-    [<JavaScript>] member this.Dispose() = bridge.disposeDevice(id)
+type Device [<JavaScript>] (dev: JDevice) =
+    let name = dev.getName()
+    let address = dev.getAddress()
+    [<JavaScript>] member this.Dispose() = ()
     [<JavaScript>] member this.Address = address
+    [<JavaScript>] member this.Device = dev
     [<JavaScript>] member this.Name = name
-    [<JavaScript>] member this.Id = id
 
     interface IDisposable with
-        member this.Dispose() = this.Dispose()
+        member this.Dispose() = ()
 
 [<Sealed>]
-type Socket [<JavaScript>] (id: int, bridge: Bridge) =
+type Socket [<JavaScript>] (bridge: Bridge, sock: JSocket) =
+    let device = new Device(sock.getRemoteDevice())
 
     [<JavaScript>]
-    member this.Dispose() = bridge.disposeSocket(id)
+    member this.Dispose() = sock.close()
 
     [<JavaScript>]
     member this.Read() =
-        Receiver.MakeAsync
-            (fun uid -> bridge.socketRead(id, uid))
-            (fun msg -> As<Binary> msg?data)
+        U.toAsync (fun () -> bridge.socketRead(sock))
 
     [<JavaScript>]
     member this.Write(data: Binary) =
-        Receiver.MakeAsync
-            (fun uid -> bridge.socketWrite(id, uid, data))
-            (fun msg -> ())
+        U.toAsync (fun () -> bridge.socketWrite(sock, data))
 
-    interface IDisposable with
-        member this.Dispose() = this.Dispose()
-
-[<Sealed>]
-type Connection [<JavaScript>] (serverId: int, device: Device, socket: Socket) =
-    [<JavaScript>] member this.Dispose() = device.Dispose(); socket.Dispose()
-    [<JavaScript>] member this.Device = device
-    [<JavaScript>] member this.Socket = socket
-    [<JavaScript>] member this.ServerId = serverId
-
-    interface IDisposable with
-        member this.Dispose() = this.Dispose()
-
-[<Sealed>]
-type Server
     [<JavaScript>]
-    (
-        id: int,
-        bridge: Bridge,
-        handle: Connection -> Async<unit>,
-        dispose: unit -> unit
-    ) =
-    [<JavaScript>] member this.Dispose() = dispose (); bridge.disposeServer(id)
-    [<JavaScript>] member this.Handle(c) = handle c
+    member this.Device = device
+
+    interface IDisposable with
+        member this.Dispose() = this.Dispose()
+
+[<Sealed>]
+type Connection [<JavaScript>] (socket: Socket) =
+    [<JavaScript>] member this.Dispose() = socket.Dispose()
+    [<JavaScript>] member this.Device = socket.Device
+    [<JavaScript>] member this.Socket = socket
+
+    interface IDisposable with
+        member this.Dispose() = this.Dispose()
+
+[<Sealed>]
+type Server [<JavaScript>] (bridge: Bridge, handle: Connection -> Async<unit>, server: JServer) =
+
+    [<JavaScript>]
+    let rec loop () =
+        async {
+            if server.isRunning() then
+                do
+                    U.toArray (server.getClients())
+                    |> Array.iter (fun c ->
+                        handle (new Connection(new Socket(bridge, c)))
+                        |> Async.Start)
+                do! Async.Sleep(500)
+                return! loop ()
+            else
+                return ()
+        }
+    do Async.Start(loop ())
+
+    [<JavaScript>]
+    member this.Dispose() = server.stop()
+
     interface IDisposable with
         member this.Dispose() = this.Dispose()
 
 [<Sealed>]
 type Context [<JavaScript>] (bridge: Bridge, android: C) =
 
-    let servers = Dictionary<int,Server>()
+    let discoveryEvent = Event<Device>()
+    let onDiscover = discoveryEvent.Publish
+    let mutable isLooping = false
 
-    let onDiscover =
-        Receiver.GetEvent "onDiscover" <| fun msg ->
-            new Device(msg?device, bridge)
+    [<JavaScript>]
+    let rec discoveryLoop () =
+        async {
+            if bridge.isDiscovering() then
+                do
+                    bridge.getDiscoveredDevices()
+                    |> U.toArray
+                    |> Array.iter (fun dev ->
+                        discoveryEvent.Trigger(new Device(dev)))
+                do! Async.Sleep(500)
+                return! discoveryLoop ()
+            else
+                return isLooping <- false
+        }
 
-    let onAccept =
-        Receiver.GetEvent "onAccept" <| fun msg ->
-            new Connection(msg?server,
-                new Device(msg?device, bridge),
-                new Socket(msg?socket, bridge))
-
-    do  onAccept
-        |> Event.add (fun conn ->
-            if servers.ContainsKey(conn.ServerId) then
-                let server = servers.[conn.ServerId]
-                async.TryFinally(server.Handle conn, fun () -> conn.Dispose())
-                |> Async.Start)
+    [<JavaScript>]
+    let startDiscoveryLoop () =
+        if not isLooping then
+            isLooping <- true
+            discoveryLoop ()
+            |> Async.Start
 
     [<JavaScript>]
     member this.Android = android
 
     [<JavaScript>]
-    member this.GetBondedDeviceCount() =
-        android.Trace(Pr.Info, "Bluetooth", "GetBondedDeviceCount")
-        let devices = bridge.getBondedDeviceCount()
-        android.Trace(Pr.Info, "Bluetooth", "GetBondedDeviceCount --> " + string devices)
-        devices
-
-    [<JavaScript>]
     member this.GetBondedDevices() =
-        Receiver.MakeAsync
-            (fun uid -> bridge.getBondedDevices(uid))
-            (fun msg ->
-                let devices = As<int[]> msg?devices
-                android.Trace(Pr.Info, "Bluetooth", "GetBondedDevices --> " + string devices)
-                let r = Array.init devices.Length (fun i -> new Device(devices.[i], bridge))
-                r :> seq<_>)
+        bridge.getBondedDevices()
+        |> U.toArray
+        |> Seq.map (fun dev -> new Device(dev))
 
     [<JavaScript>]
     member this.ConnectToDevice(device: Device, uuid: string) =
-        Receiver.MakeAsync
-            (fun uid -> bridge.connectToDevice(device.Id, uuid, uid))
-            (fun msg -> new Socket(msg?socket, bridge))
+        async {
+            let! s = U.toAsync (fun () -> bridge.connectToDevice(device.Device, uuid))
+            return new Socket(bridge, s)
+        }
 
     [<JavaScript>]
     member this.Serve(name: string, uuid: string, handle: Connection -> Async<unit>) =
-        let serverId = bridge.makeServer(name, uuid)
-        let server =
-            new Server(serverId, bridge, handle, fun () ->
-                servers.Remove(serverId) |> ignore)
-        servers.[serverId] <- server
-        bridge.startServer(serverId)
-        server
+        new Server(bridge, handle, bridge.createServer(name, uuid))
 
-    [<JavaScript>] member this.CancelDiscovery() = bridge.cancelDiscovery()
-    [<JavaScript>] member this.Discovery = onDiscover
-    [<JavaScript>] member this.IsDiscovering = bridge.isDiscovering()
-    [<JavaScript>] member this.StartDiscovery() = bridge.startDiscovery()
-    [<JavaScript>] member this.IsDiscoverable = bridge.isDiscoverable()
+    [<JavaScript>]
+    member this.CancelDiscovery() = bridge.cancelDiscovery()
+
+    [<JavaScript>]
+    member this.Discovery = onDiscover
+
+    [<JavaScript>]
+    member this.IsDiscovering = bridge.isDiscovering()
+
+    [<JavaScript>]
+    member this.StartDiscovery() =
+        if not isLooping && bridge.startDiscovery() then
+            startDiscoveryLoop ()
+
+    [<JavaScript>]
+    member this.IsDiscoverable = bridge.isDiscoverable()
 
     [<JavaScript>]
     member this.MakeDiscoverable(durationSeconds: int) =
-        Receiver.MakeAsync
-            (fun uid -> bridge.makeDiscoverable(durationSeconds, uid))
-            ignore
+        U.toAsync (fun () -> bridge.makeDiscoverable(durationSeconds))
 
-    [<JavaScript>] member this.Enable() = Receiver.MakeAsync bridge.enable ignore
-    [<JavaScript>] member this.IsEnabled = bridge.isEnabled()
+    [<JavaScript>]
+    member this.Enable() =
+        U.toAsync (fun () -> bridge.enable())
+
+    [<JavaScript>]
+    member this.IsEnabled = bridge.isEnabled()
 
     [<JavaScript>]
     static member Get() =
