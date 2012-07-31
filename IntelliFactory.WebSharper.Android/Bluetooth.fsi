@@ -23,7 +23,7 @@ type Binary = string
 type Device =
     interface IDisposable
 
-    /// Drops the reference to the proxied object on the Android side. Called in IDisposable.
+    /// A no-op (deprecated).
     member Dispose : unit -> unit
 
     /// The device address.
@@ -47,7 +47,6 @@ type Socket =
     interface IDisposable
 
     /// Closes the socket and frees resources.
-    /// Drops the reference to the proxied object on the Android side. Called in IDisposable.
     member Dispose : unit -> unit
 
     /// Reads data from the socket. Returns `null` if no more data is to be read.
@@ -75,6 +74,9 @@ type Connection =
 /// providing available Bluetooth operations.
 [<Sealed>]
 type Context =
+
+    /// The general Android context.
+    member Android : IntelliFactory.WebSharper.Android.Context
 
     (* Clients, servers, bonded devices *)
 
