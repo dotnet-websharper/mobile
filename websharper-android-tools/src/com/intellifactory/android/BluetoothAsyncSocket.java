@@ -40,7 +40,7 @@ final class BluetoothAsyncSocket implements Runnable {
 	}
 	
 	/** Exposes the connected device */
-	final BluetoothDevice getRemoteDevice() {
+	final public BluetoothDevice getRemoteDevice() {
 		return socket.getRemoteDevice();
 	}
 
