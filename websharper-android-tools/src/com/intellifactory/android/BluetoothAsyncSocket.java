@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.util.Base64;
 import android.util.Log;
 
 /** Wraps a BT socket to provide async operations */
@@ -15,6 +16,7 @@ final class BluetoothAsyncSocket implements Runnable {
 	final private static String TAG = "BluetoothAsyncSocket";
 	final private LinkedBlockingQueue<BluetoothSocketMessage> queue;
 	final private BluetoothSocket socket;
+	final private Task.Environment<BluetoothAsyncSocket> task;
 
 	final private Task<String> readTask = new Task<String>(
 			new Task.Definition<String>() {
@@ -29,7 +31,8 @@ final class BluetoothAsyncSocket implements Runnable {
 			});
 
 	/** Wraps a BT socket */
-	public BluetoothAsyncSocket(final BluetoothSocket socket) {
+	public BluetoothAsyncSocket(final BluetoothSocket socket, Task.Environment<BluetoothAsyncSocket> task) {
+		this.task = task;
 		this.socket = socket;
 		this.queue = new LinkedBlockingQueue<BluetoothSocketMessage>();
 	}
@@ -77,20 +80,22 @@ final class BluetoothAsyncSocket implements Runnable {
 				case READ:
 					final BluetoothSocketMessage.Read mR = (BluetoothSocketMessage.Read) msg;
 					final int n = input.read(buffer);
-					final String data = n > 0 ? ExtendedAsciiEncoding
-							.getString(buffer, 0, n) : "";
+					final String data = n > 0 ? Base64.encodeToString(buffer, 0, n, Base64.NO_WRAP) : "";
 					mR.doneReading(data);
 					continue LOOP;
 				case WRITE:
 					final BluetoothSocketMessage.Write mW = (BluetoothSocketMessage.Write) msg;
-					output.write(ExtendedAsciiEncoding.getBytes(mW.getData()));
+					byte [] b = Base64.decode(mW.getData(), Base64.NO_WRAP);
+					output.write(b);
 					mW.doneWriting();
 					continue LOOP;
 				}
 			}
 		} catch (InterruptedException ie) {
+			task.error(ie);
 			Log.e(TAG, "Socket-handling thread interrupted", ie);
 		} catch (IOException io) {
+			task.error(io);
 			Log.e(TAG, "IO error while handling a socket", io);
 		} finally {
 			try {

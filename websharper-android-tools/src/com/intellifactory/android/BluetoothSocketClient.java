@@ -19,7 +19,7 @@ final class BluetoothSocketClient {
 									.createRfcommSocketToServiceRecord(token);
 							socket.connect();
 							BluetoothAsyncSocket job = new BluetoothAsyncSocket(
-									socket);
+									socket, task);
 							task.getExecutor().execute(job);
 							task.done(job);
 						} catch (IOException io) {

@@ -40,6 +40,7 @@
     <Compile Include="Android.fs" />
     <Compile Include="Bluetooth.fsi" />
     <Compile Include="Bluetooth.fs" />
+    <EmbeddedResource Include="base64_support.js" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -49,8 +50,6 @@
     <Reference Include="IntelliFactory.WebSharper.Core" />
     <Reference Include="IntelliFactory.WebSharper.Collections" />
     <Reference Include="IntelliFactory.WebSharper.Control" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\IntelliFactory.WebSharper.Mobile\IntelliFactory.WebSharper.Mobile.fsproj">
       <Name>IntelliFactory.WebSharper.Mobile</Name>
       <Project>{aab5b3c8-d106-4ed6-b1a2-9db4cfb30d19}</Project>

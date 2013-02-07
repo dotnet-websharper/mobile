@@ -67,9 +67,20 @@ type Device [<JavaScript>] (dev: JDevice) =
     interface IDisposable with
         member this.Dispose() = ()
 
+type Base64Resource() =
+    inherit Resources.BaseResource("base64_support.js")
+
+[<Inline "base64_decode($s)">]
+let base64_decode (s : string) = ""
+
+[<Inline "base64_encode($s)">]
+let base64_encode (s : string) = ""
+            
 [<Sealed>]
+[<Require(typeof<Base64Resource>)>]
 type Socket [<JavaScript>] (bridge: Bridge, sock: JSocket) =
     let device = new Device(sock.getRemoteDevice())
+
 
     [<JavaScript>]
     member this.Dispose() = sock.close()
@@ -78,12 +89,12 @@ type Socket [<JavaScript>] (bridge: Bridge, sock: JSocket) =
     member this.Read() =
         async {
             let! x = U.toAsync (fun () -> bridge.socketRead(sock))
-            return U.toString x
+            return base64_decode (U.toString x)
         }
 
     [<JavaScript>]
     member this.Write(data: Binary) =
-        U.toAsync (fun () -> bridge.socketWrite(sock, data))
+        U.toAsync (fun () -> bridge.socketWrite(sock, base64_encode data))
 
     [<JavaScript>]
     member this.Device = device
@@ -211,3 +222,6 @@ type Context [<JavaScript>] (bridge: Bridge, android: C) =
             | Some android -> Some (Context(b, android))
             | _ -> None
         else None
+
+[<assembly: System.Web.UI.WebResource("base64_support.js", "text/javascript")>]
+do ()
