@@ -67,8 +67,7 @@ final class BluetoothSocketServer {
 									.listenUsingRfcommWithServiceRecord(name,
 											uuid);
 							BluetoothSocket client = socket.accept();
-							BluetoothAsyncSocket job = new BluetoothAsyncSocket(
-									client);
+							BluetoothAsyncSocket job = new BluetoothAsyncSocket(client,null);
 							executor.execute(job);
 							acceptor.accept(job);
 						} catch (IOException io) {

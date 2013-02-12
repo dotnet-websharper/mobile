@@ -92,10 +92,12 @@ final class BluetoothAsyncSocket implements Runnable {
 				}
 			}
 		} catch (InterruptedException ie) {
-			task.error(ie);
+			if (task != null)
+				task.error(ie);
 			Log.e(TAG, "Socket-handling thread interrupted", ie);
 		} catch (IOException io) {
-			task.error(io);
+			if (task != null)
+				task.error(io);
 			Log.e(TAG, "IO error while handling a socket", io);
 		} finally {
 			try {
