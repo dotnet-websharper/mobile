@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ivy-module version="2.0">
-  <info organisation="IntelliFactory" module="if-ws-mobile-templates" revision="2.4" />
+  <info organisation="IntelliFactory" module="if-ws-mobile-templates" revision="2.5" />
   <publications>
     <artifact name="IntelliFactory.WebSharper.Android" ext="targets" type="bin" />
     <artifact name="IntelliFactory.WebSharper.WinPhone" ext="targets" type="bin" />
