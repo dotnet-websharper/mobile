@@ -2,12 +2,9 @@
 
 ## Prerequisites
 
-Building [Android][android] applications with WebSharper.Mobile
-requires:
+In addition to the requirements in [Install](Install.md), building
+[Android][android] applications with WebSharper.Mobile requires:
 
-* [Visaul Studio Express 2012 for Web][vsx] with [F# tools][fsharp] or
-  [Visual Studio 2012][vs]
-* [WebSharper 2.5][ws]
 * [Java Development Kit (JDK)][jdk]
 * [Android Development Tools (ADT) bundle][adt]
 
@@ -19,10 +16,6 @@ For best results, it is recommended to install:
 [android]: http://developer.android.com
 [adt]: http://developer.android.com/sdk/index.html
 [jdk]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[ws]: http://bitbucket.org/IntelliFactory/websharper
-[vs]: http://www.microsoft.com/visualstudio/eng/downloads
-[vsx]: http://www.microsoft.com/visualstudio/eng/downloads#d-2012-express
-[fsharp]: http://www.microsoft.com/web/gallery/install.aspx?appid=FSharpVWD11
 
 ## Installation
 
@@ -47,12 +40,6 @@ F# interactive):
     set "JAVA_HOME" @"C:\Program Files\Java\jdk1.7.0_40"
 
 **Step 2**: run `SDK Manager.exe` and install Android 2.2 (API 8).
-
-**Step 3**: obtain and install the
-[WebSharper.Mobile Visual Studio extension][downloads] by clicking on
-the relevant `.vsix` file.
-
-[downloads]: https://bitbucket.org/IntelliFactory/websharper.mobile/downloads
 
 ## Usage
 
