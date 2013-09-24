@@ -24,7 +24,7 @@ open System.IO
 open IntelliFactory.Build
 open global.NuGet
 
-let bt = BuildTool().PackageId("WebSharper.Mobile", "2.5-alpha")
+let bt = BuildTool().PackageId("WebSharper.Mobile", "2.5-rc1")
 
 let mobile =
     bt.WebSharper.Library("IntelliFactory.WebSharper.Mobile")
@@ -91,7 +91,9 @@ let nuPkg =
                 {
                     x with
                         Description = "Mobile app development with WebSharper"
-                        ProjectUrl = Some "http://bitbucket.org/IntelliFactory/websharper.mobile"
+                        ProjectUrl = Some "http://github.com/intellifactory/websharper.mobile"
+                        LicenseUrl = Some "http://github.com/intellifactory/websharper.mobile/blob/master/LICENSE.md"
+                        RequiresLicenseAcceptance = true
                 })
     let android = buildAndroidJar ()
     nuPkg.AddNuGetExportingProject {
