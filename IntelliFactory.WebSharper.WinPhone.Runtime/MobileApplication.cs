@@ -505,7 +505,7 @@ namespace IntelliFactory.WebSharper.WinPhone.Runtime
         {
             var resourceName =
                 assembly.GetManifestResourceNames()
-                    .First(x => x.Contains("Mobile.pkg"));
+                    .First(x => x.Contains(".pkg"));
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             {
                 using (var storage = IsolatedStorageFile.GetUserStoreForApplication())

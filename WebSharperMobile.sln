@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Web
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6CEE7364-1DDA-4DDF-A63D-CA1AC40373C1}"
+	ProjectSection(SolutionItems) = preProject
+		build.fsx = build.fsx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "automation", "automation", "{18446406-ED79-4FAA-B8CD-2AD90EE10C36}"
+	ProjectSection(SolutionItems) = preProject
+		automation\MobileTemplates.proj = automation\MobileTemplates.proj
+		automation\WebSharper.Mobile.targets = automation\WebSharper.Mobile.targets
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.Mobile", "IntelliFactory.WebSharper.Mobile\IntelliFactory.WebSharper.Mobile.fsproj", "{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.Android", "IntelliFactory.WebSharper.Android\IntelliFactory.WebSharper.Android.fsproj", "{82897A8E-A8A9-4A4B-BE84-3E11CC88FA50}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IntelliFactory.WebSharper.WinPhone", "IntelliFactory.WebSharper.WinPhone\IntelliFactory.WebSharper.WinPhone.fsproj", "{0C2B699F-7ED4-40BF-9143-E866068D14F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4450F309-2D31-45AF-992E-97A1E5BDD447}"
+	ProjectSection(SolutionItems) = preProject
+		src\VisualStudioIntegration.fsx = src\VisualStudioIntegration.fsx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{10789E52-53DB-412A-AFF0-D1644C450D84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wp-app", "wp-app", "{01F8D086-4F27-4089-9443-1EF09A62709F}"
+	ProjectSection(SolutionItems) = preProject
+		templates\wp-app\WpApp.fsproj = templates\wp-app\WpApp.fsproj
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "android-app", "android-app", "{F26BB307-AE4C-40F1-B060-63D556368EB2}"
+	ProjectSection(SolutionItems) = preProject
+		templates\android-app\AndroidApp.fsproj = templates\android-app\AndroidApp.fsproj
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAB5B3C8-D106-4ED6-B1A2-9DB4CFB30D19}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{82897A8E-A8A9-4A4B-BE84-3E11CC88FA50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82897A8E-A8A9-4A4B-BE84-3E11CC88FA50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82897A8E-A8A9-4A4B-BE84-3E11CC88FA50}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{82897A8E-A8A9-4A4B-BE84-3E11CC88FA50}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{0C2B699F-7ED4-40BF-9143-E866068D14F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C2B699F-7ED4-40BF-9143-E866068D14F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C2B699F-7ED4-40BF-9143-E866068D14F1}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C2B699F-7ED4-40BF-9143-E866068D14F1}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{18446406-ED79-4FAA-B8CD-2AD90EE10C36} = {6CEE7364-1DDA-4DDF-A63D-CA1AC40373C1}
+		{4450F309-2D31-45AF-992E-97A1E5BDD447} = {6CEE7364-1DDA-4DDF-A63D-CA1AC40373C1}
+		{10789E52-53DB-412A-AFF0-D1644C450D84} = {6CEE7364-1DDA-4DDF-A63D-CA1AC40373C1}
+		{01F8D086-4F27-4089-9443-1EF09A62709F} = {10789E52-53DB-412A-AFF0-D1644C450D84}
+		{F26BB307-AE4C-40F1-B060-63D556368EB2} = {10789E52-53DB-412A-AFF0-D1644C450D84}
+	EndGlobalSection
+EndGlobal

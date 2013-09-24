@@ -1,0 +1,119 @@
+﻿<!--
+***********************************************************************************************
+IntelliFactory.WebSharper.WinPhone.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+This file defines MSBuild targets used by IntelliFactory WebSharper(TM) Platform.
+
+This file is confidential and proprietary.
+
+Copyright (c) IntelliFactory, 2004-2013.
+
+All rights reserved.  Reproduction or use in whole or in part is
+prohibited without the written consent of the copyright holder.
+
+***********************************************************************************************
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <WinPhoneWrapper>false</WinPhoneWrapper>
+    <WinPhoneWrapper Condition=" '$(WebSharperMobile)' == 'wp-wrapper' ">true</WinPhoneWrapper>
+    <WinPhoneApp>false</WinPhoneApp>
+    <WinPhoneApp Condition=" '$(WebSharperMobile)' == 'wp-app' ">true</WinPhoneApp>
+    <AndroidApp>false</AndroidApp>
+    <AndroidApp Condition=" '$(WebSharperMobile)' == 'android-app' ">true</AndroidApp>
+  </PropertyGroup>
+
+  <!-- wp-wrapper template -->
+
+  <PropertyGroup Condition="$(WinPhoneWrapper)">
+    <BuildDependsOn>CreateWebSharperMobilePackage;$(BuildDependsOn)</BuildDependsOn>
+    <MobilePackage>$(OutDir)\$(AssemblyName).pkg</MobilePackage>
+    <MobilePackageSources Condition="'$(MobilePackageSources)' == ''">$(MSBuildProjectDirectory)\..\build\html</MobilePackageSources>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)\IntelliFactory.WebSharper.WinPhone.Tasks.dll"
+             TaskName="IntelliFactory.WebSharper.WinPhone.Tasks.PackageForWinPhone"
+             Condition="$(WinPhoneWrapper)" />
+
+  <Target Name="CreateWebSharperMobilePackage" Condition="$(WinPhoneWrapper)">
+    <PackageForWinPhone SourceDirectory="$(MobilePackageSources)"
+                        PackageFile="$(MobilePackage)" />
+  </Target>
+
+  <ItemGroup Condition="$(WinPhoneWrapper)">
+    <EmbeddedResource Include="$(MobilePackage)" />
+    <Reference Include="IntelliFactory.WebSharper.WinPhone.Runtime">
+      <HintPath>$(MSBuildThisFileDirectory)\IntelliFactory.WebSharper.WinPhone.Runtime.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- wp-app template -->
+
+  <ItemGroup Condition="$(WinPhoneApp)">
+    <Reference Include="IntelliFactory.WebSharper.Mobile">
+      <HintPath>$(MSBuildThisFileDirectory)\IntelliFactory.WebSharper.Mobile.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="IntelliFactory.WebSharper.WinPhone">
+      <HintPath>$(MSBuildThisFileDirectory)\IntelliFactory.WebSharper.WinPhone.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- android-app -->
+
+  <PropertyGroup Condition="$(AndroidApp)">
+    <BuildDependsOn>DeployDependencyJars;$(BuildDependsOn);BuildApkWithAnt;WarnIfNoAnt</BuildDependsOn>
+    <CleanDependsOn>$(CleanDependsOn);CleanWithAnt</CleanDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(AndroidApp)">
+    <Reference Include="IntelliFactory.WebSharper.Mobile">
+      <HintPath>$(MSBuildThisFileDirectory)\IntelliFactory.WebSharper.Mobile.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="IntelliFactory.WebSharper.Android">
+      <HintPath>$(MSBuildThisFileDirectory)\IntelliFactory.WebSharper.Android.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="DeployDependencyJars">
+    <ItemGroup>
+      <DependencyJars Include="$(MSBuildThisFileDirectory)\*.jar" />
+    </ItemGroup>
+    <PropertyGroup>
+      <JarLibDir>$(MSBuildProjectDirectory)\android\libs</JarLibDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(JarLibDir)" />
+    <Copy SourceFiles="@(DependencyJars)" DestinationFolder="$(JarLibDir)" SkipUnchangedFiles="true"/>
+  </Target>
+
+  <Target Name="BuildApkWithAnt" Condition=" '$(ANT_HOME)' != '' ">
+    <PropertyGroup>
+      <AntConfiguration>debug</AntConfiguration>
+      <AntConfiguration Condition="'$(Configuration)' == 'Release'">release</AntConfiguration>
+    </PropertyGroup>
+    <Exec Command='"$(ANT_HOME)\bin\ant" $(AntConfiguration)'
+          WorkingDirectory='$(MSBuildProjectDirectory)\android'
+          ContinueOnError='false' />
+  </Target>
+
+  <Target Name="WarnIfNoAnt" Condition=" '$(ANT_HOME)' == '' ">
+    <Warning Text="Consider setting ANT_HOME variable to automatically build Android APK packages." />
+  </Target>
+
+  <Target Name="CleanWithAnt" Condition=" '$(ANT_HOME)' != '' ">
+    <Exec Command='"$(ANT_HOME)\bin\ant" clean'
+          WorkingDirectory='$(MSBuildProjectDirectory)\android'
+          ContinueOnError='false' />
+  </Target>
+
+</Project>
+

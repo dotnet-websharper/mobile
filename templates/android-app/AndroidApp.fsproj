@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>$guid1$</ProjectGuid>
+    <WebSharperProject>Html</WebSharperProject>
+    <WebSharperMobile>android-app</WebSharperMobile>
+    <WebSharperHtmlDirectory>$(MSBuildProjectDirectory)\android\assets</WebSharperHtmlDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <Tailcalls>false</Tailcalls>
+    <OutputPath>bin/Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <Tailcalls>true</Tailcalls>
+    <OutputPath>bin/Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <Name>$safeprojectname$</Name>
+    <RootNamespace>$(Name)</RootNamespace>
+    <AssemblyName>$(Name)</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <WarningLevel>3</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Main.fs"  />
+    <Content Include="Main.html"  />
+    <None Include="extra.files"  />
+    <Content Include="android\build.xml" />
+    <Content Include="android\.classpath" />
+    <Content Include="android\.project" />
+    <Content Include="android\AndroidManifest.xml" />
+    <Content Include="android\ant.properties" />
+    <Content Include="android\local.properties" />
+    <Content Include="android\project.properties" />
+    <Content Include="android\.settings\org.eclipse.jdt.core.prefs" />
+    <Content Include="android\assets\README.txt" />
+    <Content Include="android\bin\README.txt" />
+    <Content Include="android\gen\README.txt" />
+    <Content Include="android\res\drawable-hdpi\ic_launcher.png" />
+    <Content Include="android\res\drawable-ldpi\ic_launcher.png" />
+    <Content Include="android\res\drawable-mdpi\ic_launcher.png" />
+    <Content Include="android\res\drawable-xhdpi\ic_launcher.png" />
+    <Content Include="android\res\layout\main.xml" />
+    <Content Include="android\res\values\strings.xml" />
+    <Content Include="android\src\com\mycompany\droidsite\DroidActivity.java" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib"  />
+    <Reference Include="System"  />
+    <Reference Include="System.Core"  />
+    <Reference Include="System.Numerics"  />
+    <Reference Include="System.Web"  />
+    <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>true</Private>
+      <SpecificVersion>true</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets"  />
+  <Import Project="WebSharper.targets" Condition="Exists('WebSharper.targets')"  />
+</Project>

@@ -1,0 +1,18 @@
+<phone:PhoneApplicationPage
+    x:Class="$safeprojectname$.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="True">
+    <StackPanel HorizontalAlignment="Left" Height="768" VerticalAlignment="Top" Width="480">
+        <phone:WebBrowser x:Name="WebView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="768" />
+    </StackPanel>
+</phone:PhoneApplicationPage>

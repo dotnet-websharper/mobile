@@ -13,6 +13,7 @@ namespace IntelliFactory.WebSharper.WinPhone
 
 open System
 open System.Collections.Generic
+open System.Runtime.CompilerServices
 open System.Web
 open System.Web.UI
 open IntelliFactory.WebSharper
@@ -28,16 +29,19 @@ do ()
 
 module Bridge =
 
+    [<MethodImpl(MethodImplOptions.NoInlining)>]
     [<Inline "notifySilverlight($msg)">]
     let private notifySilverlight (msg: obj) = X<unit>
 
     [<JavaScript>]
+    [<MethodImpl(MethodImplOptions.NoInlining)>]
     let private ping (name: string) =
         let m = obj ()
         m?MessageType <- name
         m
 
     [<JavaScript>]
+    [<MethodImpl(MethodImplOptions.NoInlining)>]
     let private message (name: string) (uid: int) =
         let m = ping name
         m?UniqueId <- uid
@@ -90,6 +94,7 @@ module Bridge =
             (fun resp -> resp?Jpeg)
 
     [<Inline "JSON.parse($json)">]
+    [<MethodImpl(MethodImplOptions.NoInlining)>]
     let private jsonParse (json: string) : obj = null
 
     [<JavaScript>]
@@ -103,6 +108,7 @@ module Bridge =
         }
 
     [<Direct "hasSilverlight()">]
+    [<MethodImpl(MethodImplOptions.NoInlining)>]
     let HasSilverlight () = false
 
     [<JavaScript>]

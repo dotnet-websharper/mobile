@@ -1,0 +1,28 @@
+<!--
+***********************************************************************************************
+IntelliFactory.WebSharper.Android.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+This file defines MSBuild targets used by IntelliFactory WebSharper(TM) Platform.
+
+This file is confidential and proprietary.
+
+Copyright (c) IntelliFactory, 2004-2013.
+
+All rights reserved.  Reproduction or use in whole or in part is
+prohibited without the written consent of the copyright holder.
+
+***********************************************************************************************
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="4.0">
+  <Target Name="Build">
+    <ItemGroup>
+      <Projects Include="../IntelliFactory.WebSharper.WinPhone.Runtime/IntelliFactory.WebSharper.WinPhone.Runtime.csproj" />
+      <Projects Include="../IntelliFactory.WebSharper.WinPhone.Tasks/IntelliFactory.WebSharper.WinPhone.Tasks.csproj" />
+    </ItemGroup>
+    <MSBuild Projects="@(Projects)" />
+  </Target>
+</Project>

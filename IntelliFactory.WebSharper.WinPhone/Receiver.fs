@@ -12,9 +12,11 @@
 module IntelliFactory.WebSharper.WinPhone.Receiver
 
 open System.Collections.Generic
+open System.Runtime.CompilerServices
 open IntelliFactory.WebSharper
 
 [<Inline "JSON.parse($json)">]
+[<MethodImpl(MethodImplOptions.NoInlining)>]
 let jsonParse (json: string) : obj = null
 
 [<JavaScript>]
@@ -29,6 +31,7 @@ let handlers =
 let uid = ref 0
 
 [<JavaScript>]
+[<MethodImpl(MethodImplOptions.NoInlining)>]
 let fresh () =
     incr uid
     !uid

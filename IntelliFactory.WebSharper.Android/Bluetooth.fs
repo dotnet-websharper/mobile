@@ -13,6 +13,7 @@ module IntelliFactory.WebSharper.Android.Bluetooth
 
 open System
 open System.Collections.Generic
+open System.Runtime.CompilerServices
 open IntelliFactory.WebSharper
 type C = IntelliFactory.WebSharper.Android.Context
 type Pr = Mobile.Priority
@@ -71,16 +72,17 @@ type Base64Resource() =
     inherit Resources.BaseResource("base64_support.js")
 
 [<Inline "base64_decode($s)">]
-let base64_decode (s : string) = ""
+[<MethodImpl(MethodImplOptions.NoInlining)>]
+let base64_decode (s: string) : string = failwith "client-side"
 
 [<Inline "base64_encode($s)">]
-let base64_encode (s : string) = ""
-            
+[<MethodImpl(MethodImplOptions.NoInlining)>]
+let base64_encode (s: string) : string = failwith "client-side"
+
 [<Sealed>]
 [<Require(typeof<Base64Resource>)>]
 type Socket [<JavaScript>] (bridge: Bridge, sock: JSocket) =
     let device = new Device(sock.getRemoteDevice())
-
 
     [<JavaScript>]
     member this.Dispose() = sock.close()
