@@ -1,13 +1,18 @@
-﻿// $begin{copyright}
+﻿// WebSharper.Mobile - support for building mobile WebSharper apps
+// Copyright (c) 2013 IntelliFactory
 //
-// This file is confidential and proprietary.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
 //
-// Copyright (c) IntelliFactory, 2004-2012.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
 //
-// All rights reserved.  Reproduction or use in whole or in part is
-// prohibited without the written consent of the copyright holder.
-//-----------------------------------------------------------------
-// $end{copyright}
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace IntelliFactory.WebSharper.WinPhone
 
