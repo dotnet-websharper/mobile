@@ -8,5 +8,5 @@ Mobile application development support for [WebSharper][ws].
 * [Mercurial sources at Bitbucket](http://bitbucket.org/IntelliFactory/websharper.mobile)
 
 [docs]: http://github.com/intellifactory/websharper.mobile/blob/master/docs/WebSharperMobile.md
-[license]: http://bitbucket.org/IntelliFactory/websharper.mobile/src/tip/LICENSE.md?at=default
+[license]: http://github.com/intellifactory/websharper.mobile/blob/master/docs/LICENSE.md
 [ws]: http://bitbucket.org/IntelliFactory/websharper
