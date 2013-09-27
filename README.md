@@ -6,5 +6,5 @@ Mobile application development support for [WebSharper][ws].
 * [LICENSE][license]
 
 [docs]: http://bitbucket.org/IntelliFactory/websharper.mobile/src/tip/docs/WebSharperMobile.md?at=default
-[license]: http://bitbucket.org/IntelliFactory/websharper.mobile/src/tip/docs/LICENSE.md?at=default
+[license]: http://bitbucket.org/IntelliFactory/websharper.mobile/src/tip/LICENSE.md?at=default
 [ws]: http://bitbucket.org/IntelliFactory/websharper
