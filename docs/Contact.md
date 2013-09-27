@@ -11,11 +11,10 @@ WebSharper.Mobile is being developed and maintained by
 * [Forums on FPish][fpish] - discuss WebSharper and WebSharper.Mobile
   with other users.
 
-* [#websharper on freenode][irc] - live community chat on WebSharper
+* **#websharper** on freenode - live community IRC chat on WebSharper
   and related topics.
 
 [contact]: http://websharper.com/contact
 [fpish]: http://fpish.com
 [if]: http://intellifactory.com
-[irc]: irc://irc.freenode.net/websharper
-[issues]: http://bitbucket.org/IntelliFactory/websharper.mobile
+[issues]: http://bitbucket.org/IntelliFactory/websharper.mobile/issues
