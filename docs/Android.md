@@ -29,7 +29,7 @@ For best results, it is recommended to install:
 **Step 1**: set the following environment variables:
 
 | Name        | Value                            |
-+-------------+----------------------------------+
+|-------------|----------------------------------|
 | ANDROID_SDK | Path to the Android `sdk` folder |
 | ANT_HOME    | Path to ANT installation         |
 | JAVA_HOME   | Path to the JDK                  |
