@@ -13,5 +13,6 @@ the standard Remoting/RPC mechanism.
 
 * [Developing Android Applications](Android.md)
 * [Developing Windows Phone Applications](WindowsPhone.md)
-* [License](License.md)
+* [License](../LICENSE.md)
 * [Contact](Contact.md)
+
