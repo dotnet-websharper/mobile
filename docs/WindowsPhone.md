@@ -2,36 +2,21 @@
 
 ## Prerequisites
 
-Building [Windows Phone][wp] applications with WebSharper.Mobile
-requires:
+In addition to general requirements specified in
+[Install](Install.md), building [Windows Phone][wp] applications with
+WebSharper.Mobile requires:
 
-* [Visaul Studio Express 2012 for Web][vsx] with [F# tools][fsharp] or
-  [Visual Studio 2012][vs]
-
-* If using Visual Studio Express, you also need the [Windows Phone
-  variant][vsp]
+* If using Visual Studio Express, the [Windows Phone][vsp] edition.
+  Users of other editions of Visual Studio can skip this step.
 
 * [Windows Phone SDK][wp-sdk], we currently test with "SDK Update for
   Windows Phone 7.8" on Windows 8.1.
 
-* [WebSharper 2.5][ws]
-
-[fsharp]: http://www.microsoft.com/web/gallery/install.aspx?appid=FSharpVWD11
-[vs]: http://www.microsoft.com/visualstudio/eng/downloads
 [vsx]: http://www.microsoft.com/visualstudio/eng/downloads#d-2012-express
 [vsp]: http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-for-windows-phone
 [wp]: http://www.windowsphone.com
 [wp-sdk]: http://dev.windowsphone.com/en-us/downloadsdk
 [ws]: http://bitbucket.org/IntelliFactory/websharper
-
-
-## Installation
-
-Obtain and install the [WebSharper.Mobile Visual Studio
-extension][downloads] by clicking on the relevant `.vsix` file.
-
-[downloads]: https://bitbucket.org/IntelliFactory/websharper.mobile/downloads
-
 
 ## Usage
 

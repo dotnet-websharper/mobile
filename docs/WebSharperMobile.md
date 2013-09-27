@@ -11,8 +11,8 @@ In addition, WebSharper supports deploying server-side code to to a
 public server, and making the mobile devices communicate with it using
 the standard Remoting/RPC mechanism.
 
+* [Common Installation Requirements](Install.md)
 * [Developing Android Applications](Android.md)
 * [Developing Windows Phone Applications](WindowsPhone.md)
 * [License](../LICENSE.md)
 * [Contact](Contact.md)
-
