@@ -22,6 +22,7 @@ requires:
 [vsp]: http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-for-windows-phone
 [wp]: http://www.windowsphone.com
 [wp-sdk]: http://dev.windowsphone.com/en-us/downloadsdk
+[ws]: http://bitbucket.org/IntelliFactory/websharper
 
 
 ## Installation
