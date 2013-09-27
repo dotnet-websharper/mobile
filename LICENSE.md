@@ -1,13 +1,12 @@
 # WebSharper.Mobile Licensing
 
-WebSharper.Mobile is licensed under
-[GNU Affer General Public License v3.0 (AGPLv3)][agpl] with an
-open-source exception (see below).
+WebSharper.Mobile is licensed under [GNU Affer General Public License
+v3.0 (AGPLv3)][agpl] with an open-source exception (see below).
+
+Please [contact][contacts] IntelliFactory for other licensing options.
 
 [agpl]: http://www.gnu.org/licenses/agpl-3.0.html
-
-Please [contact](Contact.md) IntelliFactory for other licensing
-options.
+[contacts]: http://websharper.com/contact
 
 ## Open Source Exception
 
