@@ -18,4 +18,4 @@ WebSharper.Mobile is being developed and maintained by
 [fpish]: http://fpish.com
 [if]: http://intellifactory.com
 [irc]: irc://irc.freenode.net/websharper
-[issues]: http://bitbucket.org/IntelliFactory/websharper.mobile
+[issues]: http://bitbucket.org/IntelliFactory/websharper.mobile/issues
